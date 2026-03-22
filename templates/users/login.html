@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — PAPMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="login-page">
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+<div class="login-wrap">
+    <div class="login-left">
+        <div class="left-top">
+            <a class="left-logo" href="{% url 'home' %}">
+                <div class="left-logo-icon">
+                    <img src="{% static 'assets/R.U logo.png' %}" alt="R.U logo" class =logo-visual>
+                </div>
+            </a>
+            <div class="left-title">Your Academic<br/><em>Journey,</em><br/>Fully Tracked.</div>
+            <p class="left-desc">From concept note submission to graduation clearance — every stage happens here. No office queues. No lost forms.</p>
+            <div class="role-chips">
+                <span class="chip active">🎓 Student</span>
+                <span class="chip">💼 Staff Member</span>
+            </div>
+        </div>
+        <div class="left-bottom">
+            <div class="left-footnote">R.U — Postgraduate Assessment & Progress Management System</div>
+        </div>
+    </div>
+
+    <div class="login-right">
+        <a class="back-link" href="{% url 'home' %}">← Back to home</a>
+        <div class="login-h2">Welcome back</div>
+        <p class="login-sub">Sign in to access your dashboard</p>
+
+        <div class="role-selector" id="roleSelector">
+            <button class="role-btn selected" onclick="selectRole(this, 'student.html')">
+                <span class="ico">🎓</span> Student
+            </button>
+            <button class="role-btn" onclick="selectRole(this, 'staff-dashboard.html')">
+                <span class="ico">💼</span> Staff
+            </button>
+        </div>
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Admission Number</label>
+        <input type="text" name="unique_id" placeholder="Admission Number or Staff ID">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••••">
+    </div>
+    <div class="form-extras" style="margin-top: 1rem;">
+        <label class="remember"><input type="checkbox"> Remember me</label>
+        <a class="forgot" href="#">Forgot password?</a>
+    </div>
+    <button class="btn-signin" type="submit">Sign In →</button>
+</form>
+        
+
+        
+
+        <!-- <button class="btn-signin" type="submit">Sign In →</button> -->
+
+        
+    </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

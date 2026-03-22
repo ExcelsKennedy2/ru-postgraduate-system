@@ -1,0 +1,3087 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard — R.U</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0A194E;
+  --navy2:#0D2260;
+  --amber:#FFC107;
+  --amber2:#FFD54F;
+  --amber-dark:#E6AD00;
+  --white:#FFFFFF;
+  --off:#F7F8FC;
+  --off2:#EEF1F8;
+  --text:#1A2340;
+  --muted:#5A6A8A;
+  --soft:#9AAAC0;
+  --border:#DDE3F0;
+  --green:#1DA462;
+  --green-dim:rgba(29,164,98,0.1);
+  --red:#E53935;
+  --red-dim:rgba(229,57,53,0.1);
+  --blue:#1E7EDE;
+  --blue-dim:rgba(30,126,222,0.1);
+  --orange:#F57C00;
+  --orange-dim:rgba(245,124,0,0.1);
+  --sidebar-w:230px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--off);
+  background:var(--off);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+.layout{
+  display:flex;
+  min-height:100vh;
+  position:relative;
+}
+.sidebar{
+  background:var(--navy);
+  display: flex ;
+  flex-direction:column;
+  position:fixed;
+  top:0;left:0;bottom:0;
+  width:var(--sidebar-w);
+  height:100vh;
+  overflow-y:auto;
+  z-index:1000;
+  transition:transform 0.28s cubic-bezier(.4,0,.2,1);
+  transform:translateX(0);
+
+}
+.sidebar.collapsed{
+  transform:translateX(calc(-1 * var(--sidebar-w)));
+}
+
+@media(max-width:900px){
+  .sidebar{
+    transform:translateX(calc(-1 * var(--sidebar-w)));
+  }
+  .sidebar.mobile-open{
+    transform:translateX(0);
+    box-shadow:8px 0 32px rgba(0,0,0,0.35);
+  }
+  /* On mobile main never has a left margin */
+  main{
+    margin-left:0 !important;
+  }
+}
+.sidebar-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:998; /* below sidebar (1000) but above everything else */
+}
+.sidebar-overlay.visible{display:block;}
+
+.sidebar-logo{
+  padding:1.4rem 1.25rem;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  align-items:center;
+  gap:0.65rem;
+  text-decoration:none
+}
+.logo-badge{
+  width:150px;
+  height:50px;
+  background:white;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  flex-shrink:0;
+  margin-left: 10px;
+}
+.logo-img {
+    height: 110px;    
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); 
+    margin-left: 0px
+}
+.sidebar-section{
+  padding:1.1rem 0 0.4rem}
+.sidebar-section-label{
+  font-size:0.58rem;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:rgb(255, 255, 255);
+  padding:0 1.25rem;
+  margin-bottom:0.25rem;
+  display:block;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:0.7rem;
+  padding:0.6rem 1.25rem;
+  color:rgb(255, 255, 255);
+  font-size:0.82rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.18s;
+  border-left:3px solid transparent}
+.nav-item:hover{
+  color:#FFC107;
+  background:rgba(255,255,255,0.055)}
+.nav-item.active{
+  color:#FFC107;
+  background:rgba(255,255,255,0.1);
+  border-left-color:var(--amber)}
+.nav-item .ni{
+  width:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.9rem;
+  flex-shrink:0}
+.nav-badge{
+  margin-left:auto;
+  background:var(--red);
+  color:#fff;
+  font-size:0.58rem;
+  font-weight:700;
+  padding:0.1rem 0.38rem;
+  border-radius:8px;
+  min-width:18px;
+  text-align:center}
+.sidebar-footer{
+  margin-top:auto;
+  border-top:1px solid rgba(255,255,255,0.08);
+  padding:1rem 1.25rem}
+.user-card{
+  display:flex;
+  align-items:center;
+  gap:0.65rem
+}
+.user-avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:var(--amber);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.75rem;
+  font-weight:800;
+  color:var(--navy);
+  flex-shrink:0}
+.user-name{
+  font-size:0.82rem;
+  font-weight:700;
+  color:var(--white)}
+.user-role{
+  font-size:0.65rem;
+  color:rgb(255, 255, 255)}
+.logout-btn{
+  margin-left:auto;
+  width:28px;
+  height:28px;
+  border:none;
+  background:rgba(255,255,255,0.07);
+  color:rgb(255, 255, 255);
+  cursor:pointer;
+  border-radius:6px;
+  font-size:0.85rem;
+  transition:all 0.18s;
+  display:flex;
+  align-items:center;
+  justify-content:center}
+.logout-btn:hover{
+  background:var(--red-dim);
+  color:var(--red)}
+
+main {
+  flex:1;
+  margin-left:var(--sidebar-w);
+  transition:margin-left 0.28s cubic-bezier(.4,0,.2,1);
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+body.sidebar-collapsed main {
+  margin-left: 0; /* This removes the white gap from your screenshot */
+}
+.topbar{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:0.9rem 2rem;display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:40}
+.topbar-title{
+  font-size:1.18rem;
+  font-weight:800;
+  color:var(--navy)}
+.topbar-sub{
+  font-size:0.76rem;
+  color:var(--muted);
+  margin-top:0.1rem}
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+  }
+.mobile-toggle {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--navy);
+  color:white;
+  border:none;
+  padding:8px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:1.1rem;
+  transition:background 0.18s;
+  flex-shrink:0;
+}
+.mobile-toggle:hover{
+  background:var(--navy2);
+}
+.topbar-title{
+  font-size:1.18rem;
+  font-weight:800;
+  color:var(--navy)
+}
+.topbar-sub{
+  font-size:0.76rem;
+  color:var(--muted);
+  margin-top:0.1rem;
+}
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:0.65rem;
+}
+.icon-btn{
+  width:36px;
+  height:36px;
+  border:1.5px solid var(--border);
+  background:var(--white);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.95rem;
+  transition:all 0.18s;
+  position:relative}
+  
+.icon-btn:hover{
+  border-color:var(--navy);
+  background:var(--off)}
+.badge-dot{
+  position:absolute;
+  top:4px;right:4px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--red);
+  border:2px solid var(--white)
+}
+.user-chip{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  border:1.5px solid var(--border);
+  background:var(--white);
+  padding:0.3rem 0.75rem 0.3rem 0.4rem;
+  cursor:pointer;
+  transition:border-color 0.18s}
+.user-chip:hover{
+  border-color:var(--navy)}
+.chip-avatar{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.6rem;
+  font-weight:800;
+  color:var(--amber)
+}
+.chip-name{
+  font-size:0.78rem;
+  font-weight:600;
+}
+.chip-role{
+  font-size:0.62rem;
+  color:var(--muted)
+}
+.btn{
+  border:none;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:700;
+  transition:all 0.18s;
+  display:inline-flex;
+  align-items:center;
+  gap:0.4rem
+}
+.btn-primary{
+  background:var(--navy);
+  color:var(--white);
+  padding:0.55rem 1.1rem;
+  font-size:0.8rem
+}
+.btn-primary:hover{
+  background:var(--navy2)
+}
+.btn-amber{
+  background:var(--amber);
+  color:var(--navy);
+  padding:0.55rem 1.1rem;
+  font-size:0.8rem
+}
+.btn-amber:hover{
+  background:var(--amber2)
+}
+.btn-ghost{
+  background:var(--off);
+  color:var(--navy);
+  padding:0.55rem 1.1rem;
+  font-size:0.8rem;
+  border:1.5px solid var(--border)
+}
+.btn-ghost:hover{
+  border-color:var(--navy)
+}
+.btn-sm{
+  padding:0.35rem 0.75rem;
+  font-size:0.72rem
+}
+.content{
+  padding:1.75rem 2rem;
+  flex:1
+}
+.page{
+  display:none
+}
+.page.active{
+  display:block
+}
+/* welcome banner */
+.welcome-banner{
+  background:var(--navy);
+  padding:1.5rem 1.75rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:1.5rem;
+  position:relative;
+  overflow:hidden
+}
+.welcome-banner::before{
+  content:'';
+  position:absolute;
+  right:-40px;top:-40px;
+  width:200px;
+  height:200px;
+  background:radial-gradient(circle,rgba(255,193,7,0.12) 0%,transparent 70%)}
+.wb-title{font-family:'Lora',serif;
+font-size:1.25rem;
+font-weight:700;
+color:var(--white);
+margin-bottom:0.3rem
+}
+.wb-sub{
+  font-size:0.8rem;
+  color:rgb(255, 255, 255)}
+.wb-actions{
+  display:flex;
+  gap:0.65rem;
+  position:relative}
+/* stat cards */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.1rem;
+  margin-bottom:1.5rem}
+.stat-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  padding:1.2rem 1.4rem;
+  position:relative;
+  overflow:hidden}
+.stat-card::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:4px}
+.sc-navy::after{
+  background:var(--navy)} 
+  .sc-green::after{
+    background:var(--green)} 
+    .sc-amber::after{
+      background:var(--amber)} 
+      .sc-red::after{
+        background:var(--red)} 
+        .sc-blue::after{
+  background:var(--blue)}
+.stat-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:0.65rem}
+.stat-label{
+  font-size:0.72rem;
+  font-weight:600;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.06em}
+.stat-icon{
+  width:34px;
+  height:34px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.95rem}
+.si-navy{
+  background:rgba(10,25,78,0.08)} 
+  .si-green{
+    background:var(--green-dim)} 
+    .si-amber{
+      background:rgba(255,193,7,0.14)} 
+      .si-red{background:var(--red-dim)} 
+      .si-blue{background:var(--blue-dim)}
+.stat-value{
+  font-family:'Lora',serif;
+  font-size:1.9rem;
+  font-weight:700;
+  color:var(--text);
+  line-height:1;
+  margin-bottom:0.25rem}
+.trend-up{
+  font-size:0.72rem;
+  font-weight:600;
+  color:var(--green)} 
+  .trend-down{
+    font-size:0.72rem;
+    font-weight:600;
+    color:var(--red)}
+.stat-meta{
+  font-size:0.72rem;
+  color:var(--muted);
+  margin-top:0.15rem}
+.mini-bar{
+  margin-top:0.5rem;
+  height:4px;
+  background:var(--off2);
+  border-radius:2px;
+  overflow:hidden}
+.mini-bar-fill{
+  height:100%;
+  border-radius:2px}
+/* charts */
+.charts-row{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:1.1rem;
+  margin-bottom:1.5rem}
+.card{
+  background:var(--white);
+  border:1px solid var(--border)}
+.card-header{
+  padding:1.1rem 1.4rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start}
+.card-title{
+  font-size:0.92rem;
+  font-weight:700;
+  color:var(--navy)}
+.card-sub{
+  font-size:0.72rem;
+  color:var(--muted);
+  margin-top:0.12rem}
+.card-body{
+  padding:1.2rem 1.4rem}
+.card-footer{
+  padding:0.75rem 1.4rem;
+  border-top:1px solid var(--border);
+  background:var(--off)}
+.svg-chart{
+  width:100%}
+  .pie-chart {
+  transform: rotate(-90deg); 
+}
+
+.pie-chart circle {
+  transition: stroke-dasharray 0.3s ease;
+}
+.chart-text {
+    transform: rotate(90deg); 
+    transform-origin: center;
+}
+
+.pie-number {
+    font-size: 7px; 
+    font-weight: 800;
+    fill: #333;
+    text-anchor: middle; 
+    dominant-baseline: middle; 
+}
+
+.pie-label {
+    font-size: 3px;
+    fill: #888;
+    text-anchor: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+.chart-legend{
+  display:flex;gap:1.1rem;
+  margin-top:0.65rem}
+  /* Unique CSS for the Finance Card */
+.stat-card-finance {
+
+    background: #0A194E;
+    margin-left: 80px;
+    margin-right: 80px;
+    margin-bottom: 10px;
+}
+
+.stat-card-finance {
+    position: relative; 
+    overflow: hidden;
+}
+
+.stat-card-finance::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px; 
+    background: var(--yellow);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+.stat-card-finance .stat-value.finance-data {
+    color: #ffffff; 
+    font-weight: 800;
+}
+.stat-card-finance:hover::before {
+    transform: scaleX(1);
+}
+.stat-card-finance .stat-label {
+    color: #FFC107;
+    font-weight: bold;
+}
+.stat-value finance-data.finance-page-container {
+    padding: 2rem;
+    background-color: #ffffff;
+}
+
+.status-pill-cleared {
+    background: #d4edda;
+    color: #155724;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+.legend-dot
+{width:9px;
+  height:9px;
+  border-radius:50%;
+  flex-shrink:0}
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+  font-size:0.72rem;
+  color:var(--muted)}
+
+/* layout */
+.two-col{
+  display:grid;
+  grid-template-columns:1.3fr 1fr;
+  gap:1.1rem;
+  margin-bottom:1.5rem}
+/* tasks */
+.task-item{
+  display:flex;
+  align-items:flex-start;
+  gap:0.85rem;
+  padding:0.85rem 1.4rem;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:background 0.15s}
+.task-item:hover{
+  background:var(--off)}
+.task-item:last-child{
+  border-bottom:none}
+.task-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-top:4px}
+.td-high{
+  background:var(--red)} 
+  .td-med{
+    background:var(--orange)} 
+    .td-low{
+      background:var(--blue)} 
+      .td-done{background:var(--green)}
+.task-body{
+  flex:1;
+  min-width:0}
+.task-title{
+  font-size:0.84rem;
+  font-weight:600;
+  color:var(--text)}
+.task-title.struck{
+  text-decoration:line-through;
+  color:var(--soft)}
+.task-meta{
+  font-size:0.7rem;
+  color:var(--muted);
+  margin-top:0.15rem}
+.pill{
+  font-size:0.62rem;
+  font-weight:700;
+  padding:0.15rem 0.5rem;
+  display:inline-block}
+.pill-high{
+  background:var(--red-dim);
+  color:var(--red)} 
+  .pill-med{
+    background:var(--orange-dim);
+    color:var(--orange)} 
+    .pill-low{
+      background:var(--blue-dim);
+      color:var(--blue)} 
+      .pill-done{
+        background:var(--green-dim);
+        color:var(--green)}
+.pill-approved
+{background:var(--green-dim);
+  color:var(--green)} 
+  .pill-pending{
+    background:rgba(255,193,7,0.15);
+    color:var(--amber-dark)} 
+    .pill-revision{background:var(--red-dim);
+      color:var(--red)} 
+      .pill-review{
+        background:var(--blue-dim);
+        color:var(--blue)} 
+        .pill-draft{
+          background:var(--off2);
+          color:var(--muted)}
+/* activity */
+.activity-item{
+  display:flex;
+  gap:0.75rem;
+  padding:0.85rem 1.4rem;
+  border-bottom:1px solid var(--border)}
+.activity-item:last-child{
+  border-bottom:none}
+.act-icon{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.85rem;
+  flex-shrink:0}
+.aci-blue{
+  background:var(--blue-dim)} 
+  .aci-green{
+    background:var(--green-dim)} 
+  .aci-amber{
+    background:rgba(255,193,7,0.12)} 
+  .aci-red{
+    background:var(--red-dim)} 
+    .aci-navy{
+      background:rgba(10,25,78,0.08)}
+.act-text{
+  font-size:0.8rem;
+  color:var(--text);
+  line-height:1.5}
+.act-time{
+  font-size:0.67rem;
+  color:var(--soft);
+  margin-top:0.18rem}
+/* table */
+.tbl-wrap{
+  overflow-x:auto}
+table{
+  width:100%;
+  border-collapse:collapse}
+th{padding:0.7rem 1.4rem;
+  font-size:0.67rem;
+  font-weight:700;
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  background:var(--off);
+  white-space:nowrap}
+td{padding:0.85rem 1.4rem;
+  border-bottom:1px solid var(--border);
+  font-size:0.82rem;
+  vertical-align:middle}
+tr:last-child td{
+  border-bottom:none}
+tr:hover td{
+  background:rgba(10,25,78,0.018)}
+.td-title{
+  font-weight:600;
+  color:var(--text)} 
+  .td-muted{
+    color:var(--muted);
+    font-size:0.78rem}
+.score-good{
+  color:var(--green);
+  font-weight:700} 
+  .score-ok{
+    color:var(--orange);
+    font-weight:700}
+a.link-btn{
+  color:var(--navy);
+  font-size:0.78rem;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer}
+a.link-btn:hover{
+  color:var(--amber-dark)
+}
+/* tabs */
+.tabs{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  padding:0 1.4rem;gap:0;
+  overflow-x:auto;
+}
+.tab{
+  padding:0.8rem 0.9rem;
+  font-size:0.8rem;
+  font-weight:600;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2.5px solid transparent;
+  transition:all 0.18s;white-space:nowrap}
+.tab:hover{color:var(--navy)}
+.tab.active{color:var(--navy);
+  border-bottom-color:var(--navy)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+/* pipeline */
+.pipeline{
+  display:flex;
+  gap:0;
+  overflow-x:auto;
+  padding:1.2rem 1.4rem;
+}
+.pipeline-step{
+  display:flex;
+  align-items:center;
+  gap:0;
+  flex-shrink:0;
+}
+.pipeline-node{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.4rem;
+}
+.pn-circle{
+  width:40px;
+  height:40px;
+  border-radius:
+  50%;display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.75rem;
+  font-weight:700;
+  flex-shrink:0;
+}
+.pn-done{
+  background:var(--green);
+  color:white
+} 
+.pn-active{
+  background:var(--navy);
+  color:var(--amber);
+  border:2px solid var(--amber)
+} 
+.pn-pending{
+  background:var(--off2);
+  color:var(--muted);
+  border:1.5px solid var(--border)
+}
+.pn-label{
+  font-size:0.62rem;
+  color:var(--muted);
+  text-align:center;
+  max-width:70px;
+  line-height:1.3;
+}
+.pipeline-arrow{
+  width:30px;
+  height:2px;
+  background:var(--border);
+  margin:0 2px;
+  flex-shrink:0;
+  margin-bottom:16px
+}
+.pipeline-arrow.done-arrow{
+  background:var(--green)
+}
+/* pbar */
+.pbar-wrap{
+  display:flex;
+  align-items:center;
+  gap:0.7rem;
+}
+.pbar{
+  height:7px;
+  background:var(--off2);
+  border-radius:4px;
+  overflow:hidden;
+  flex:1
+}
+.pbar-fill{
+  height:100%;
+  border-radius:4px;
+  background:var(--navy)
+}
+.pbar-val{
+  font-size:0.72rem;
+  font-weight:700;
+  color:var(--text);
+  min-width:32px;
+  text-align:right
+}
+/* milestone */
+.ms-item{
+  display:flex;
+  gap:1rem;
+  padding:0.9rem 1.4rem;
+  border-bottom:1px solid var(--border);
+  align-items:flex-start;
+  transition:background 0.15s;
+  cursor:pointer}
+.ms-item:hover{
+  background:var(--off)
+}
+.ms-item:last-child{
+  border-bottom:none
+}
+.ms-icon{
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.9rem;
+  flex-shrink:0;
+}
+.ms-done{
+  background:var(--green-dim);
+  color:var(--green);
+  border:1px solid rgba(29,164,98,0.2)
+}
+.ms-active{
+  background:rgba(10,25,78,0.08);
+  color:var(--navy);
+  border:1px solid rgba(10,25,78,0.15)
+}
+.ms-upcoming{
+  background:var(--off2);
+  color:var(--soft);
+  border:1px solid var(--border)
+}
+.ms-title{
+  font-size:0.85rem;
+  font-weight:700;
+  color:var(--text)
+}
+.ms-desc{
+  font-size:0.72rem;
+  color:var(--muted);
+  margin-top:0.15rem;
+}
+.ms-date-tag{
+  font-size:0.7rem;
+  font-weight:600;
+  margin-top:0.2rem
+}
+.dg{
+  color:var(--green)
+} .do{
+  color:var(--orange)
+} .dr{
+  color:var(--red)
+} .dm{
+  color:var(--soft)
+}
+/* feedback */
+.feedback-card{
+  border:1px solid var(--border);
+  padding:1.25rem;
+  margin-bottom:1rem}
+
+.fc-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:0.75rem
+}
+.fc-from{
+  font-size:0.85rem;
+  font-weight:700;
+  color:var(--navy)
+}
+.fc-date{
+  font-size:0.7rem;
+  color:var(--muted);
+  margin-top:0.1rem
+}
+.fc-body{
+  font-size:0.84rem;
+  color:var(--text);
+  line-height:1.75
+}
+.fc-score{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  margin-top:0.75rem;
+  padding-top:0.75rem;
+  border-top:1px solid var(--border)
+}
+.fc-score-val{
+  font-size:0.85rem;
+  font-weight:800
+}
+.fc-score-label{
+  font-size:0.72rem;
+  color:var(--muted)
+}
+/* Styling for the Finance Clearance Gate Alert */
+
+#finance-alert.alert-warning {
+    background-color: #0A194E; /* Deep Navy Background */
+    color: #ffffff;            /* White Text */
+    padding: 1.25rem;
+    border-radius: 8px;
+    border-left: 5px solid var(--yellow); /* Accent line to grab attention */
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(10, 25, 78, 0.15);
+}
+#finance-alert {
+    background-color: #0A194E !important; /* Force Navy Background */
+    color: #ffffff !important;            /* Force White Text */
+    padding: 1.25rem;
+    border-radius: 8px;
+    border-left: 5px solid #FFC107;      /* Using your --amber variable color */
+    margin-bottom: 1.5rem;
+    display: flex !important;            /* Force it to be visible */
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(10, 25, 78, 0.15);
+}
+#finance-alert strong {
+  color: #FFC107; /* Matches your Amber/Yellow theme */
+  margin-right: 5px;
+}
+
+#finance-alert .alert-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+/* modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  z-index:200;display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.2s
+}
+.modal-overlay.open{
+  opacity:1;
+  pointer-events:all
+}
+.modal{
+  background:var(--white);
+  width:100%;
+  max-width:560px;
+  max-height:90vh;
+  overflow-y:auto;
+  transform:translateY(20px);
+  transition:transform 0.2s
+}
+
+.modal-overlay.open .modal{
+  transform:translateY(0)
+}
+.modal-header{
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+.modal-title{
+  font-size:1rem;
+  font-weight:700;
+  color:var(--navy)
+}
+.modal-close{
+  width:30px;
+  height:30px;
+  border:none;
+  background:var(--off);
+  cursor:pointer;
+  font-size:1rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:4px
+}
+.modal-body{
+  padding:1.5rem
+}
+.form-group{
+  margin-bottom:1.1rem
+}
+.form-label{
+  display:block;
+  font-size:0.7rem;
+  font-weight:700;
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:0.4rem;
+}
+.form-input,.form-select,.form-textarea{
+  width:100%;
+  background:var(--off);
+  border:1.5px solid var(--border);
+  padding:0.72rem 0.9rem;
+  font-family:inherit;
+  font-size:0.88rem;
+  color:var(--text);
+  outline:none;
+  transition:border-color 0.18s;
+  border-radius:0
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus{border-color:var(--navy);
+  background:var(--white)
+}
+.form-textarea{
+  resize:vertical;
+  min-height:90px
+}
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;gap:1rem
+}
+.modal-footer{
+  padding:1rem 1.5rem;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:flex-end;
+  gap:0.65rem
+}
+.erp-status-card{
+  border:1px solid var(--border);border-radius:6px;padding:1.5rem;
+  margin-bottom:1.5rem;background:var(--white);
+}
+.erp-status-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;}
+.erp-status-title{font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:0.2rem;}
+.erp-status-sub{font-size:0.75rem;color:var(--muted);}
+
+/* Status indicator strip */
+.erp-indicator{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.65rem 1rem;border-radius:5px;margin-bottom:1rem;
+  font-size:0.82rem;font-weight:600;
+}
+.erp-indicator.status-approved{background:var(--green-dim);color:var(--green);border:1px solid rgba(29,164,98,0.25);}
+.erp-indicator.status-pending{background:rgba(255,193,7,0.12);color:#b37f00;border:1px solid rgba(255,193,7,0.3);}
+.erp-indicator.status-returned{background:var(--red-dim);color:var(--red);border:1px solid rgba(229,57,53,0.25);}
+.erp-indicator.status-idle{background:var(--off2);color:var(--muted);border:1px solid var(--border);}
+
+.erp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-approved{background:var(--green);}
+.dot-pending{background:var(--amber);animation:pulse 1.4s infinite;}
+.dot-returned{background:var(--red);}
+.dot-idle{background:var(--muted);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Fee gate warning (outstanding balance) */
+.fee-gate-banner{
+  background:#fff8e1;border:1px solid #ffe082;border-left:4px solid var(--amber);
+  border-radius:4px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:0.9rem;align-items:flex-start;
+}
+.fee-gate-banner .gate-icon{font-size:1.3rem;flex-shrink:0;margin-top:0.05rem;}
+.fee-gate-banner .gate-body{flex:1;}
+.fee-gate-banner .gate-title{font-size:0.88rem;font-weight:700;color:#7c5800;margin-bottom:0.3rem;}
+.fee-gate-banner .gate-text{font-size:0.8rem;color:#7c5800;line-height:1.6;}
+.fee-gate-banner .gate-contact{font-size:0.77rem;margin-top:0.5rem;color:#7c5800;font-weight:600;}
+
+/* ERP response detail box */
+.erp-response-box{
+  background:var(--off);border:1px solid var(--border);border-radius:5px;padding:1rem 1.1rem;
+  margin-top:0.75rem;font-size:0.8rem;
+}
+.erp-response-row{display:flex;gap:1rem;padding:0.35rem 0;border-bottom:1px solid var(--border);}
+.erp-response-row:last-child{border-bottom:none;}
+.erp-key{color:var(--muted);font-weight:600;min-width:140px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;}
+.erp-val{color:var(--text);font-weight:500;}
+.erp-val.ref-code{font-family:monospace;background:rgba(10,25,78,0.06);padding:0.1rem 0.4rem;border-radius:3px;color:var(--navy);}
+
+/* Loading spinner */
+.erp-loading{
+  display:flex;align-items:center;gap:0.75rem;padding:1rem;
+  font-size:0.82rem;color:var(--muted);
+}
+.spinner{
+  width:18px;height:18px;border:2.5px solid var(--border);
+  border-top-color:var(--navy);border-radius:50%;
+  animation:spin 0.7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+.clearance-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+.clearance-tile{
+  background:var(--white);border:1px solid var(--border);border-radius:5px;
+  padding:1rem 1.1rem;
+}
+.clearance-tile-label{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:0.4rem;}
+.clearance-tile-val{font-size:1.05rem;font-weight:800;color:var(--navy);}
+.clearance-tile-sub{font-size:0.7rem;color:var(--muted);margin-top:0.15rem;}
+
+.privacy-note{
+  background:rgba(30,126,222,0.04);border:1px solid rgba(30,126,222,0.15);
+  border-radius:4px;padding:0.75rem 1rem;margin-top:1rem;
+  display:flex;gap:0.6rem;align-items:flex-start;font-size:0.77rem;color:var(--muted);
+}
+
+/* notif panel */
+.notif-panel{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  width:340px;
+  background:var(--white);
+  border-left:1px solid var(--border);
+  z-index:150;
+  transform:translateX(100%);
+  transition:transform 0.28s
+  ;box-shadow:-8px 0 30px rgba(10,25,78,0.1);
+  overflow-y:auto
+}
+.notif-panel.open{
+  transform:translateX(0)
+}
+.notif-panel-header{
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  background:var(--white);
+  z-index:1}
+.notif-item{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;gap:0.75rem;cursor:pointer;transition:background 0.15s}
+.notif-item:hover{background:var(--off)}
+.notif-item.unread{background:rgba(10,25,78,0.025)}
+.ni-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ni-blue{background:var(--blue)} 
+.ni-green{background:var(--green)} 
+.ni-red{background:var(--red)}
+ .ni-amber{background:var(--amber)}
+.notif-text{font-size:0.82rem;color:var(--text);line-height:1.5}
+.notif-time{font-size:0.67rem;color:var(--soft);margin-top:0.18rem}
+/* alert */
+.alert{display:flex;gap:0.75rem;padding:0.85rem 1rem;border-left:3px solid;margin-bottom:1rem}
+.alert-info{background:var(--blue-dim);border-color:var(--blue)}
+.alert-warning{background:rgba(255,193,7,0.1);border-color:var(--amber)}
+.alert-success{background:var(--green-dim);border-color:var(--green)}
+.alert-error{background:var(--red-dim);border-color:var(--red)}
+.alert-text{font-size:0.82rem;color:var(--text);line-height:1.5}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.1rem}
+.section-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:700;color:var(--navy)}
+.section-sub{font-size:0.78rem;color:var(--muted);margin-top:0.2rem}
+/* Ensure content stays beside sidebar on laptops */
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .charts-row,.two-col{grid-template-columns:1fr}
+  .clearance-summary-grid{grid-template-columns:1fr 1fr;}
+  .topbar{padding:0.75rem 1rem;}
+  .content{padding:1.25rem 1rem;}
+  .wb-actions{flex-direction:column;gap:0.4rem;}
+}
+</style>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar">
+  <a class="sidebar-logo" href="{% url 'home' %}">
+    <div class="logo-badge">
+      <img src="{% static 'assets/R.U logo.png' %}" alt="R.U logo" class="logo-img">
+    </div>
+    
+  </a>
+  <div class="sidebar-section">
+    <span class="sidebar-section-label">Main</span>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni">◈</span> Dashboard</div>
+    <div class="nav-item" onclick="nav('finance',this)"><span class="ni">💰</span>Finance</div>
+    <div class="nav-item" onclick="nav('submissions',this)"><span class="ni">📄</span> My Submissions</div>
+    <div class="nav-item" onclick="nav('milestones',this)"><span class="ni">🎯</span> Milestones</div>
+    <div class="nav-item" onclick="nav('feedback',this)"><span class="ni">💬</span> Feedback <span class="nav-badge">2</span></div>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-section-label">Progress</span>
+    <div class="nav-item" onclick="nav('pipeline',this)"><span class="ni">🔀</span> Assessment Pipeline</div>
+    <div class="nav-item" onclick="nav('reports',this)"><span class="ni">📊</span> Reports</div>
+    <div class="nav-item" onclick="nav('schedule',this)"><span class="ni">📅</span> Schedule</div>
+  </div>
+  <div class="sidebar-section">
+    <span class="sidebar-section-label">Account</span>
+    <div class="nav-item" onclick="nav('settings',this)"><span class="ni">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">SJ</div>
+      <div><div class="user-name">{{ student.user.username }}</div><div class="user-role">{{ student.programme }} Student</div></div>
+      <!-- <button class="logout-btn" onclick="window.location.href='login.html'">⍈ Logout</button> -->
+       <a href="{% url 'logout' %}" class="logout-btn">⍈ Logout</a>
+    </button>
+    </div>
+  </div>
+</aside>
+ 
+<main>
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="tb-title">Welcome back, {{ student.user.username }}! 👋</div>
+        <div class="topbar-sub" id="tb-sub">
+          Here's your academic progress overview · <span id="current-date"></span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="toggleNotif()">🔔<span class="badge-dot"></span></button>
+      <div class="user-chip">
+        <div class="chip-avatar">{{ student.user.username|slice:":2"|upper }}</div>
+        <div><div class="chip-name">{{ student.user.username }}</div><div class="chip-role">Student</div></div>
+        <span style="font-size:0.6rem;color:var(--muted);margin-left:4px">▾</span>
+      </div>
+      <button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button>
+    </div>
+  </div>
+ 
+  <div class="content">
+ 
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="welcome-banner">
+        <div><div class="wb-title">Welcome back, {{ student.user.username }}! 👋</div><div class="wb-sub">You're making great progress. {{ tasks_due_this_week|default:"0" }}  tasks due this week   keep going!</div></div>
+        <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting',null)">Book Presentations</button></div>
+      </div>
+
+      <div class="card" style="margin-bottom:1.5rem">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Current Progress</div>
+      <div class="card-sub">Stage {{ active_index }} of {{ pipeline_steps|length }} — {{ active_step.title }} <!-- optional custom text --></div>
+    </div>
+    <div class="pill pill-review">
+      {{ in_progress_text }}
+    </div>
+  </div>
+
+  <div class="pipeline" style="padding: 1.5rem 1rem;">
+    {% for step in pipeline_steps %}
+      <div class="pipeline-step">
+        <div class="pipeline-node">
+          <div class="pn-circle
+            {% if step.status == 'done' %}pn-done{% elif step.status == 'active' %}pn-active{% else %}pn-pending{% endif %}
+          ">
+            {% if step.status == 'done' %}✓{% elif step.status == 'pending' %}🔒{% else %}{{ forloop.counter }}{% endif %}
+          </div>
+          <div class="pn-label"
+               {% if step.status == 'active' %} style="color:var(--navy);font-weight:700"{% endif %}>
+            {{ step.title }}
+          </div>
+        </div>
+      </div>
+
+      {% if not forloop.last %}
+        <div class="pipeline-arrow {% if step.status == 'done' %}done-arrow{% endif %}"></div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+      <div class="stats-grid">
+
+  <!-- Pending Tasks -->
+  <div class="stat-card sc-amber">
+    <div class="stat-head">
+      <div class="stat-label">Pending Tasks</div>
+      <div class="stat-icon si-amber">⏰</div>
+    </div>
+    <div class="stat-value">{{ pending_tasks }}</div>
+    <div class="stat-meta">{{ tasks_due_this_week }} due this week</div>
+  </div>
+
+  <!-- Milestones -->
+  <div class="stat-card sc-green">
+    <div class="stat-head">
+      <div class="stat-label">Milestones Done</div>
+      <div class="stat-icon si-green">✅</div>
+    </div>
+    <div class="stat-value">
+      {{ completed_milestones }}
+      <span style="font-size:1.1rem;color:var(--muted)">
+        /{{ total_milestones }}
+      </span>
+    </div>
+    <div class="stat-meta">{{ remaining_milestones }} remaining</div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="stat-card sc-red" onclick="showPage('page-feedback')" style="cursor: pointer;">
+    <div class="stat-head">
+      <div class="stat-label">New Feedback</div>
+      <div class="stat-icon si-red">💬</div>
+    </div>
+    <div class="stat-value">{{ new_feedback }}</div>
+    <div class="trend-down">
+      {% if new_feedback > 0 %}
+        Awaiting review
+      {% else %}
+        All caught up 🎉
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+    
+      <div class="stat-card stat-card-finance">
+  <div class="stat-head">
+    <div class="stat-label">FINANCE CLEARANCE</div>
+  </div>
+
+  <div class="stat-value finance-data">
+    {{ finance.status|title }}
+  </div>
+
+  <div class="trend-down finance-data">
+    Reference: {{ finance.reference|default:"No reference" }}
+  </div>
+
+  <div class="privacy-mask" style="display: none;">••••••••</div>
+</div>
+      
+      <div class="charts-row">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Progress Over Time</div>
+                <div class="card-sub">Academic progress across the last 6 months</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <canvas id="progressChart" height="140"></canvas>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--navy)"></div>Progress %
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Assessment Scores</div>
+                <div class="card-sub">Latest evaluation by category</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="pie-container" style="display:flex; justify-content:center; align-items:center;">
+                <canvas id="scoreChart" width="220" height="220"></canvas>
+            </div>
+
+            <!-- <div class="chart-legend" style="margin-top:1.5rem">
+                <div class="legend-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div> Literature Review</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#2196F3"></div> Methodology</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#FFC107"></div> Data Analysis</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#FF5722"></div> Writing Quality</div>
+                </div>
+            </div> -->
+            <div id="scoreLegend" class="chart-legend" style="margin-top:1.5rem; display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        </div>
+    </div>
+</div>
+      <div class="two-col">
+    <!-- -----------------------------
+         Upcoming Tasks & Milestones
+         ----------------------------- -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Upcoming Tasks & Milestones</div>
+                <div class="card-sub">Complete these to advance your progress</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">⬆ Submit</button>
+        </div>
+
+        {% for milestone in milestones %}
+        <div class="task-item">
+            <div class="task-dot td-{% if milestone.status == 'done' %}done{% elif milestone.priority == 'high' %}high{% elif milestone.priority == 'medium' %}med{% else %}low{% endif %}"></div>
+            <div class="task-body">
+                <div class="task-title {% if milestone.status == 'done' %}struck{% endif %}">{{ milestone.title }}</div>
+                <div class="task-meta">
+                    {% if milestone.status == 'done' %}
+                        Completed {{ milestone.completed_at|timesince }} ago
+                    {% else %}
+                        Due in {{ milestone.due_date|timeuntil }}
+                    {% endif %}
+                </div>
+            </div>
+            <span class="pill pill-{% if milestone.status == 'done' %}done{% elif milestone.priority == 'high' %}high{% elif milestone.priority == 'medium' %}med{% else %}low{% endif %}">
+                {% if milestone.status == 'done' %}Done{% else %}{{ milestone.priority|title }}{% endif %}
+            </span>
+        </div>
+        {% empty %}
+        <div class="task-item">
+            <div class="task-body"><div class="task-title">No upcoming tasks</div></div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- -----------------------------
+         Recent Activity
+         ----------------------------- -->
+    <div style="display:flex;flex-direction:column;gap:1.1rem">
+        <div class="card">
+            <div class="card-header">
+                <div><div class="card-title">Recent Activity</div><div class="card-sub">Latest notifications</div></div>
+            </div>
+
+            {% for note in notifications %}
+            <div class="activity-item">
+                <div class="act-icon aci-{% if note.type == 'feedback' %}navy{% elif note.type == 'milestone' %}green{% elif note.type == 'task' %}amber{% else %}muted{% endif %}">
+                    {% if note.type == 'feedback' %}💬{% elif note.type == 'milestone' %}✅{% elif note.type == 'task' %}📋{% else %}ℹ️{% endif %}
+                </div>
+                <div>
+                    <div class="act-text"><strong>{{ note.title }}</strong> — {{ note.message }}</div>
+                    <div class="act-time">{{ note.created_at|timesince }} ago</div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="activity-item">
+                <div class="act-text">No recent activity</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- -----------------------------
+             Supervisor Info
+             ----------------------------- -->
+        <div class="card">
+            <div class="card-header"><div class="card-title">My Supervisor</div></div>
+            <div style="padding:1.1rem 1.4rem;display:flex;align-items:center;gap:1rem">
+                <div style="width:44px;height:44px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;color:var(--amber);flex-shrink:0">
+                    {{ supervisor.initials }}
+                </div>
+                <div style="flex:1">
+                    <div style="font-weight:700;color:var(--navy);font-size:0.88rem">{{ supervisor.name }}</div>
+                    <div style="font-size:0.72rem;color:var(--muted)">{{ supervisor.role }} · {{ supervisor.department }}</div>
+                    <div style="font-size:0.7rem;color:var(--blue);margin-top:0.15rem">{{ supervisor.email }}</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting')">📅</button>
+            </div>
+        </div>
+    </div>
+</div>
+      <div class="card" style="margin-bottom:1.5rem">
+    <div class="card-header">
+        <div>
+            <div class="card-title">Submission History</div>
+            <div class="card-sub">Track all submissions and their status</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="stab(this,'st-all')">All Submissions</div>
+        <div class="tab" onclick="stab(this,'st-approved')">Approved</div>
+        <div class="tab" onclick="stab(this,'st-pending')">Pending Review</div>
+        <div class="tab" onclick="stab(this,'st-revision')">Needs Revision</div>
+    </div>
+
+    <!-- All Submissions -->
+    <div id="st-all" class="tab-pane active">
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                    <tr>
+                        <td class="td-title">{{ sub.title }}</td>
+                        <td class="td-muted">{{ sub.type|title }}</td>
+                        <td class="td-muted">{{ sub.submitted_at|date:"Y-m-d" }}</td>
+                        <td>
+                            <span class="pill 
+                                {% if sub.status == 'approved' %}pill-approved
+                                {% elif sub.status == 'pending' %}pill-pending
+                                {% elif sub.status == 'revision' %}pill-revision
+                                {% endif %}">
+                                {{ sub.status|title }}
+                            </span>
+                        </td>
+                        <td>
+    {% if sub.score %}
+        {% if sub.score >= 85 %}
+            <span class="score-good">{{ sub.score }}%</span>
+        {% elif sub.score >= 70 %}
+            <span class="score-ok">{{ sub.score }}%</span>
+        {% else %}
+            <span class="score-low">{{ sub.score }}%</span>
+        {% endif %}
+    {% else %}
+        <span class="td-muted">—</span>
+    {% endif %}
+</td>
+                        <td>
+                            {% if sub.status == 'revision' %}
+                                <a class="link-btn" onclick="openM('modal-submit')">Resubmit →</a>
+                            {% else %}
+                                <a class="link-btn" onclick="showPage('page-feedback')">View Feedback</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="td-muted">No submissions found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Approved Submissions -->
+    <div id="st-approved" class="tab-pane">
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Submitted</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                        {% if sub.status == 'approved' %}
+                    <tr>
+                        <td class="td-title">{{ sub.title }}</td>
+                        <td class="td-muted">{{ sub.type|title }}</td>
+                        <td class="td-muted">{{ sub.submitted_at|date:"Y-m-d" }}</td>
+                        <td><span class="score-good">{{ sub.score }}%</span></td>
+                    </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr><td colspan="4" class="td-muted">No approved submissions</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pending Review -->
+    <div id="st-pending" class="tab-pane">
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Submitted</th>
+                        <th>Expected Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                        {% if sub.status == 'pending' %}
+                    <tr>
+                        <td class="td-title">{{ sub.title }}</td>
+                        <td class="td-muted">{{ sub.type|title }}</td>
+                        <td class="td-muted">{{ sub.submitted_at|date:"Y-m-d" }}</td>
+                        <td class="td-muted">~{{ sub.expected_review_days }} business days</td>
+                    </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr><td colspan="4" class="td-muted">No pending submissions</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Needs Revision -->
+    <div id="st-revision" class="tab-pane">
+        <div class="tbl-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Score</th>
+                        <th>Supervisor Comments</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                        {% if sub.status == 'revision' %}
+                    <tr>
+                        <td class="td-title">{{ sub.title }}</td>
+                        <td><span class="score-ok">{{ sub.score }}%</span></td>
+                        <td class="td-muted">{{ sub.supervisor_comments }}</td>
+                        <td><a class="link-btn" onclick="openM('modal-submit')">Resubmit →</a></td>
+                    </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr><td colspan="4" class="td-muted">No submissions needing revision</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    </div>
+    <!-- FINANCE PAGE -->
+<div class="page" id="page-finance">
+
+  <div class="section-head">
+    <div>
+      <div class="section-title">Finance & Fee Clearance</div>
+      <div class="section-sub">Digital integration with University ERP Finance Module — no office visits required</div>
+    </div>
+    <div style="display:flex;gap:0.65rem;align-items:center">
+      <!-- Student selector (demo) -->
+      <select class="form-select" id="demo-student-select" onchange="switchDemoStudent(this.value)" style="font-size:0.78rem;padding:0.4rem 0.7rem;width:auto">
+        <option value="cleared">{{ student.user.get_full_name }} (Fees Cleared)</option>
+        <option value="outstanding">Demo: Outstanding Balance</option>
+      </select>
+      <button class="btn btn-primary btn-sm" id="refresh-btn" onclick="requestFinanceClearance()">🔄 Request ERP Clearance</button>
+    </div>
+  </div>
+
+  <!-- CLEARANCE SUMMARY TILES -->
+  <div class="clearance-summary-grid">
+    <div class="clearance-tile">
+      <div class="clearance-tile-label">Student</div>
+      <div class="clearance-tile-val" id="fin-student-name">{{ student.user.get_full_name }}</div>
+      <div class="clearance-tile-sub">{{ student.student_number }} · {{ student.programme }}</div>
+    </div>
+    <div class="clearance-tile">
+      <div class="clearance-tile-label">Current Period</div>
+      <div class="clearance-tile-val">{{ finance.current_period }}</div>
+      <div class="clearance-tile-sub">{{ finance.current_period_range }}</div>
+    </div>
+    <div class="clearance-tile">
+      <div class="clearance-tile-label">Last Clearance</div>
+      <div class="clearance-tile-val" id="fin-last-clearance">{{ finance.last_period }}</div>
+      <div class="clearance-tile-sub" id="fin-last-date">
+        {% if finance.last_date %}Approved {{ finance.last_date|date:"d M Y" }}{% else %}—{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- FEE GATE BANNER -->
+  <div class="fee-gate-banner" id="fee-gate-banner" style="{% if finance.status == 'outstanding' %}display:block{% else %}display:none{% endif %}">
+    <div class="gate-icon">⚠️</div>
+    <div class="gate-body">
+      <div class="gate-title">Finance Clearance Pending — Outstanding Fee Balance</div>
+      <div class="gate-text">
+        The University ERP Finance Module has indicated that your account has an outstanding balance for the current period. Finance clearance cannot be granted until this is resolved. Your quarterly report will remain in the approval chain until Finance clearance is confirmed.
+      </div>
+      <div class="gate-contact">📞 Contact Finance Office: finance@university.edu · +254 20 123 4567 · Room B2, Admin Block</div>
+    </div>
+  </div>
+
+  <!-- ERP STATUS CARD -->
+  <div class="erp-status-card">
+    <div class="erp-status-header">
+      <div>
+        <div class="erp-status-title">ERP Finance Module — Clearance Status</div>
+        <div class="erp-status-sub">Live connection to University ERP · Reference updated on each request</div>
+      </div>
+      <div id="erp-last-checked" style="font-size:0.72rem;color:var(--muted)">
+        {% if finance.last_checked %}Last checked {{ finance.last_checked|date:"d M Y H:i" }}{% else %}Not yet checked{% endif %}
+      </div>
+    </div>
+
+    <!-- Status indicator -->
+    <div class="erp-indicator {% if finance.status == 'cleared' %}status-approved{% elif finance.status == 'pending' %}status-pending{% else %}status-idle{% endif %}" id="erp-indicator">
+      <div class="erp-dot {% if finance.status == 'cleared' %}dot-approved{% elif finance.status == 'pending' %}dot-pending{% else %}dot-idle{% endif %}" id="erp-dot"></div>
+      <span id="erp-status-text">
+        {% if finance.status == 'cleared' %}✅ Fees Cleared{% elif finance.status == 'pending' %}⏳ Pending Clearance{% else %}Click "Request ERP Clearance" to check current status{% endif %}
+      </span>
+    </div>
+
+    <!-- Loading state -->
+    <div class="erp-loading" id="erp-loading" style="display:none">
+      <div class="spinner"></div>
+      <span>Sending request to ERP Finance Module…</span>
+    </div>
+
+    <!-- Response detail box -->
+    <div class="erp-response-box" id="erp-response-box" style="display:{% if finance.status_detail %}block{% else %}none{% endif %}">
+      <div class="erp-response-row">
+        <span class="erp-key">ERP Reference</span>
+        <span class="erp-val ref-code" id="erp-ref-val">{{ finance.current_request.erp_ref|default:"—" }}</span>
+      </div>
+      <div class="erp-response-row">
+        <span class="erp-key">Status</span>
+        <span class="erp-val" id="erp-status-val">{{ finance.current_request.status|title|default:"—" }}</span>
+      </div>
+      <div class="erp-response-row">
+        <span class="erp-key">Document Type</span>
+        <span class="erp-val">{{ finance.current_request.document_type|default:"Quarterly Progress Report" }}</span>
+      </div>
+      <div class="erp-response-row">
+        <span class="erp-key">Finance Officer</span>
+        <span class="erp-val" id="erp-officer-val">{{ finance.current_request.officer_name|default:"—" }}</span>
+      </div>
+      <div class="erp-response-row">
+        <span class="erp-key">Clearance Date</span>
+        <span class="erp-val" id="erp-clearance-date">
+          {% if finance.current_request.date %}{{ finance.current_request.date|date:"d M Y" }}{% else %}—{% endif %}
+        </span>
+      </div>
+      <div class="erp-response-row" id="erp-comments-row" style="display:{% if finance.current_request.comments %}block{% else %}none{% endif %}">
+        <span class="erp-key">ERP Comments</span>
+        <span class="erp-val" id="erp-comments-val" style="color:var(--orange);">{{ finance.current_request.comments }}</span>
+      </div>
+    </div>
+
+    <!-- Privacy note -->
+    <div class="privacy-note">
+      🔒 <span>Your financial balance and fee details are held securely in the University system and are never shared with supervisors, panel members, or administrators through this portal. Only clearance status and reference numbers are displayed here.</span>
+    </div>
+  </div>
+
+  <!-- CLEARANCE REQUEST HISTORY -->
+  <div class="card" style="margin-bottom:1.5rem">
+    <div class="card-header"><div class="card-title">Clearance Request History</div></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Document Type</th>
+            <th>Period</th>
+            <th>ERP Reference</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Finance Officer</th>
+          </tr>
+        </thead>
+        <tbody id="clearance-history-tbody">
+          {% for req in finance.history %}
+          <tr {% if req.is_current %}id="current-request-row"{% endif %}>
+            <td class="td-title">{{ req.document_type }}</td>
+            <td class="td-muted">{{ req.period }}</td>
+            <td><code>{{ req.erp_ref }}</code></td>
+            <td>
+              <span class="pill 
+                {% if req.status == 'approved' %}pill-approved
+                {% elif req.status == 'pending' %}pill-pending
+                {% elif req.status == 'rejected' %}pill-revision
+                {% endif %}">{{ req.status|title }}</span>
+            </td>
+            <td class="td-muted">{% if req.date %}{{ req.date|date:"d M Y" }}{% else %}—{% endif %}</td>
+            <td class="td-muted">{{ req.officer_name }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="td-muted">No clearance requests found</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- GRADUATION CLEARANCE -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">🎓 Graduation Clearance</div>
+        <div class="card-sub">Final ERP integration point — all academic and finance approvals required</div>
+      </div>
+      <span class="pill {% if student.graduation_eligible %}pill-approved{% else %}pill-pending{% endif %}">
+        {% if student.graduation_eligible %}Eligible{% else %}Not Yet Eligible{% endif %}
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-info" style="margin-bottom:1rem">
+        <div class="alert-text">Graduation clearance can only be initiated after: all academic approvals (supervisors, school, PG Dean), all correction submissions complete, the external examiner's report received, and Finance clearance confirming all fees are settled. The ERP Finance Module issues the final digital clearance certificate.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem">
+
+        <!-- Academic Progress -->
+        <div style="background:{% if student.academic_progress_complete %}var(--green-dim){% else %}var(--off2){% endif %};border:1px solid {% if student.academic_progress_complete %}rgba(29,164,98,0.2){% else %}var(--border){% endif %};border-radius:4px;padding:0.75rem;text-align:center">
+          <div style="font-size:1.1rem;margin-bottom:0.25rem">{% if student.academic_progress_complete %}✓{% else %}⏳{% endif %}</div>
+          <div style="font-size:0.72rem;font-weight:700;color:{% if student.academic_progress_complete %}var(--green){% else %}var(--muted){% endif %}">Academic Progress</div>
+        </div>
+
+        <!-- All Corrections Done -->
+        <div style="background:{% if student.corrections_complete %}var(--green-dim){% else %}var(--off2){% endif %};border:1px solid {% if student.corrections_complete %}rgba(29,164,98,0.2){% else %}var(--border){% endif %};border-radius:4px;padding:0.75rem;text-align:center">
+          <div style="font-size:1.1rem;margin-bottom:0.25rem">{% if student.corrections_complete %}✓{% else %}⏳{% endif %}</div>
+          <div style="font-size:0.72rem;font-weight:700;color:{% if student.corrections_complete %}var(--green){% else %}var(--muted){% endif %}">All Corrections Done</div>
+        </div>
+
+        <!-- Examiner Report -->
+        <div style="background:{% if student.examiner_report_received %}var(--green-dim){% else %}var(--off2){% endif %};border:1px solid {% if student.examiner_report_received %}rgba(29,164,98,0.2){% else %}var(--border){% endif %};border-radius:4px;padding:0.75rem;text-align:center">
+          <div style="font-size:1.1rem;margin-bottom:0.25rem">{% if student.examiner_report_received %}✓{% else %}⏳{% endif %}</div>
+          <div style="font-size:0.72rem;font-weight:700;color:{% if student.examiner_report_received %}var(--green){% else %}var(--muted){% endif %}">Examiner Report</div>
+        </div>
+
+        <!-- ERP Finance Clearance -->
+        <div style="background:{% if finance.status == 'cleared' %}var(--green-dim){% else %}var(--off2){% endif %};border:1px solid {% if finance.status == 'cleared' %}rgba(29,164,98,0.2){% else %}var(--border){% endif %};border-radius:4px;padding:0.75rem;text-align:center">
+          <div style="font-size:1.1rem;margin-bottom:0.25rem">{% if finance.status == 'cleared' %}🏦{% else %}⏳{% endif %}</div>
+          <div style="font-size:0.72rem;font-weight:700;color:{% if finance.status == 'cleared' %}var(--green){% else %}var(--muted){% endif %}">ERP Finance Clearance</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-finance -->
+ 
+    <!-- SUBMISSIONS PAGE -->
+    <div class="page" id="page-submissions">
+      <div class="section-head">
+        <div><div class="section-title">My Submissions</div><div class="section-sub">All submitted work and current review status</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">+ New Submission</button>
+      </div>
+      <div class="alert alert-info"><div class="act-icon aci-blue" style="flex-shrink:0;font-size:1rem">ℹ️</div><div class="alert-text"><strong>Research Proposal</strong> is currently under review. Expected feedback within 5 business days.</div></div>
+      <div class="card">
+        <div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Chapter</th><th>Submitted</th><th>Supervisor</th><th>Status</th><th>Score</th><th>Actions</th></tr></thead>
+          <tbody id="submissions-tbody">
+  <!-- Rows will be injected dynamically -->
+</tbody>
+          <!-- <tbody>
+
+          <tr><td class="td-title">Chapter 3: Methodology</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 3</td><td class="td-muted">2026-03-15</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">92%</span></td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">Ch. 2</td><td class="td-muted">2026-03-10</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">88%</span></td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Research Proposal</td><td class="td-muted">Proposal</td><td class="td-muted">—</td><td class="td-muted">2026-03-08</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-pending">Pending</span></td><td class="td-muted">—</td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Data Analysis Chapter</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 4</td><td class="td-muted">2026-03-05</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-revision">Needs Revision</span></td><td><span class="score-ok">71%</span></td><td><a class="link-btn" onclick="openM('modal-submit')">Resubmit</a></td></tr>
+          <tr><td class="td-title">Introduction Chapter</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 1</td><td class="td-muted">2026-02-20</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">85%</span></td><td><a class="link-btn">View</a></td></tr>
+          <tr><td class="td-title">Research Background</td><td class="td-muted">Draft</td><td class="td-muted">Ch. 1</td><td class="td-muted">2026-02-01</td><td class="td-muted">Dr. M. Chen</td><td><span class="pill pill-approved">Approved</span></td><td><span class="score-good">79%</span></td><td><a class="link-btn">View</a></td></tr>
+        </tbody> -->
+      </table></div>
+      </div>
+    </div>
+ 
+    <!-- MILESTONES PAGE -->
+    <div class="page" id="page-milestones">
+      <div class="section-head">
+        <div><div class="section-title">Academic Milestones</div><div class="section-sub">Track your progress through the postgraduate journey</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.5rem">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Overall Progress</div></div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.1rem">
+              <svg viewBox="0 0 80 80" style="width:80px;height:80px;flex-shrink:0">
+                <circle cx="40" cy="40" r="34" fill="none" stroke="var(--off2)" stroke-width="8"/>
+                <circle cx="40" cy="40" r="34" fill="none" stroke="var(--navy)" stroke-width="8" stroke-dasharray="213.6" stroke-dashoffset="{{ circle_offset }}" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+                <text x="40" y="44" font-size="15" font-weight="700" fill="var(--navy)" text-anchor="middle" font-family="'Lora',serif">{{ progress_percent }}%</text>
+              </svg>
+              <div>
+                <div style="font-size:1.5rem;font-weight:800;color:var(--navy);font-family:'Lora',serif">{{ completed_milestones }} / {{ total_milestones }}</div>
+                <div style="font-size:0.82rem;color:var(--muted)">milestones completed</div>
+                <div class="trend-up" style="margin-top:0.3rem;font-size:0.75rem">↑ On track for Dec 2026</div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              <div class="pbar-wrap"><span style="font-size:0.75rem;color:var(--muted);width:90px">Completed</span><div class="pbar"><div class="pbar-fill" style="width:{{ progress_percent }}%;background:var(--green)"></div></div><span class="pbar-val" style="color:var(--green)">{{ completed_milestones }}</span></div>
+              <div class="pbar-wrap"><span style="font-size:0.75rem;color:var(--muted);width:90px">In Progress</span><div class="pbar"><div class="pbar-fill" style="width:{{ in_progress_percent }}%;background:var(--amber)"></div></div><span class="pbar-val" style="color:var(--amber-dark)">{{ in_progress_milestones }}</span></div>
+              <div class="pbar-wrap"><span style="font-size:0.75rem;color:var(--muted);width:90px">Upcoming</span><div class="pbar"><div class="pbar-fill" style="width:{{ upcoming_percent }}%;background:var(--border)"></div></div><span class="pbar-val" style="color:var(--soft)">{{ upcoming_milestones }}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Programme Timeline</div></div>
+          <div class="card-body" style="font-size:0.82rem">
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Programme Start</span><span style="font-weight:600">January 2024</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Current Stage</span><span style="font-weight:600;color:var(--navy)">{{ current_stage|default:"Not started"|title }}</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Expected Submission</span><span style="font-weight:600">September 2026</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted)">Expected Graduation</span><span style="font-weight:600">December 2026</span></div>
+              <div style="display:flex;justify-content:space-between;padding:0.55rem 0"><span style="color:var(--muted)">Programme</span><span style="font-weight:600">PhD Computer Science</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Full Milestone Tracker</div><div class="card-sub">All 12 academic milestones with current status</div></div></div>
+        <div>
+          {% for m in milestones %}
+<!-- <div class="ms-item {% if m.status == 'in_progress' %}" style="background:rgba(10,25,78,0.025)"{% endif %}"> -->
+  <div class="ms-item {% if m.status == 'in_progress' %}active{% endif %}"
+     {% if m.status == 'in_progress' %}style="background:rgba(10,25,78,0.025)"{% endif %}>
+
+  <!-- ICON -->
+  <div class="ms-icon
+    {% if m.status == 'done' %}ms-done
+    {% elif m.status == 'in_progress' %}ms-active
+    {% else %}ms-upcoming
+    {% endif %}
+  ">
+    {% if m.status == 'done' %}✓
+    {% elif m.status == 'in_progress' %}→
+    {% else %}○
+    {% endif %}
+  </div>
+
+  <!-- CONTENT -->
+  <div style="flex:1">
+    <div class="ms-title">{{ m.title }}</div>
+    <div class="ms-desc">{{ m.description }}</div>
+  </div>
+
+  <!-- DATE -->
+  <div class="ms-date-tag
+    {% if m.status == 'done' %}dg
+    {% elif m.status == 'in_progress' %}do
+    {% else %}dm
+    {% endif %}
+  ">
+    {% if m.status == 'done' %}
+      Completed —
+    {% elif m.status == 'in_progress' %}
+      Due —
+    {% else %}
+      Planned —
+    {% endif %}
+    
+    {{ m.date|date:"M Y" }}
+  </div>
+
+</div>
+{% endfor %}
+        </div>
+      </div>
+    </div>
+ 
+    <!-- FEEDBACK PAGE -->
+    <div class="page" id="page-feedback">
+      <div class="section-head">
+        <div><div class="section-title">Supervisor Feedback</div><div class="section-sub">All feedback from Dr. Michael Chen</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting')">📅 Request Meeting</button>
+      </div>
+      <div class="alert alert-warning"><div class="alert-text">You have <strong>{{ unread_feedback_count }} unread feedback items</strong> requiring your attention. Please review and take action on revision requests.</div></div>
+      <div>
+        {% for f in context_feedbacks %}
+<div class="feedback-card"
+     style="border-left:3px solid
+     {% if f.status == 'approved' %}var(--green)
+     {% elif f.status == 'revision' %}var(--orange)
+     {% else %}var(--blue)
+     {% endif %};
+     {% if f.is_read %}opacity:0.85{% endif %}">
+
+  <!-- HEADER -->
+  <div class="fc-header">
+    <div>
+      <div class="fc-from">
+        {{ f.title }}{% if f.chapter %} — Chapter {{ f.chapter }}{% endif %}
+      </div>
+      <div class="fc-date">
+        {{ supervisor.name }} · {{ f.date|timesince }} ago
+      </div>
+    </div>
+
+    <span class="pill
+      {% if f.status == 'approved' %}pill-approved
+      {% elif f.status == 'revision' %}pill-revision
+      {% else %}pill-review
+      {% endif %}">
+      
+      {% if not f.is_read %}New
+      {% elif f.status == 'approved' %}Approved
+      {% elif f.status == 'revision' %}Revision Required
+      {% else %}Review
+      {% endif %}
+    </span>
+  </div>
+
+  <!-- BODY -->
+  <div class="fc-body">
+    {{ f.message|linebreaks }}
+  </div>
+
+  <!-- SCORE -->
+  <div class="fc-score">
+    <span class="fc-score-val"
+          style="color:
+          {% if f.status == 'approved' %}var(--green)
+          {% else %}var(--orange)
+          {% endif %}">
+      {{ f.score }}%
+    </span>
+
+    <span class="fc-score-label">
+      {% if f.status == 'approved' %}
+        Approved ✓
+      {% elif f.status == 'revision' %}
+        Needs Revision ⚠
+      {% else %}
+        Pending Review
+      {% endif %}
+    </span>
+  </div>
+
+</div>
+{% endfor %}
+      </div>
+    </div>
+ 
+    <!-- PIPELINE PAGE -->
+    <div class="page" id="page-pipeline">
+      <div class="section-head">
+        <div><div class="section-title">Assessment Pipeline</div><div class="section-sub">Your progress through the 8-stage postgraduate assessment process</div></div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header"><div><div class="card-title">Current Stage</div><div class="card-sub">Stage {{ current_stage_number }} of {{ total_stages }} — {{ current_stage_title }}</div></div></div>
+        <div class="pipeline">
+          <div class="pipeline">
+  {% for step in pipeline_steps %}
+  
+    <!-- STEP -->
+    <div class="pipeline-step">
+      <div class="pipeline-node">
+
+        <div class="pn-circle
+          {% if step.status == 'done' %}pn-done
+          {% elif step.status == 'active' %}pn-active
+          {% else %}pn-pending
+          {% endif %}
+        ">
+          {% if step.status == 'done' %}
+            ✓
+          {% elif step.status == 'active' %}
+            {{ forloop.counter }}
+          {% else %}
+            {{ forloop.counter }}
+          {% endif %}
+        </div>
+
+        <div class="pn-label
+          {% if step.status == 'active' %}
+            " style="color:var(--navy);font-weight:700
+          {% endif %}
+        ">
+          {{ step.title }}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ARROW -->
+    {% if not forloop.last %}
+      <div class="pipeline-arrow
+        {% if step.status == 'done' %}done-arrow{% endif %}
+      "></div>
+    {% endif %}
+
+  {% endfor %}
+</div>
+        </div>
+        <div class="card-footer">
+          <div style="display:flex;align-items:center;gap:1.5rem;font-size:0.78rem">
+            <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>Completed ({{ completed_steps }})</span>
+            <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--navy);display:inline-block"></span>Current ({{ current_steps }})</span>
+            <span style="display:flex;align-items:center;gap:0.4rem"><span style="width:10px;height:10px;border-radius:50%;background:var(--off2);border:1px solid var(--border);display:inline-block"></span>Upcoming ({{ pending_steps }})</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Stage {{ current_stage_number }} Details — {{ current_stage_title }}</div></div></div>
+        <div class="card-body">
+          <div class="alert alert-warning" style="margin-bottom:1rem"><div class="alert-text"><strong>Action Required:</strong> Chapter 4 (Data Analysis) needs to be resubmitted with statistical revisions by April 30, 2026.</div></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem">
+            <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Stage Status</div><div style="font-weight:700;color:var(--orange)">In Revision</div></div>
+            <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Stage Deadline</div><div style="font-weight:700;color:var(--navy)">Apr 30, 2026</div></div>
+            <div style="background:var(--off);padding:1rem;border:1px solid var(--border)"><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Submissions</div><div style="font-weight:700;color:var(--navy)">2 (1 revision req.)</div></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openM('modal-submit')">⬆ Resubmit Chapter 4</button>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- REPORTS PAGE -->
+<div class="page" id="page-reports">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Academic Reports</div>
+      <div class="section-sub">Progress reports and performance summaries</div>
+    </div>
+    <!-- Optional: single button for overall PDF generation -->
+    <!-- <button class="btn btn-primary btn-sm" onclick="alert('Generating PDF…')">📄 Download PDF</button> -->
+     <a class="btn btn-primary btn-sm" href="{% url 'download_all_submissions' %}">📄 Download PDF</a>
+    
+  </div>
+
+  <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-card sc-green">
+      <div class="stat-head">
+        <div class="stat-label">GPA (Current)</div>
+        <div class="stat-icon si-green">🎓</div>
+      </div>
+      <div class="stat-value">{{ current_gpa }}</div>
+      <div class="stat-meta">Out of 4.0</div>
+    </div>
+
+    <div class="stat-card sc-navy">
+      <div class="stat-head">
+        <div class="stat-label">Avg Score</div>
+        <div class="stat-icon si-navy">📊</div>
+      </div>
+      <div class="stat-value">{{ avg_score }}%</div>
+      <div class="stat-meta">Across all submissions</div>
+    </div>
+
+    <div class="stat-card sc-amber">
+      <div class="stat-head">
+        <div class="stat-label">Supervisor Rating</div>
+        <div class="stat-icon si-amber">⭐</div>
+      </div>
+      <div class="stat-value">{{ supervisor_rating }}<span style="font-size:1rem;color:var(--muted)">/5</span></div>
+      <div class="stat-meta">Based on {{ review_count }} reviews</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Report History</div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Report</th>
+            <th>Period</th>
+            <th>Generated</th>
+            <th>GPA</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sub in submissions %}
+          <tr>
+            <td class="td-title">{{ sub.title }}</td>
+            <td class="td-muted">{{ sub.period }}</td>
+            <td class="td-muted">{{ sub.created_at|date:"Y-m-d" }}</td>
+            <td>
+              <span class="{% if sub.gpa >= 3.7 %}score-good{% else %}score-ok{% endif %}">{{ sub.gpa }}</span>
+            </td>
+            <td>
+              <span class="pill {% if sub.status == 'Complete' %}pill-approved{% else %}pill-pending{% endif %}">{{ sub.status }}</span>
+            </td>
+            <td>
+              <!-- Download PDF link -->
+              <a class="link-btn" href="{% url 'download_submission' sub.id %}">Download</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="td-muted">No reports found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+ 
+    <!-- SCHEDULE PAGE -->
+    <div class="page" id="page-schedule">
+      <div class="section-head">
+        <div><div class="section-title">Schedule</div><div class="section-sub">Upcoming meetings, deadlines and events</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openM('modal-meeting')">+ Book Presentations</button>
+
+        <!-- Modal -->
+<div class="modal" id="modal-meeting" style="display:none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeM('modal-meeting')">&times;</span>
+    <h3>Book Presentation</h3>
+    <form method="POST" action="{% url 'book_presentation' %}">
+      {% csrf_token %}
+      <label for="title">Title</label>
+      <input type="text" name="title" required>
+
+      <label for="date">Date & Time</label>
+      <input type="datetime-local" name="date" required>
+
+      <button type="submit" class="btn btn-primary">Book</button>
+    </form>
+  </div>
+</div>
+
+
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Upcoming Events</div></div>
+        {% for booking in bookings %}
+<div class="task-item">
+  <div class="task-dot td-med"></div>
+  <div class="task-body">
+    <div class="task-title">{{ booking.title }}</div>
+    <div class="task-meta">📅 {{ booking.date|date:"F j, Y · g:ia" }}</div>
+  </div>
+  <span class="pill pill-{{ booking.status }}">{{ booking.get_status_display }}</span>
+</div>
+{% empty %}
+<div class="task-item">No upcoming bookings.</div>
+{% endfor %}
+        <!-- <div class="task-item"><div class="task-dot td-high"></div><div class="task-body"><div class="task-title">Chapter 4 Resubmission Deadline</div><div class="task-meta">📅 April 30, 2026</div></div><span class="pill pill-high">Deadline</span></div>
+        <div class="task-item"><div class="task-dot td-med"></div><div class="task-body"><div class="task-title">Supervisor Meeting — Dr. Michael Chen</div><div class="task-meta">📅 Friday, March 22, 2026 · 10:00am</div></div><span class="pill pill-approved">Confirmed</span></div>
+        <div class="task-item"><div class="task-dot td-low"></div><div class="task-body"><div class="task-title">Department Research Seminar</div><div class="task-meta">📅 Thursday, March 27, 2026 · 2:00pm · Room 204</div></div><span class="pill pill-draft">Optional</span></div>
+        <div class="task-item"><div class="task-dot td-med"></div><div class="task-body"><div class="task-title">Progress Review Committee Meeting</div><div class="task-meta">📅 May 5, 2026 · 11:00am</div></div><span class="pill pill-pending">Pending Confirmation</span></div>
+        <div class="task-item"><div class="task-dot td-low"></div><div class="task-body"><div class="task-title">PhD Conference — Research Showcase</div><div class="task-meta">📅 June 14, 2026</div></div><span class="pill pill-low">Registered</span></div> -->
+      </div>
+    </div>
+ 
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="section-head">
+        <div><div class="section-title">Account Settings</div><div class="section-sub">Manage your profile and preferences</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1rem">
+        <div>
+          <div class="card" style="margin-bottom:1.1rem">
+            <div class="card-header"><div class="card-title">Profile Information</div></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)">
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--amber);flex-shrink:0">SJ</div>
+                <div><div style="font-weight:700;color:var(--navy)">Sarah Johnson</div><div style="font-size:0.75rem;color:var(--muted)">PhD Computer Science · PG/2024/001</div><button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="alert('Photo upload')">Change Photo</button></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">First Name</label><input class="form-input" value="Sarah"/></div>
+                <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" value="Johnson"/></div>
+              </div>
+              <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" value="s.johnson@university.edu"/></div>
+              <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" value="+254 700 123 456"/></div>
+              <div class="form-group"><label class="form-label">Student ID</label><input class="form-input" value="PG/2024/001" readonly style="background:var(--off2);color:var(--muted)"/></div>
+              <div class="form-group"><label class="form-label">Programme</label><input class="form-input" value="PhD Computer Science" readonly style="background:var(--off2);color:var(--muted)"/></div>
+              <button class="btn btn-primary" onclick="alert('Profile updated successfully!')">Save Changes</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:1.1rem">
+            <div class="card-header"><div class="card-title">Password & Security</div></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <div class="form-group"><label class="form-label">Confirm New Password</label><input class="form-input" type="password" placeholder="••••••••"/></div>
+              <button class="btn btn-primary" onclick="alert('Password changed successfully!')">Update Password</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Notification Preferences</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:0.75rem">
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Email notifications<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Feedback received<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Deadline reminders<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">Meeting invites<input type="checkbox" checked style="accent-color:var(--navy)"/></label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:0.85rem">System announcements<input type="checkbox" style="accent-color:var(--navy)"/></label>
+              <button class="btn btn-ghost" style="margin-top:0.5rem" onclick="alert('Preferences saved!')">Save Preferences</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</main>
+ 
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-panel-header">
+    <div style="font-size:0.95rem;font-weight:700;color:var(--navy)">Notifications</div>
+    <button class="modal-close" onclick="toggleNotif()">✕</button>
+  </div>
+  <div class="notif-item unread"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>Feedback received</strong> — Dr. Chen reviewed Chapter 3 Methodology</div><div class="notif-time">2 hours ago</div></div></div>
+  <div class="notif-item unread"><div class="ni-dot ni-red"></div><div><div class="notif-text"><strong>Revision required</strong> — Data Analysis Chapter needs resubmission</div><div class="notif-time">5 days ago</div></div></div>
+  <div class="notif-item"><div class="ni-dot ni-green"></div><div><div class="notif-text"><strong>Milestone completed</strong> — Data Collection Phase marked complete</div><div class="notif-time">1 day ago</div></div></div>
+  <div class="notif-item"><div class="ni-dot ni-amber"></div><div><div class="notif-text"><strong>Deadline reminder</strong> — Chapter 4 due in 3 days</div><div class="notif-time">2 days ago</div></div></div>
+  <div class="notif-item"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>Meeting confirmed</strong> — Dr. Chen, Friday 10:00am</div><div class="notif-time">4 days ago</div></div></div>
+</div>
+ 
+<!-- MODAL: Submit Work -->
+<div class="modal-overlay" id="modal-submit" onclick="bgClose(event,'modal-submit')">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⬆ Submit Work</div><button class="modal-close" onclick="closeM('modal-submit')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Submission Title</label><input class="form-input" placeholder="e.g. Chapter 4: Data Analysis — Revised"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label><select class="form-select"><option>Draft</option><option>Final</option><option>Proposal</option><option>Revision</option></select></div>
+        <div class="form-group"><label class="form-label">Chapter</label><select class="form-select"><option>Chapter 1</option><option>Chapter 2</option><option>Chapter 3</option><option selected>Chapter 4</option><option>Chapter 5</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes for Supervisor</label><textarea class="form-textarea" placeholder="Describe changes made, key points, or anything the supervisor should note…"></textarea></div>
+      <div class="form-group"><label class="form-label">Upload File</label><input class="form-input" type="file" style="padding:0.55rem 0.9rem"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-submit')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="alert('Submission successful! Supervisor has been notified.');closeM('modal-submit')">Submit →</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL: Meeting Request -->
+<div class="modal-overlay" id="modal-meeting" onclick="bgClose(event,'modal-meeting')">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">📅 Book Presentation</div><button class="modal-close" onclick="closeM('modal-meeting')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Meeting Purpose</label><input class="form-input" placeholder="e.g. Chapter 4 revision discussion"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Preferred Date</label><input class="form-input" type="date"/></div>
+        <div class="form-group"><label class="form-label">Preferred Time</label><input class="form-input" type="time" value="10:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Meeting Type</label><select class="form-select"><option>In-Person</option><option>Video Call</option><option>Phone Call</option></select></div>
+      <div class="form-group"><label class="form-label">Additional Notes</label><textarea class="form-textarea" placeholder="Any specific topics or documents to review…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('modal-meeting')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="alert('Meeting request sent to Dr. Michael Chen!');closeM('modal-meeting')">Book →</button>
+    </div>
+  </div>
+</div>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // -----------------------------
+    // Progress Chart
+    // -----------------------------
+    const months = {{ months|safe }};
+    const progressData = {{ progress_values|safe }};
+    const ctx = document.getElementById('progressChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Progress %',
+                data: progressData,
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+                borderColor: '#0A194E',
+                backgroundColor: 'rgba(10, 25, 78, 0.14)'
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 100 } }
+        }
+    });
+
+    // -----------------------------
+    // Scores Chart
+    // -----------------------------
+    const scoreLabels = {{ scores_labels|safe }};
+    const scoreValues = {{ scores_values|safe }};
+    const ctx2 = document.getElementById('scoreChart').getContext('2d');
+
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: scoreLabels,
+            datasets: [{
+                data: scoreValues,
+                backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#FF5722'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } } // hide Chart.js legend, use custom
+        }
+    });
+
+    // -----------------------------
+    // Dynamically create legend
+    // -----------------------------
+    const legendContainer = document.getElementById('scoreLegend');
+    scoreLabels.forEach((label, index) => {
+        const value = scoreValues[index];
+        const color = ['#4CAF50', '#2196F3', '#FFC107', '#FF5722'][index];
+
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+
+        const dot = document.createElement('div');
+        dot.className = 'legend-dot';
+        dot.style.background = color;
+
+        const text = document.createTextNode(` ${label}: ${value}%`);
+
+        item.appendChild(dot);
+        item.appendChild(text);
+        legendContainer.appendChild(item);
+    });
+
+});
+</script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<!-- Charts -->
+<!-- <canvas id="progressChart" height="140"></canvas>
+<canvas id="scoreChart" width="220" height="220"></canvas>
+<div id="scoreLegend" class="chart-legend" style="margin-top:1.5rem;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // -----------------------------
+    // Progress Chart (Line)
+    // -----------------------------
+    const months = {{ months|safe }};
+    const progressData = {{ progress_values|safe }};
+    const ctxProgress = document.getElementById('progressChart').getContext('2d');
+
+    new Chart(ctxProgress, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Progress %',
+                data: progressData,
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+                borderColor: '#0A194E',
+                backgroundColor: 'rgba(10, 25, 78, 0.14)',
+                pointBackgroundColor: '#0A194E',
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) { return ` ${context.parsed.y}%`; }
+                    }
+                },
+                datalabels: {
+                    align: 'top',
+                    anchor: 'end',
+                    color: '#0A194E',
+                    font: { weight: 'bold' },
+                    formatter: function(value) { return value + '%'; }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) { return value + '%'; }
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+
+    // -----------------------------
+    // Scores Chart (Doughnut)
+    // -----------------------------
+    const scoreLabels = {{ scores_labels|safe }};
+    const scoreValues = {{ scores_values|safe }};
+    const colors = ['#4CAF50', '#2196F3', '#FFC107', '#FF5722'];
+    const ctxScores = document.getElementById('scoreChart').getContext('2d');
+
+    new Chart(ctxScores, {
+        type: 'doughnut',
+        data: {
+            labels: scoreLabels,
+            datasets: [{
+                data: scoreValues,
+                backgroundColor: colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }, // hide default legend
+                datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold', size: 14 },
+                    formatter: (value) => value + '%'
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+
+    // -----------------------------
+    // Dynamic Doughnut Legend
+    // -----------------------------
+    const legendContainer = document.getElementById('scoreLegend');
+    legendContainer.innerHTML = ""; // clear old legend
+
+    scoreLabels.forEach((label, index) => {
+        const value = scoreValues[index];
+        const color = colors[index];
+
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.marginBottom = '4px';
+
+        const dot = document.createElement('div');
+        dot.className = 'legend-dot';
+        dot.style.width = '12px';
+        dot.style.height = '12px';
+        dot.style.borderRadius = '50%';
+        dot.style.background = color;
+        dot.style.marginRight = '6px';
+
+        const text = document.createTextNode(`${label}: ${value}%`);
+
+        item.appendChild(dot);
+        item.appendChild(text);
+        legendContainer.appendChild(item);
+    });
+
+});
+</script>
+
+<script>
+async function loadReports() {
+    try {
+        const response = await fetch("{% url 'submissions_api' %}");
+        const data = await response.json();
+
+        const tbody = document.querySelector("#page-reports table tbody");
+        tbody.innerHTML = ""; // clear existing rows
+
+        data.submissions.forEach(sub => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="td-title">${sub.title}</td>
+                <td class="td-muted">${sub.submitted}</td>
+                <td class="td-muted">${sub.chapter}</td>
+                <td><span class="score-good">${sub.score}</span></td>
+                <td><span class="pill pill-approved">${sub.status}</span></td>
+                <td><a class="link-btn" href="/submissions/${sub.id}/download/">Download</a></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading reports:", err);
+    }
+}
+
+// Load submissions when the page loads
+document.addEventListener("DOMContentLoaded", loadReports);
+</script>
+
+<script>
+function openM(id){document.getElementById(id).style.display='block'}
+function closeM(id){document.getElementById(id).style.display='none'}
+</script>
+ 
+<!-- <script>
+const pageData = {
+  dashboard:['Welcome back, {{ student.user.username }}! 👋',"Here's your academic progress overview ·"],
+  finance:['Digital integration with University ERP Finance Module'],
+  submissions:['My Submissions','All submitted work and current review status'],
+  milestones:['Academic Milestones','Track your progress through the postgraduate journey'],
+  feedback:['Supervisor Feedback','Feedback from Dr. Michael Chen'],
+  pipeline:['Assessment Pipeline','Your progress through the 8-stage assessment process'],
+  reports:['Academic Reports','Progress reports and performance summaries'],
+  schedule:['Schedule','Upcoming meetings, deadlines and events'],
+  settings:['Account Settings','Manage your profile and preferences'],
+};
+function nav(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const t=pageData[id]||['Dashboard',''];
+  document.getElementById('tb-title').textContent=t[0];
+  document.getElementById('tb-sub').textContent=t[1];
+}
+function stab(tab,id){
+  const c=tab.closest('.card');
+  c.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  c.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+// Mock ERP data
+const erpData = {
+  cleared: {
+    reference: 'FIN-2026-' + Math.floor(Math.random() * 900 + 100),
+    status: 'approved',
+    finance_officer_name: 'Ms. Grace Otieno',
+    clearance_date: new Date().toISOString(),
+  },
+  outstanding: {
+    reference: 'FIN-2026-HOLD',
+    status: 'returned',
+    finance_officer_name: 'Ms. Grace Otieno',
+    clearance_date: null,
+    comments: 'Outstanding fee balance detected. Please settle fees before clearance can be granted.'
+  }
+};
+
+function requestFinanceClearance() {
+  const studentType = document.getElementById('demo-student-select').value;
+  const loading     = document.getElementById('erp-loading');
+  const btn         = document.getElementById('refresh-btn');
+
+  // Show loading
+  loading.style.display = 'flex';
+  btn.disabled = true;
+  btn.textContent = '⏳ Checking ERP…';
+  document.getElementById('erp-response-box').style.display = 'none';
+  document.getElementById('fee-gate-banner').style.display  = 'none';
+  setIndicator('pending', 'Awaiting ERP Finance Module response…');
+
+  // Simulate ERP delay
+  setTimeout(() => {
+    loading.style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = '🔄 Request ERP Clearance';
+    document.getElementById('erp-last-checked').textContent = 'Last checked: ' + new Date().toLocaleTimeString();
+
+    const resp = erpData[studentType];
+
+    if (resp.status === 'approved') {
+      setIndicator('approved', '✓ Finance Clearance Approved — ERP reference recorded');
+      document.getElementById('fee-gate-banner').style.display = 'none';
+      document.getElementById('erp-comments-row').style.display = 'none';
+    } else {
+      setIndicator('returned', '✗ Clearance Returned — Outstanding fee balance');
+      document.getElementById('fee-gate-banner').style.display  = 'flex';
+      document.getElementById('erp-comments-row').style.display = 'flex';
+      document.getElementById('erp-comments-val').textContent   = resp.comments;
+    }
+
+    // Fill response box
+    document.getElementById('erp-ref-val').textContent        = resp.reference;
+    document.getElementById('erp-status-val').textContent     = resp.status === 'approved' ? 'Approved ✓' : 'Returned ✗';
+    document.getElementById('erp-status-val').style.color     = resp.status === 'approved' ? 'var(--green)' : 'var(--red)';
+    document.getElementById('erp-officer-val').textContent    = resp.finance_officer_name;
+    document.getElementById('erp-clearance-date').textContent = resp.clearance_date ? new Date(resp.clearance_date).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : 'Pending';
+    document.getElementById('erp-response-box').style.display = 'block';
+
+    // Show history row
+    document.getElementById('current-request-row').style.display = '';
+    document.getElementById('hist-ref').textContent     = resp.reference;
+    document.getElementById('hist-status-cell').innerHTML = resp.status === 'approved'
+      ? '<span class="pill pill-approved">Approved</span>'
+      : '<span class="pill pill-revision">Returned</span>';
+    document.getElementById('hist-date').textContent    = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    document.getElementById('hist-officer').textContent = resp.finance_officer_name;
+
+  }, 2200);
+}
+
+function setIndicator(type, text) {
+  const ind = document.getElementById('erp-indicator');
+  const dot = document.getElementById('erp-dot');
+  const txt = document.getElementById('erp-status-text');
+  ind.className = 'erp-indicator status-' + type;
+  dot.className = 'erp-dot dot-' + type;
+  txt.textContent = text;
+}
+
+function switchDemoStudent(val) {
+  const name = val === 'cleared' ? 'Sarah Johnson' : 'Demo Student (Outstanding)';
+  document.getElementById('fin-student-name').textContent = name;
+  // Reset the panel when switching
+  document.getElementById('erp-response-box').style.display = 'none';
+  document.getElementById('fee-gate-banner').style.display  = 'none';
+  setIndicator('idle', 'Click "Request ERP Clearance" to check current status');
+  document.getElementById('erp-last-checked').textContent = 'Not yet checked';
+}
+
+function formatDate(iso) {
+  if (!iso) return 'Pending';
+  return new Date(iso).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+}
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const main = document.querySelector('main');
+
+    if (window.innerWidth <= 900) {
+        // Mobile: slide sidebar over content
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('visible');
+    } else {
+        // Desktop: collapse sidebar and close the gap in main
+        sidebar.classList.toggle('collapsed');
+        main.style.marginLeft = sidebar.classList.contains('collapsed') ? '0' : 'var(--sidebar-w)';
+    }
+}
+// 1. The Main Navigation Function
+function showPage(pageId, saveHistory = true) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    
+    // Show the target page
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.style.display = 'block';
+        
+        
+        if (saveHistory) {
+            history.pushState({ id: pageId }, '', '#' + pageId);
+        }
+    }
+    if (pageId === 'page-finance') {
+    const alertBox = document.getElementById('finance-alert');
+    
+    // In a real demo, this would be triggered by your Mock ERP response
+    // For now, we manually show it to demonstrate the 'Fee Clearance Gate'
+    alertBox.style.display = 'flex'; 
+}
+}
+
+window.onpopstate = (e) => {
+    if (e.state && e.state.id) {
+        showPage(e.state.id, false); 
+    } else {
+        showPage('page-dashboard', false); 
+    }
+};
+
+window.onload = () => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) showPage(hash, false);
+};
+
+
+function openM(id){document.getElementById(id).classList.add('open')}
+function closeM(id){document.getElementById(id).classList.remove('open')}
+function bgClose(e,id){if(e.target===e.currentTarget)closeM(id)}
+function toggleNotif(){document.getElementById('notif-panel').classList.toggle('open')}
+</script> -->
+<script>
+// Page header text (same as before)
+const pageData = {
+  dashboard:['Welcome back, {{ student.user.username }}! 👋',"Here's your academic progress overview ·"],
+  finance:['Digital integration with University ERP Finance Module'],
+  submissions:['My Submissions','All submitted work and current review status'],
+  milestones:['Academic Milestones','Track your progress through the postgraduate journey'],
+  feedback:['Supervisor Feedback','Feedback from Dr. Michael Chen'],
+  pipeline:['Assessment Pipeline','Your progress through the 8-stage assessment process'],
+  reports:['Academic Reports','Progress reports and performance summaries'],
+  schedule:['Schedule','Upcoming meetings, deadlines and events'],
+  settings:['Account Settings','Manage your profile and preferences'],
+};
+
+function nav(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const t = pageData[id] || ['Dashboard',''];
+  document.getElementById('tb-title').textContent = t[0];
+  document.getElementById('tb-sub').textContent   = t[1];
+}
+
+// --- Tabs ---
+function stab(tab,id){
+  const c = tab.closest('.card');
+  c.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  c.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// --- Mock ERP Data (Demo / Dynamic) ---
+const erpData = {
+  cleared: {
+    reference: 'FIN-2026-' + Math.floor(Math.random() * 900 + 100),
+    status: 'approved',
+    finance_officer_name: 'Ms. Grace Otieno',
+    clearance_date: new Date().toISOString(),
+  },
+  outstanding: {
+    reference: 'FIN-2026-HOLD',
+    status: 'returned',
+    finance_officer_name: 'Ms. Grace Otieno',
+    clearance_date: null,
+    comments: 'Outstanding fee balance detected. Please settle fees before clearance can be granted.'
+  }
+};
+
+// --- Request ERP Clearance ---
+function requestFinanceClearance() {
+  const studentType = document.getElementById('demo-student-select').value;
+  const loading     = document.getElementById('erp-loading');
+  const btn         = document.getElementById('refresh-btn');
+
+  // Show loading
+  loading.style.display = 'flex';
+  btn.disabled = true;
+  btn.textContent = '⏳ Checking ERP…';
+  document.getElementById('erp-response-box').style.display = 'none';
+  document.getElementById('fee-gate-banner').style.display  = 'none';
+  setIndicator('pending', 'Awaiting ERP Finance Module response…');
+
+  // Simulate ERP API delay
+  setTimeout(() => {
+    loading.style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = '🔄 Request ERP Clearance';
+    document.getElementById('erp-last-checked').textContent = 'Last checked: ' + new Date().toLocaleTimeString();
+
+    const resp = erpData[studentType];
+
+    // Update tiles & banner
+    if (resp.status === 'approved') {
+      setIndicator('approved', '✓ Finance Clearance Approved — ERP reference recorded');
+      document.getElementById('fee-gate-banner').style.display = 'none';
+      document.getElementById('erp-comments-row').style.display = 'none';
+    } else {
+      setIndicator('returned', '✗ Clearance Returned — Outstanding fee balance');
+      document.getElementById('fee-gate-banner').style.display  = 'flex';
+      document.getElementById('erp-comments-row').style.display = 'flex';
+      document.getElementById('erp-comments-val').textContent   = resp.comments;
+    }
+
+    // Fill response box
+    document.getElementById('erp-ref-val').textContent        = resp.reference;
+    document.getElementById('erp-status-val').textContent     = resp.status === 'approved' ? 'Approved ✓' : 'Returned ✗';
+    document.getElementById('erp-status-val').style.color     = resp.status === 'approved' ? 'var(--green)' : 'var(--red)';
+    document.getElementById('erp-officer-val').textContent    = resp.finance_officer_name;
+    document.getElementById('erp-clearance-date').textContent = resp.clearance_date ? new Date(resp.clearance_date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'Pending';
+    document.getElementById('erp-response-box').style.display = 'block';
+
+    // Update clearance history dynamically
+    const histRow = document.getElementById('current-request-row');
+    histRow.style.display = '';
+    document.getElementById('hist-ref').textContent = resp.reference;
+    document.getElementById('hist-status-cell').innerHTML = resp.status === 'approved'
+      ? '<span class="pill pill-approved">Approved</span>'
+      : '<span class="pill pill-revision">Returned</span>';
+    document.getElementById('hist-date').textContent = resp.clearance_date ? new Date(resp.clearance_date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'Pending';
+    document.getElementById('hist-officer').textContent = resp.finance_officer_name;
+
+    // Update ERP Finance clearance tile in Graduation section
+    const erpTile = document.querySelectorAll('div > div.card-body > div > div:nth-child(4)');
+    if(resp.status === 'approved'){
+      erpTile.forEach(tile => {
+        tile.style.backgroundColor = 'var(--green-dim)';
+        tile.style.border = '1px solid rgba(29,164,98,0.2)';
+        tile.querySelector('div:first-child').textContent = '🏦';
+        tile.querySelector('div:last-child').style.color = 'var(--green)';
+      });
+    } else {
+      erpTile.forEach(tile => {
+        tile.style.backgroundColor = 'var(--off2)';
+        tile.style.border = '1px solid var(--border)';
+        tile.querySelector('div:first-child').textContent = '⏳';
+        tile.querySelector('div:last-child').style.color = 'var(--muted)';
+      });
+    }
+
+  }, 2000);
+}
+
+// --- ERP Indicator ---
+function setIndicator(type, text) {
+  const ind = document.getElementById('erp-indicator');
+  const dot = document.getElementById('erp-dot');
+  const txt = document.getElementById('erp-status-text');
+  ind.className = 'erp-indicator status-' + type;
+  dot.className = 'erp-dot dot-' + type;
+  txt.textContent = text;
+}
+
+// --- Switch Demo Student ---
+function switchDemoStudent(val) {
+  const name = val === 'cleared' ? '{{ student.user.get_full_name }}' : 'Demo Student (Outstanding)';
+  document.getElementById('fin-student-name').textContent = name;
+  // Reset ERP panel
+  document.getElementById('erp-response-box').style.display = 'none';
+  document.getElementById('fee-gate-banner').style.display  = 'none';
+  setIndicator('idle', 'Click "Request ERP Clearance" to check current status');
+  document.getElementById('erp-last-checked').textContent = 'Not yet checked';
+}
+
+// --- Date formatting ---
+function formatDate(iso) {
+  if (!iso) return 'Pending';
+  return new Date(iso).toLocaleDateString('en-GB',{day:'numeric', month:'short', year:'numeric'});
+}
+
+// --- Sidebar / page navigation functions remain unchanged ---
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  const main = document.querySelector('main');
+
+  if(window.innerWidth <= 900){
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('visible');
+  } else {
+    sidebar.classList.toggle('collapsed');
+    main.style.marginLeft = sidebar.classList.contains('collapsed') ? '0' : 'var(--sidebar-w)';
+  }
+}
+
+function showPage(pageId, saveHistory = true){
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  const target = document.getElementById(pageId);
+  if(target) target.style.display = 'block';
+  if(saveHistory) history.pushState({ id: pageId }, '', '#' + pageId);
+}
+
+window.onpopstate = (e) => {
+  if(e.state && e.state.id) showPage(e.state.id,false);
+  else showPage('page-dashboard',false);
+};
+
+window.onload = () => {
+  const hash = window.location.hash.replace('#','');
+  if(hash) showPage(hash,false);
+}
+
+function openM(id){document.getElementById(id).classList.add('open')}
+function closeM(id){document.getElementById(id).classList.remove('open')}
+function bgClose(e,id){if(e.target===e.currentTarget)closeM(id)}
+function toggleNotif(){document.getElementById('notif-panel').classList.toggle('open')}
+</script>
+
+<script>
+async function loadSubmissions() {
+  const tbody = document.getElementById('submissions-tbody');
+  tbody.innerHTML = '<tr><td colspan="8" class="td-muted">Loading submissions…</td></tr>';
+
+  try {
+    const res = await fetch('/api/submissions/'); // Django URL to your API
+    if (!res.ok) throw new Error('Network response was not ok');
+
+    const data = await res.json();
+    const subs = data.submissions;
+
+    if (!subs.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="td-muted">No submissions found</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = ''; // clear loading row
+
+    subs.forEach(s => {
+      const statusClass = s.status.toLowerCase().includes('approved') ? 'pill-approved' :
+                          s.status.toLowerCase().includes('pending') ? 'pill-pending' : 'pill-revision';
+
+      const scoreClass = s.score !== '—' ? (s.score >= 85 ? 'score-good' : (s.score >= 70 ? 'score-ok' : 'score-low')) : 'td-muted';
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="td-title">${s.title}</td>
+        <td class="td-muted">${s.type}</td>
+        <td class="td-muted">${s.chapter}</td>
+        <td class="td-muted">${s.submitted}</td>
+        <td class="td-muted">${s.supervisor}</td>
+        <td><span class="pill ${statusClass}">${s.status}</span></td>
+        <td><span class="${scoreClass}">${s.score !== '—' ? s.score+'%' : '—'}</span></td>
+        <td>
+          <a class="link-btn" onclick="openSubmission(${s.id})">${s.status.toLowerCase().includes('revision') ? 'Resubmit' : 'View'}</a>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="8" class="td-muted">Error loading submissions: ${err.message}</td></tr>`;
+  }
+}
+
+// Open submission modal
+function openSubmission(id){
+  // You can populate your modal with AJAX or navigate to a submission detail page
+  console.log("Open submission ID:", id);
+  openM('modal-submit');
+}
+
+// Load submissions when page shows
+document.addEventListener('DOMContentLoaded', loadSubmissions);
+</script>
+</body>
+</html>

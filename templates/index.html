@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Rongo University — Postgraduate Assessment System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+  
+<nav id="navbar">
+  <div class="logo-container">
+    <div class="logo-v">
+      <img src="{% static 'assets/R.U logo.png' %}" alt="R.U logo" class="logo-img">
+    </div>
+  </div>
+  
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#stats">Stats</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="{% url 'login' %}" class="btn-nav-cta">Sign In →</a>
+  </div>
+  
+</nav>
+  
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">✦ Academic Management Platform</div>
+    <h1>Postgraduate<br/>Assessment &<br/><em>Progress</em> Management</h1>
+    <p class="hero-desc">A comprehensive platform designed to track, assess, and manage postgraduate student progress with seamless collaboration between students, supervisors, and administrators.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="{% url 'login' %}">Get Started</a>
+    
+    </div>
+  </div>
+  <div hero-visual>
+    <img src="{% static 'assets/vs.jpeg' %}">
+  </div>
+</section>
+  
+
+<section id="stats" class="section">
+    <div class="stats-strip">
+        <div class="strip-stat reveal"><div class="strip-val">5000+</div><div class="strip-lbl">Active Students</div></div>
+        <div class="strip-stat reveal"><div class="strip-val">500+</div><div class="strip-lbl">Supervisors</div></div>
+        <div class="strip-stat reveal"><div class="strip-val">98%</div><div class="strip-lbl">Satisfaction Rate</div></div>
+        <div class="strip-stat reveal"><div class="strip-val">50+</div><div class="strip-lbl">Institutions</div></div>
+      </div>
+ 
+</section>
+  
+<section  id="features">
+    <div class="section-header reveal">
+        <div class="section-eyebrow">Powerful Features</div>
+        <h2>Everything you need to manage<br/><em>postgraduate assessments</em></h2>
+        <p class="section-lead">Everything you need to manage postgraduate assessments and track student progress efficiently across your institution.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feat-card reveal"><div class="feat-icon">📈</div> 
+        <div class="feat-title">Progress Tracking</div>
+            <div class="feat-desc">Monitor student progress in real-time with comprehensive dashboards and visual analytics for every stage of the journey.</div></div>
+        <div class="feat-card reveal"><div class="feat-icon">💬</div>
+            <div class="feat-title">Supervisor Feedback</div>
+            <div class="feat-desc">Streamlined feedback system enabling supervisors to provide timely and structured guidance with correction tagging.</div></div>
+        <div class="feat-card reveal"><div class="feat-icon">🎯</div>
+              <div class="feat-title">Milestone Management</div>
+              <div class="feat-desc">Define, track, and achieve academic milestones with automated reminders and notifications at every checkpoint.</div></div>
+        <div class="feat-card reveal"><div class="feat-icon">📋</div>
+             <div class="feat-title">Comprehensive Reports</div>
+             <div class="feat-desc">Generate detailed reports with insights on performance, submissions, and assessments. Quarterly reports with multi-tier sign-off.</div></div>
+        <div class="feat-card reveal"><div class="feat-icon">👥</div>
+               <div class="feat-title">Multi-Role Access</div>
+               <div class="feat-desc">Role-based permissions for students, supervisors, chairs, administrators, and deans — each with tailored dashboards.</div></div>
+        <div class="feat-card reveal"><div class="feat-icon">🏦</div>
+               <div class="feat-title">ERP Finance Integration</div>
+               <div class="feat-desc">REST API bridge to the Finance Module. Digital clearance replaces physical office visits for quarterly reports and graduation.</div></div>
+      </div> 
+</section>
+    <section class="how-section" id="how">
+        <div class="section-header reveal">
+          <div class="section-eyebrow">How It Works</div>
+          <h2>A simple, streamlined workflow<br/>to manage your <em>academic journey</em></h2>
+        </div>
+        <div class="steps-list">
+          <div class="step-row reveal">
+            <div class="step-num">01</div>
+            <div><div class="step-title">Register & Setup</div><div class="step-desc">Students and supervisors register on the platform and complete their profiles with relevant academic information, programme details, and research topics.</div></div>
+          </div>
+          <div class="step-row reveal">
+            <div class="step-num">02</div>
+            <div><div class="step-title">Define Milestones</div><div class="step-desc">Set academic milestones, deadlines, and assessment criteria tailored to your programme requirements across all 8 pipeline stages.</div></div>
+          </div>
+          <div class="step-row reveal">
+            <div class="step-num">03</div>
+            <div><div class="step-title">Track Progress</div><div class="step-desc">Monitor progress through interactive dashboards, submit work, and receive feedback in real-time. Present at seminars and advance through gated stages.</div></div>
+          </div>
+          <div class="step-row reveal">
+            <div class="step-num">04</div>
+            <div><div class="step-title">Review & Assess</div><div class="step-desc">Supervisors review submissions, provide structured feedback, and assess student performance. Corrections are AI-extracted and validated by the chair.</div></div>
+          </div>
+        </div>
+      </section> 
+
+
+      <section id="testimonials">
+        <div class="section-header reveal">
+          <div class="section-2">What Users Say</div>
+          <h2>Trusted by students, supervisors,<br/>and <em>administrators worldwide</em></h2>
+        </div>
+        <div class="testi-grid">
+          <div class="testi-card reveal">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"This platform transformed how I track my research progress. The feedback system is intuitive and keeps me aligned with my supervisor at every stage."</p>
+            <div class="testi-author">Sarah Johnson</div>
+            <div class="testi-role">PhD Student</div>
+            <span class="testi-stat">↑ 94% Progress</span>
+          </div>
+          <div class="testi-card reveal">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"Managing multiple students has never been easier. I can provide timely feedback and monitor everyone's progress from a single, clean dashboard."</p>
+            <div class="testi-author">Dr. Michael Chen</div>
+            <div class="testi-role">Research Supervisor</div>
+            <span class="testi-stat">15 Students managed</span>
+          </div>
+          <div class="testi-card reveal">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">"The ERP Finance integration alone saved our department hundreds of hours. No more queues, no lost paperwork — everything is tracked digitally."</p>
+            <div class="testi-author">Prof. Emily Rodriguez</div>
+            <div class="testi-role">Department Chair</div>
+            <span class="testi-stat">200+ Reports generated</span>
+          </div>
+        </div>
+      </section>
+       
+  
+<footer>
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:0.6rem">
+        <div class="nav-logo-icon">
+        </div>
+        <span class="nav-logo-text">RONGO <em>UNIVERSITY</em></span>
+      </div>
+      <p>Empowering postgraduate education through innovative assessment and progress management.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="#">Features</a><a href="#">Roles</a><a href="#">How It Works</a><a href="#">Testimonials</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Documentation</a><a href="#">Help Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#">support@papms.edu</a><a href="#">+1 (555) 123-4567</a><a href="#">University Campus</a>
+    </div>
+  </footer>
+
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
