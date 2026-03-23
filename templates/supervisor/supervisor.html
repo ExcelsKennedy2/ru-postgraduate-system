@@ -1,0 +1,1398 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Supervisor Dashboard — PAPMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0A194E;--navy-light:#1a3580;--navy-dark:#060f30;
+  --amber:#FFC107;--amber-dim:rgba(255,193,7,.13);--amber-dark:#c9960a;
+  --white:#fff;--off:#F5F7FC;--off2:#EBEEf8;
+  --text:#111827;--muted:#5B6F8A;--soft:#94A3B8;
+  --border:#DDE4F0;
+  --green:#16A34A;--green-dim:rgba(22,163,74,.1);
+  --red:#DC2626;--red-dim:rgba(220,38,38,.1);
+  --blue:#2563EB;--blue-dim:rgba(37,99,235,.1);
+  --orange:#EA580C;--orange-dim:rgba(234,88,12,.1);
+  --sidebar:228px;
+  --topbar:60px;
+}
+html{
+  font-size:14px}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--off);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+  overflow-x:hidden}
+ 
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:var(--sidebar);
+  background:var(--navy);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;
+  left:0;
+  height:100vh;
+  z-index:100;
+  overflow-y:auto;
+  overflow-x:hidden;
+  transition:width .3s;
+ 
+}
+  .sidebar-logo{
+ 
+  border-bottom: none;
+  display:flex;
+  align-items:center;
+  gap:0.65rem;
+  text-decoration:none;
+  margin-top: 10px;
+  margin-left: 10px;
+
+}
+  
+  
+.logo-badge{
+  width:150px;
+  height:50px;
+  background:white;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  flex-shrink:0;
+  margin-left: 10px;
+}
+.logo-img {
+    height: 110px;    
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); 
+    margin-left: 0px;
+}
+
+
+
+
+.nav-section-title{
+  font-size:.6rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgb(255, 255, 255);
+  padding:.4rem 1.25rem .4rem;
+  display:block;
+  margin-left: 10px;
+  
+}
+  
+.nav-link{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:1.05rem .25rem;
+  color:rgb(255, 255, 255);
+  font-size:.92rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .18s;
+  position:relative;
+  border-left:2.5px solid transparent;
+  text-decoration:none;
+  white-space:nowrap;
+  margin-left: 10px;
+}
+.nav-link:hover{
+  color:#E6AD00;
+  background:rgba(255,255,255,.06)}
+.nav-link.active{
+  color:#E6AD00;
+  background:rgba(255,255,255,.09);
+  border-left-color:var(--amber)}
+.nav-link .ni{
+  width:17px;
+  text-align:center;
+  font-size:1.09rem;
+  flex-shrink:0}
+.nav-badge{
+  margin-left:auto;
+  background:var(--red);
+  color:#ffffff;
+  font-size:.58rem;
+  font-weight:700;
+  padding:.1rem .38rem;
+  border-radius:20px;
+  min-width:18px;
+  text-align:center}
+.nav-badge.amber{
+  background:var(--amber);
+  color:var(--navy)}
+.sidebar-footer{
+  margin-top:auto;
+  padding:1rem 1.25rem;
+  border-top:1px solid rgba(255,255,255,.07)}
+.user-mini{
+  display:flex;
+  align-items:center;
+  gap:.65rem}
+.user-av{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:var(--amber);
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  font-weight:800;
+  flex-shrink:0}
+.user-mini-name{
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  line-height:1.2}
+.user-mini-role{
+  font-size:.65rem;
+  color:rgba(255,255,255,.38)}
+.logout-btn{
+  margin-left:auto;
+  background:none;border:none;
+  color:rgba(255,255,255,.28);
+  font-size:.9rem;cursor:pointer;
+  padding:.25rem;
+  transition:color .2s}
+.logout-btn:hover{color:var(--red)}
+ 
+/* ─── MAIN ─── */
+.main{
+  margin-left:var(--sidebar);
+  flex:1;display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+.topbar{
+  height:var(--topbar);
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:0 1.75rem;
+  position:sticky;
+  top:0;
+  z-index:50}
+.topbar-title{
+  font-size:1.05rem;
+  font-weight:800;
+  color:var(--navy);
+  flex:1}
+.topbar-title span{
+  font-weight:400;
+  color:var(--muted);
+  font-size:.82rem;
+  margin-left:.5rem}
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:.65rem}
+.tb-notif{
+  position:relative;
+  width:34px;height:34px;
+  border:1px solid var(--border);
+  background:var(--off);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:.95rem;
+  transition:border-color .2s}
+.tb-notif:hover{
+  border-color:var(--navy)}
+.tb-notif-dot{
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:6px;
+  height:6px;
+  background:var(--red);
+  border-radius:50%;
+  border:1.5px solid #fff}
+.tb-search{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  background:var(--off);
+  border:1px solid var(--border);
+  padding:.35rem .75rem;
+  font-size:.78rem;
+  color:var(--muted);
+  cursor:text;
+  transition:border-color .2s}
+.tb-search:hover{
+  border-color:var(--navy)}
+.tb-search input{
+  background:none;
+  border:none;
+  outline:none;
+  font-family:inherit;
+  font-size:.78rem;
+  color:var(--text);
+  width:160px}
+.tb-pill{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  background:var(--off);
+  border:1px solid var(--border);
+  padding:.3rem .75rem;
+  cursor:pointer}
+.tb-av{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:var(--navy);
+  color:var(--amber);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.6rem;
+  font-weight:800}
+.tb-name{
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--text)}
+.tb-role{
+  font-size:.62rem;
+  color:var(--muted)}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.48rem 1rem;
+  font-family:inherit;
+  font-size:.78rem;
+  font-weight:700;
+  cursor:pointer;
+  border:none;
+  transition:all .2s;
+  white-space:nowrap}
+.btn-navy{
+  background:var(--navy);
+  color:#fff}
+.btn-navy:hover{
+  background:var(--navy-light)}
+.btn-green{
+  background:var(--green);
+  color:#fff}
+.btn-green:hover{
+  background:#15803d}
+.btn-amber{
+  background:var(--amber);
+  color:var(--navy)}
+.btn-amber:hover{
+  background:#e6ad00}
+.btn-outline{
+  background:transparent;
+  color:var(--navy);
+  border:1.5px solid var(--border)}
+.btn-outline:hover{
+  border-color:var(--navy);
+  background:rgba(10,25,78,.04)}
+.btn-sm{
+  padding:.3rem .65rem;
+  font-size:.72rem}
+.btn-xs{
+  padding:.2rem .5rem;
+  font-size:.65rem}
+ 
+/* ─── CONTENT ─── */
+.content{
+  padding:1.5rem 1.75rem;
+  flex:1}
+.section-view{
+  display:none}
+.section-view.active{
+  display:block}
+ 
+/* Page header */
+.page {
+    display: none; 
+}
+.page.active {
+    display: block; 
+}
+.page-hdr{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:1.5rem;
+  gap:1rem;
+  flex-wrap:wrap}
+.page-hdr-left h2{
+  font-family:'Lora',serif;font-size:1.45rem;
+  font-weight:700;
+  color:var(--navy);
+  line-height:1.2}
+.page-hdr-left p{
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:.2rem}
+.page-hdr-actions{
+  display:flex;
+  gap:.5rem;
+  align-items:center;flex-wrap:wrap}
+ 
+/* ─── STAT CARDS ─── */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+  margin-bottom:1.5rem}
+.stat-card{
+  background:#fff;
+  border:1px solid var(--border);
+  padding:1.1rem 1.25rem;
+  position:relative;
+  overflow:hidden}
+.stat-card::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  bottom:0;
+  width:3.5px}
+.s-navy::after{
+  background:var(--navy)}
+.s-green::after{
+  background:var(--green)}
+.s-amber::after{
+  background:var(--amber)}
+.s-red::after{
+  background:var(--red)}
+.s-blue::after{
+  background:var(--blue)}
+.stat-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:.65rem}
+.stat-lbl{
+  font-size:.68rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--muted)}
+.stat-ico{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.9rem}
+.ico-navy{
+  background:rgba(10,25,78,.08);
+  color:var(--navy)}
+.ico-green{
+  background:var(--green-dim);
+  color:var(--green)}
+.ico-amber{
+  background:var(--amber-dim);
+  color:var(--amber-dark)}
+.ico-red{
+  background:var(--red-dim);
+  color:var(--red)}
+.ico-blue{
+  background:var(--blue-dim);
+  color:var(--blue)}
+.stat-val{
+  font-family:'Lora',
+  serif;font-size:1.9rem;
+  font-weight:700;
+  color:var(--text);
+  line-height:1;
+  margin-bottom:.25rem}
+.stat-sub{
+  font-size:.7rem;
+  color:var(--muted)}
+.up{color:var(--green);
+  font-weight:600}
+.dn{color:var(--red);
+  font-weight:600}
+ 
+/* ─── CARDS / PANELS ─── */
+.card{
+  background:#fff;
+  border:1px solid var(--border)}
+.card-hdr{
+  padding:1rem 1.25rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  flex-wrap:wrap}
+.card-hdr-left{
+  flex:1}
+.card-title{
+  font-size:.9rem;
+  font-weight:700;
+  color:var(--navy)}
+.card-sub{
+  font-size:.7rem;
+  color:var(--muted);
+  margin-top:.15rem}
+.card-body{
+  padding:1.25rem}
+.card-body-0{
+  padding:0}
+ 
+/* ─── GRID LAYOUTS ─── */
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1rem}
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:1rem}
+.grid-65-35{
+  display:grid;
+  grid-template-columns:1.85fr 1fr;
+  gap:1rem}
+.grid-60-40{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:1rem}
+ 
+/* ─── CHARTS ─── */
+.chart-area{
+  padding:1.25rem}
+svg.chart{
+  overflow:visible;
+  width:100%}
+.chart-legend{
+  display:flex;gap:1.25rem;
+  padding:.6rem 1.25rem 1rem;
+  flex-wrap:wrap}
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.7rem;
+  color:var(--muted)}
+.legend-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  flex-shrink:0}
+.legend-line{
+  width:18px;
+  height:2px;
+  flex-shrink:0}
+ 
+/* Pie chart */
+.pie-section{
+  display:flex;
+  align-items:center;
+  gap:1.75rem;
+  padding:1rem 1.25rem}
+.pie-wrap{
+  position:relative;
+  flex-shrink:0}
+.pie-wrap canvas,
+.pie-svg{
+  width:140px;
+  height:140px}
+.pie-legend{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:.6rem}
+.pie-leg-row{
+  display:flex;
+  align-items:center;
+  gap:.55rem}
+.pie-leg-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  flex-shrink:0}
+.pie-leg-label{
+  font-size:.75rem;
+  color:var(--muted);
+  flex:1}
+.pie-leg-val{
+  font-size:.75rem;
+  font-weight:700;
+  color:var(--text)}
+.pie-leg-pct{
+  font-size:.68rem;
+  color:var(--soft);
+  width:28px;
+  text-align:right}
+ 
+/* Bar chart */
+.bar-wrap{
+  display:flex;
+  align-items:flex-end;
+  gap:6px;
+  height:110px;
+  padding:0 .25rem}
+.bar-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex:1;gap:3px}
+.bar-rect{
+  border-radius:3px 3px 0 0;
+  width:100%;
+  transition:opacity .2s;
+  cursor:pointer}
+.bar-rect:hover{
+  opacity:.8}
+.bar-lbl{
+  font-size:.6rem;
+  color:var(--muted)}
+.bar-val{
+  font-size:.6rem;
+  font-weight:700;color:var(--text)}
+ 
+/* ─── TABLES ─── */
+.tbl-wrap{
+  overflow-x:auto}
+table{
+  width:100%;
+  border-collapse:collapse}
+thead th{
+  padding:.65rem 1.1rem;
+  font-size:.63rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-align:left;
+  background:var(--off);
+  border-bottom:1px solid var(--border);
+  white-space:nowrap}
+tbody td{
+  padding:.8rem 1.1rem;
+  font-size:.8rem;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle}
+tbody tr:hover td{
+  background:rgba(10,25,78,.018)}
+tbody tr:last-child td{
+  border-bottom:none}
+.td-bold{
+  font-weight:600;
+  color:var(--text)}
+.td-muted{
+  color:var(--muted)}
+.td-mono{
+  font-family:monospace;
+  font-size:.75rem}
+ 
+/* PROGRESS BAR */
+.prog-wrap{
+  display:flex;
+  align-items:center;
+  gap:.6rem}
+.prog-bar{
+  height:6px;
+  background:var(--off2);
+  flex:1;overflow:hidden;
+  min-width:60px}
+.prog-fill{
+  height:100%;
+  transition:width .4s}
+.prog-val{
+  font-size:.72rem;
+  font-weight:700;
+  width:32px;
+  text-align:right;
+  flex-shrink:0}
+ 
+/* STATUS PILLS */
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  font-size:.63rem;
+  font-weight:700;
+  padding:.2rem .55rem;
+  white-space:nowrap}
+.pill-green{
+  background:var(--green-dim);
+  color:var(--green)}
+.pill-red{
+  background:var(--red-dim);
+  color:var(--red)}
+.pill-amber{
+  background:var(--amber-dim);
+  color:var(--amber-dark)}
+.pill-blue{
+  background:var(--blue-dim);
+  color:var(--blue)}
+.pill-orange{
+  background:var(--orange-dim);
+  color:var(--orange)}
+.pill-navy{
+  background:rgba(10,25,78,.1);
+  color:var(--navy)}
+.pill-gray{
+  background:var(--off2);
+  color:var(--muted)}
+ 
+/* PRIORITY DOT */
+.prio{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  display:inline-block;
+  margin-right:.3rem}
+.prio-high{
+  background:var(--red)}
+.prio-med{
+  background:var(--orange)}
+.prio-low{
+  background:var(--blue)}
+ 
+/* AVATAR */
+.av{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.62rem;
+  font-weight:800;
+  flex-shrink:0}
+ 
+/* ACTIVITY FEED */
+.feed-item{
+  display:flex;
+  gap:.75rem;
+  padding:.85rem 1.25rem;
+  border-bottom:1px solid var(--border)}
+.feed-item:last-child{
+  border-bottom:none}
+.feed-ico{
+  width:30px;
+  height:30px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.8rem;
+  flex-shrink:0}
+.feed-text{
+  font-size:.78rem;
+  color:var(--text);
+  line-height:1.5;
+  flex:1}
+.feed-text strong{
+  font-weight:700;
+  color:var(--navy)}
+.feed-time{
+  font-size:.65rem;
+  color:var(--soft);
+  margin-top:.15rem}
+ 
+/* TABS */
+.tabs{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto}
+.tab-btn{
+  padding:.7rem 1.1rem;
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2.5px solid transparent;
+  transition:all .18s;
+  white-space:nowrap;
+  background:none;
+  border-top:none;
+  border-left:none;
+  border-right:none;
+  font-family:inherit}
+.tab-btn:hover{color:var(--navy)}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+ 
+/* STARS */
+.stars{color:var(--amber);letter-spacing:.05em;font-size:.78rem}
+ 
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(6,15,48,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)}
+.modal-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted);transition:color .2s;padding:.25rem}
+.modal-close:hover{color:var(--red)}
+.modal-body{padding:1.25rem}
+.modal-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.form-control{width:100%;background:var(--off);border:1.5px solid var(--border);padding:.65rem .9rem;font-family:inherit;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s}
+.form-control:focus{border-color:var(--navy);background:#fff}
+.form-control::placeholder{color:var(--soft)}
+textarea.form-control{resize:vertical;min-height:90px}
+select.form-control{appearance:none;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+ 
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:#fff;border-left:4px solid var(--amber);padding:.8rem 1.25rem;font-size:.8rem;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+ 
+/* INLINE EMPTY STATE */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--soft)}
+.empty .empty-ico{font-size:2rem;margin-bottom:.5rem}
+.empty p{font-size:.8rem}
+ 
+/* SCHEDULE CALENDAR */
+.cal-week{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem}
+.cal-day{border:1px solid var(--border);padding:.6rem}
+.cal-day-name{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.cal-day-num{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:.4rem}
+.cal-event{background:rgba(10,25,78,.07);border-left:2.5px solid var(--navy);padding:.25rem .4rem;font-size:.65rem;font-weight:600;color:var(--navy);margin-bottom:.25rem}
+.cal-event.ev-amber{background:var(--amber-dim);border-left-color:var(--amber);color:var(--amber-dark)}
+.cal-event.ev-green{background:var(--green-dim);border-left-color:var(--green);color:var(--green)}
+ 
+/* SECTION-SPECIFIC OVERRIDES */
+.profile-card{display:grid;grid-template-columns:auto 1fr auto;gap:1.25rem;align-items:start;padding:1.25rem}
+.profile-av{width:56px;height:56px;border-radius:50%;background:var(--navy);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800}
+.profile-name{font-size:1rem;font-weight:700;color:var(--navy)}
+.profile-meta{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+.profile-tags{display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap}
+ 
+/* TOOLTIP */
+[data-tip]{position:relative;cursor:default}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:.65rem;padding:.3rem .55rem;white-space:nowrap;z-index:999;pointer-events:none}
+ 
+/* ANIMATE IN */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.section-view.active{animation:fadeUp .3s ease}
+ 
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--off2);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--soft)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a class="sidebar-logo" href="{% url 'home' %}">
+      <div class="logo-badge">
+        <img src="{% static 'assets/R.U logo.png' %}" alt="R.U logo" class="logo-img">
+      </div>
+  </div>
+ 
+  <nav class="nav-section">
+    <span class="nav-section-title">Main</span>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'students')"><span class="ni">🎓</span> My Students <span class="nav-badge">15</span></a>
+    <a class="nav-link" onclick="nav(this,'reviews')"><span class="ni">📋</span> Submissions <span class="nav-badge">8</span></a>
+    <a class="nav-link" onclick="nav(this,'feedback')"><span class="ni">💬</span> Feedback</a>
+    <a class="nav-link" onclick="nav(this,'schedule')"><span class="ni">📅</span> Schedule</a>
+    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📊</span> Reports</a>
+  </nav>
+  <nav class="nav-section">
+    <span class="nav-section-title">Account</span>
+    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">⚙️</span> Settings</a>
+    <a class="nav-link" href="{% url 'login' %}"><span class="ni">🏠</span> Back to Portal</a>
+  </nav>
+ 
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="user-av">MC</div>
+      <div>
+        <div class="user-mini-name">Dr. Michael Chen</div>
+        <div class="user-mini-role">Research Supervisor</div>
+      </div>
+      <!-- <button class="logout-btn" onclick="window.location.href='login.html'">⍈Log out </button> -->
+      <a href="{% url 'logout' %}" class="logout-btn">⍈ Logout</a>
+    </div>
+  </div>
+</aside>
+ 
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+  <header class="topbar">
+    <div class="tb-search">
+      🔍 <input type="text" placeholder="Search students, submissions…"/>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-notif" onclick="showToast('No new notifications')">🔔<span class="tb-notif-dot"></span></div>
+      <div class="tb-pill">
+        <div class="tb-av">MC</div>
+        <div><div class="tb-name">Dr. Michael Chen</div><div class="tb-role">Supervisor</div></div>
+      </div>
+      <button class="btn btn-green" onclick="openModal('feedback-modal')">💬 Give Feedback</button>
+    </div>
+  </header>
+ 
+  <main class="content">
+ 
+    <!-- ───────── DASHBOARD ───────── -->
+    <section class="section-view active" id="view-dashboard">
+      <div class="page-hdr">
+        <div class="page-hdr-left">
+          <h2>Supervisor Dashboard 🎓</h2>
+          <p>Manage and monitor your students' academic progress</p>
+        </div>
+        <div class="page-hdr-actions">
+          <button class="btn btn-outline" onclick="nav(document.querySelector('.nav-link:nth-child(3)'),'schedule')">📅 Schedule Meeting</button>
+          <button class="btn btn-navy" onclick="openModal('feedback-modal')">💬 Provide Feedback</button>
+        </div>
+      </div>
+ 
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card s-navy">
+          <div class="stat-head"><span class="stat-lbl">Total Students</span><div class="stat-ico ico-navy">👥</div></div>
+          <div class="stat-val">15</div>
+          <div class="stat-sub">3 PhD · 12 Masters</div>
+        </div>
+        <div class="stat-card s-red">
+          <div class="stat-head"><span class="stat-lbl">Pending Reviews</span><div class="stat-ico ico-red">📋</div></div>
+          <div class="stat-val">8</div>
+          <div class="stat-sub"><span class="dn">4 urgent — action needed</span></div>
+        </div>
+        <div class="stat-card s-green">
+          <div class="stat-head"><span class="stat-lbl">Avg. Progress</span><div class="stat-ico ico-green">📈</div></div>
+          <div class="stat-val">72%</div>
+          <div class="stat-sub"><span class="up">↑ 1.8%</span> from last month</div>
+        </div>
+        <div class="stat-card s-amber">
+          <div class="stat-head"><span class="stat-lbl">Reviewed This Month</span><div class="stat-ico ico-amber">✅</div></div>
+          <div class="stat-val">25</div>
+          <div class="stat-sub">submissions completed</div>
+        </div>
+      </div>
+ 
+      <!-- Charts row -->
+      <div class="grid-2" style="margin-bottom:1rem">
+        <!-- Progress distribution pie -->
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-hdr-left"><div class="card-title">Student Progress Distribution</div><div class="card-sub">Overview of all 15 students' current status</div></div>
+          </div>
+          <div class="pie-section">
+            <div class="pie-wrap">
+              <svg viewBox="0 0 140 140" style="width:140px;height:140px">
+                <!-- On Track 33% green -->
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#16A34A" stroke-width="22" stroke-dasharray="113 226" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+                <!-- In Progress 47% amber -->
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#FFC107" stroke-width="22" stroke-dasharray="160 226" stroke-dashoffset="-113" transform="rotate(-90 70 70)"/>
+                <!-- At Risk 13% orange -->
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#EA580C" stroke-width="22" stroke-dasharray="44 226" stroke-dashoffset="-273" transform="rotate(-90 70 70)"/>
+                <!-- Stalled 7% red -->
+                <circle cx="70" cy="70" r="54" fill="none" stroke="#DC2626" stroke-width="22" stroke-dasharray="24 226" stroke-dashoffset="-317" transform="rotate(-90 70 70)"/>
+                <text x="70" y="67" text-anchor="middle" font-size="18" font-weight="800" fill="#111827" font-family="Lora,serif">15</text>
+                <text x="70" y="82" text-anchor="middle" font-size="9" fill="#5B6F8A" font-family='Plus Jakarta Sans,sans-serif'>students</text>
+              </svg>
+            </div>
+            <div class="pie-legend">
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#16A34A"></div><span class="pie-leg-label">On Track</span><span class="pie-leg-val">5</span><span class="pie-leg-pct">33%</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#FFC107"></div><span class="pie-leg-label">In Progress</span><span class="pie-leg-val">7</span><span class="pie-leg-pct">47%</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#EA580C"></div><span class="pie-leg-label">At Risk</span><span class="pie-leg-val">2</span><span class="pie-leg-pct">13%</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#DC2626"></div><span class="pie-leg-label">Stalled</span><span class="pie-leg-val">1</span><span class="pie-leg-pct">7%</span></div>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Submission trends bar chart -->
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-hdr-left"><div class="card-title">Submission Trends</div><div class="card-sub">Monthly submissions from your students (2026)</div></div>
+          </div>
+          <div class="chart-area">
+            <div class="bar-wrap">
+              <div class="bar-col"><div class="bar-val">12</div><div class="bar-rect" style="height:48%;background:var(--navy)"></div><div class="bar-lbl">Jan</div></div>
+              <div class="bar-col"><div class="bar-val">18</div><div class="bar-rect" style="height:72%;background:var(--navy)"></div><div class="bar-lbl">Feb</div></div>
+              <div class="bar-col"><div class="bar-val">15</div><div class="bar-rect" style="height:60%;background:var(--navy)"></div><div class="bar-lbl">Mar</div></div>
+              <div class="bar-col"><div class="bar-val">22</div><div class="bar-rect" style="height:88%;background:var(--amber)"></div><div class="bar-lbl">Apr</div></div>
+              <div class="bar-col"><div class="bar-val">17</div><div class="bar-rect" style="height:68%;background:var(--navy)"></div><div class="bar-lbl">May</div></div>
+              <div class="bar-col"><div class="bar-val">25</div><div class="bar-rect" style="height:100%;background:var(--green)"></div><div class="bar-lbl">Jun</div></div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Submitted</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Highest month</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Above avg</div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Students table + Sidebar -->
+      <div class="grid-65-35" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-hdr-left"><div class="card-title">My Students</div><div class="card-sub">Monitor individual progress & status</div></div>
+            <button class="btn btn-outline btn-sm" onclick="nav(document.querySelectorAll('.nav-link')[1],'students')">View All →</button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Student</th><th>Programme</th><th>Progress</th><th>Status</th><th>Last Active</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><div><div class="td-bold">Sarah Johnson</div><div class="td-muted" style="font-size:.67rem">s.j@uni.edu</div></div></div></td><td class="td-muted">PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></td><td><span class="pill pill-green">On Track</span></td><td class="td-muted">Today</td><td><button class="btn btn-navy btn-xs" onclick="nav(document.querySelectorAll('.nav-link')[1],'students')">View</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">James Wilson</div><div class="td-muted" style="font-size:.67rem">j.w@uni.edu</div></div></div></td><td class="td-muted">MSc CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">On Track</span></td><td class="td-muted">Yesterday</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><div><div class="td-bold">Emily Brown</div><div class="td-muted" style="font-size:.67rem">e.b@uni.edu</div></div></div></td><td class="td-muted">PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Needs Attention</span></td><td class="td-muted">3 days ago</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">DL</div><div><div class="td-bold">David Lee</div><div class="td-muted" style="font-size:.67rem">d.l@uni.edu</div></div></div></td><td class="td-muted">MSc Data Sci</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">90%</span></div></td><td><span class="pill pill-amber">Excellent</span></td><td class="td-muted">Today</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">MG</div><div><div class="td-bold">Maria Garcia</div><div class="td-muted" style="font-size:.67rem">m.g@uni.edu</div></div></div></td><td class="td-muted">MSc CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><span class="pill pill-green">On Track</span></td><td class="td-muted">2 days ago</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <!-- Quick actions + notifs -->
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Quick Actions</div></div>
+            <div style="padding:.75rem">
+              <button class="btn btn-green" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="openModal('feedback-modal')">💬 Provide Feedback</button>
+              <button class="btn btn-navy" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="openModal('meeting-modal')">📅 Schedule Meeting</button>
+              <button class="btn btn-outline" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'reports')">📊 View Reports</button>
+              <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[2],'reviews')">📋 Review Submissions</button>
+            </div>
+          </div>
+ 
+          <div class="card" style="flex:1">
+            <div class="card-hdr"><div class="card-title">Recent Notifications</div></div>
+            <div class="feed-item"><div class="feed-ico" style="background:var(--blue-dim)">📄</div><div><div class="feed-text"><strong>Sarah Johnson</strong> submitted Chapter 4 draft for review</div><div class="feed-time">2h ago</div></div></div>
+            <div class="feed-item"><div class="feed-ico" style="background:var(--amber-dim)">📅</div><div><div class="feed-text"><strong>Meeting request</strong> from James Wilson — Week of 24 Mar</div><div class="feed-time">5h ago</div></div></div>
+            <div class="feed-item"><div class="feed-ico" style="background:var(--red-dim)">⚠️</div><div><div class="feed-text"><strong>Emily Brown</strong> needs urgent feedback on methodology revision</div><div class="feed-time">1d ago</div></div></div>
+            <div class="feed-item"><div class="feed-ico" style="background:var(--green-dim)">✅</div><div><div class="feed-text"><strong>David Lee</strong> completed milestone — Data Collection Phase</div><div class="feed-time">2d ago</div></div></div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Pending reviews table -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-hdr-left"><div class="card-title">Pending Reviews</div><div class="card-sub">Submissions awaiting your evaluation</div></div>
+          <span class="pill pill-red" style="font-size:.7rem;padding:.3rem .7rem">8 Pending</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Submitted</th><th>Days Waiting</th><th>Priority</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 4: Data Analysis & Results</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-16</td><td><span style="color:var(--red);font-weight:700">3 days</span></td><td><span class="pill pill-red"><span class="prio prio-high"></span>High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>Literature Review — Final Version</td><td class="td-muted">Final</td><td class="td-muted">2026-03-15</td><td><span style="color:var(--orange);font-weight:700">4 days</span></td><td><span class="pill pill-red"><span class="prio prio-high"></span>High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>Research Methodology Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-14</td><td><span style="color:var(--orange);font-weight:700">5 days</span></td><td><span class="pill pill-orange"><span class="prio prio-med"></span>Medium</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">David Lee</td><td>Thesis Proposal Revision v2</td><td class="td-muted">Revision</td><td class="td-muted">2026-03-13</td><td class="td-muted">6 days</td><td><span class="pill pill-blue"><span class="prio prio-low"></span>Low</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">Maria Garcia</td><td>Introduction Chapter Draft</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-12</td><td class="td-muted">7 days</td><td><span class="pill pill-blue"><span class="prio prio-low"></span>Low</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ───────── STUDENTS ───────── -->
+    <section class="section-view" id="view-students">
+      <div class="page-hdr">
+        <div class="page-hdr-left"><h2>My Students</h2><p>15 students currently under your supervision</p></div>
+        <div class="page-hdr-actions">
+          <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem">
+            <option>All Programmes</option><option>PhD CS</option><option>MSc CS</option><option>MSc Data Science</option>
+          </select>
+          <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem">
+            <option>All Status</option><option>On Track</option><option>At Risk</option><option>Stalled</option>
+          </select>
+        </div>
+      </div>
+ 
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Year</th><th>Progress</th><th>Avg Score</th><th>Last Submission</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="students-tbody">
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><div><div class="td-bold">Sarah Johnson</div><div class="td-muted" style="font-size:.67rem">s.j@uni.edu · ID: PG/2024/001</div></div></div></td><td>PhD CS</td><td>Year 2</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></td><td style="color:var(--green);font-weight:700">92%</td><td class="td-muted">2026-03-15</td><td><span class="pill pill-green">On Track</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">James Wilson</div><div class="td-muted" style="font-size:.67rem">j.w@uni.edu · ID: PG/2024/007</div></div></div></td><td>MSc CS</td><td>Year 1</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td style="color:var(--green);font-weight:700">88%</td><td class="td-muted">2026-03-10</td><td><span class="pill pill-green">On Track</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><div><div class="td-bold">Emily Brown</div><div class="td-muted" style="font-size:.67rem">e.b@uni.edu · ID: PG/2023/019</div></div></div></td><td>PhD CS</td><td>Year 3</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td style="color:var(--orange);font-weight:700">67%</td><td class="td-muted">2026-03-08</td><td><span class="pill pill-red">Needs Attention</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">DL</div><div><div class="td-bold">David Lee</div><div class="td-muted" style="font-size:.67rem">d.l@uni.edu · ID: PG/2024/012</div></div></div></td><td>MSc Data Sci</td><td>Year 1</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">90%</span></div></td><td style="color:var(--green);font-weight:700">95%</td><td class="td-muted">2026-03-12</td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">MG</div><div><div class="td-bold">Maria Garcia</div><div class="td-muted" style="font-size:.67rem">m.g@uni.edu · ID: PG/2024/021</div></div></div></td><td>MSc CS</td><td>Year 1</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td style="color:var(--green);font-weight:700">84%</td><td class="td-muted">2026-03-11</td><td><span class="pill pill-green">On Track</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ───────── SUBMISSIONS/REVIEWS ───────── -->
+    <section class="section-view" id="view-reviews">
+      <div class="page-hdr">
+        <div class="page-hdr-left"><h2>Submissions & Reviews</h2><p>All student submissions across your supervised cohort</p></div>
+      </div>
+ 
+      <div class="card" style="margin-bottom:1rem">
+        <div class="tabs" id="review-tabs">
+          <button class="tab-btn active" onclick="switchTab('review-tabs','rt-pending',this)">Pending (8)</button>
+          <button class="tab-btn" onclick="switchTab('review-tabs','rt-reviewed',this)">Reviewed (25)</button>
+          <button class="tab-btn" onclick="switchTab('review-tabs','rt-all',this)">All Submissions</button>
+        </div>
+        <div id="rt-pending" class="tab-panel active tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Programme</th><th>Submitted</th><th>Days Waiting</th><th>Priority</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 4: Data Analysis</td><td class="td-muted">Draft</td><td class="td-muted">PhD CS</td><td class="td-muted">16 Mar 2026</td><td style="color:var(--red);font-weight:700">3 days</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">MSc CS</td><td class="td-muted">15 Mar 2026</td><td style="color:var(--orange);font-weight:700">4 days</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>Research Methodology</td><td class="td-muted">Draft</td><td class="td-muted">PhD CS</td><td class="td-muted">14 Mar 2026</td><td style="color:var(--orange);font-weight:700">5 days</td><td><span class="pill pill-orange">Medium</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              <tr><td class="td-bold">David Lee</td><td>Proposal Revision v2</td><td class="td-muted">Revision</td><td class="td-muted">MSc Data Sci</td><td class="td-muted">13 Mar 2026</td><td class="td-muted">6 days</td><td><span class="pill pill-blue">Low</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="rt-reviewed" class="tab-panel tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Score Given</th><th>Decision</th><th>Reviewed On</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 3: Methodology</td><td class="td-muted">Draft</td><td style="color:var(--green);font-weight:700">92%</td><td><span class="pill pill-green">Approved</span></td><td class="td-muted">2026-03-10</td></tr>
+              <tr><td class="td-bold">David Lee</td><td>Research Proposal v1</td><td class="td-muted">Proposal</td><td style="color:var(--green);font-weight:700">88%</td><td><span class="pill pill-green">Approved</span></td><td class="td-muted">2026-03-08</td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>Introduction Chapter</td><td class="td-muted">Draft</td><td style="color:var(--orange);font-weight:700">74%</td><td><span class="pill pill-amber">Minor Revision</span></td><td class="td-muted">2026-03-05</td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>Literature Survey</td><td class="td-muted">Draft</td><td style="color:var(--red);font-weight:700">58%</td><td><span class="pill pill-red">Major Revision</span></td><td class="td-muted">2026-03-01</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="rt-all" class="tab-panel tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Status</th><th>Score</th><th>Submitted</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 4: Data Analysis</td><td class="td-muted">Draft</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-16</td></tr>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 3: Methodology</td><td class="td-muted">Draft</td><td><span class="pill pill-green">Approved</span></td><td style="color:var(--green);font-weight:700">92%</td><td class="td-muted">2026-03-05</td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>Literature Review Final</td><td class="td-muted">Final</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-15</td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>Research Methodology</td><td class="td-muted">Draft</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-14</td></tr>
+              <tr><td class="td-bold">David Lee</td><td>Proposal Revision v2</td><td class="td-muted">Revision</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-13</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ───────── FEEDBACK ───────── -->
+    <section class="section-view" id="view-feedback">
+      <div class="page-hdr">
+        <div class="page-hdr-left"><h2>Feedback History</h2><p>All feedback you have provided to students</p></div>
+        <button class="btn btn-navy" onclick="openModal('feedback-modal')">+ New Feedback</button>
+      </div>
+ 
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Feedback Sent</div><div class="card-sub">Sorted by most recent</div></div>
+          <div>
+            <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">Sarah Johnson — Chapter 3 Review</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent 2 hours ago · Draft Submission</div></div>
+                <span class="pill pill-green">Delivered</span>
+              </div>
+              <p style="font-size:.8rem;color:var(--text);line-height:1.65">Great work on the methodology chapter. Your justification for using grounded theory is particularly well-argued. Please expand on the sampling strategy in section 3.2 and add more detail on data validation procedures. Overall this is strong — approve with minor revisions.</p>
+              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: 92%</span><span class="pill pill-green">Approved</span></div>
+            </div>
+            <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">Emily Brown — Literature Survey</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent 5 days ago · Draft Submission</div></div>
+                <span class="pill pill-green">Delivered</span>
+              </div>
+              <p style="font-size:.8rem;color:var(--text);line-height:1.65">The literature coverage is broad but lacks depth in the AI-ethics section which is central to your thesis. You need to cite at least 15 more recent papers (2022-2026) and critically compare the theoretical frameworks. Please revise and resubmit.</p>
+              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: 58%</span><span class="pill pill-red">Major Revision</span></div>
+            </div>
+            <div style="padding:1.1rem 1.25rem">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">David Lee — Research Proposal v1</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent 8 days ago · Proposal</div></div>
+                <span class="pill pill-green">Delivered</span>
+              </div>
+              <p style="font-size:.8rem;color:var(--text);line-height:1.65">Excellent proposal — the research questions are clearly defined and the methodology is appropriate. The timeline looks realistic. Approved to proceed. Please begin the literature review and have a draft ready by end of April.</p>
+              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: 88%</span><span class="pill pill-green">Approved</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="align-self:start">
+          <div class="card-hdr"><div class="card-title">Feedback Stats</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.85rem">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Total feedback given</span><span style="font-weight:800;font-size:1.1rem;color:var(--navy)">47</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Avg response time</span><span style="font-weight:700;font-size:.9rem;color:var(--text)">2.3 days</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Approval rate</span><span style="font-weight:700;font-size:.9rem;color:var(--green)">68%</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Avg grade awarded</span><span style="font-weight:700;font-size:.9rem;color:var(--navy)">79.4%</span></div>
+            <hr style="border:none;border-top:1px solid var(--border)"/>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em">Decisions Breakdown</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Approved</span><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--green)"></div></div><span class="prog-val">68%</span></div>
+              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Minor Revision</span><div class="prog-bar"><div class="prog-fill" style="width:19%;background:var(--amber)"></div></div><span class="prog-val">19%</span></div>
+              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Major Revision</span><div class="prog-bar"><div class="prog-fill" style="width:13%;background:var(--red)"></div></div><span class="prog-val">13%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ───────── SCHEDULE ───────── -->
+    <section class="section-view" id="view-schedule">
+      <div class="page-hdr">
+        <div class="page-hdr-left"><h2>Schedule & Meetings</h2><p>Week of 17–21 March 2026</p></div>
+        <button class="btn btn-navy" onclick="openModal('meeting-modal')">+ Schedule Meeting</button>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="cal-week">
+            <div class="cal-day">
+              <div class="cal-day-name">Mon</div><div class="cal-day-num">17</div>
+              <div class="cal-event">10:00 Sarah Johnson — Progress review</div>
+              <div class="cal-event ev-amber">14:00 Department meeting</div>
+            </div>
+            <div class="cal-day">
+              <div class="cal-day-name">Tue</div><div class="cal-day-num">18</div>
+              <div class="cal-event">09:00 James Wilson — Lit review check</div>
+              <div class="cal-event ev-green">15:30 Emily Brown — Urgent catch-up</div>
+            </div>
+            <div class="cal-day">
+              <div class="cal-day-name">Wed</div><div class="cal-day-num" style="color:var(--amber)">19 ●</div>
+              <div class="cal-event ev-amber">11:00 Faculty seminar</div>
+            </div>
+            <div class="cal-day">
+              <div class="cal-day-name">Thu</div><div class="cal-day-num">20</div>
+              <div class="cal-event">09:30 David Lee — Proposal sign-off</div>
+              <div class="cal-event">13:00 Maria Garcia — Monthly check</div>
+            </div>
+            <div class="cal-day">
+              <div class="cal-day-name">Fri</div><div class="cal-day-num">21</div>
+              <div class="cal-event ev-amber">10:00 Supervisor forum</div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="card" style="margin-top:1rem">
+        <div class="card-hdr"><div class="card-title">Upcoming Meetings</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Date & Time</th><th>Topic</th><th>Location</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td class="td-muted">Mon 17 Mar · 10:00</td><td>Q1 Progress Review</td><td class="td-muted">Room 214B</td><td><span class="pill pill-green">Confirmed</span></td><td><button class="btn btn-outline btn-xs">Reschedule</button></td></tr>
+              <tr><td class="td-bold">James Wilson</td><td class="td-muted">Tue 18 Mar · 09:00</td><td>Literature Review Check</td><td class="td-muted">Zoom</td><td><span class="pill pill-green">Confirmed</span></td><td><button class="btn btn-outline btn-xs">Reschedule</button></td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td class="td-muted">Tue 18 Mar · 15:30</td><td>Urgent Methodology Discussion</td><td class="td-muted">Office 118</td><td><span class="pill pill-amber">Pending</span></td><td><button class="btn btn-outline btn-xs">Confirm</button></td></tr>
+              <tr><td class="td-bold">David Lee</td><td class="td-muted">Thu 20 Mar · 09:30</td><td>Proposal Sign-Off</td><td class="td-muted">Room 214B</td><td><span class="pill pill-green">Confirmed</span></td><td><button class="btn btn-outline btn-xs">Reschedule</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ───────── REPORTS ───────── -->
+    <section class="section-view" id="view-reports">
+      <div class="page-hdr">
+        <div class="page-hdr-left"><h2>Reports & Analytics</h2><p>Performance summaries and cohort analysis</p></div>
+        <button class="btn btn-navy" onclick="showToast('Report generated and downloaded')">⬇ Export Report</button>
+      </div>
+ 
+      <div class="stat-grid" style="margin-bottom:1rem">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Cohort Avg Progress</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">72%</div><div class="stat-sub"><span class="up">↑ 4.2%</span> this semester</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">On-Time Submissions</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">83%</div><div class="stat-sub">of all deadlines met</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Grade Awarded</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">79%</div><div class="stat-sub">across 47 submissions</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Students At Risk</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">3</div><div class="stat-sub">require immediate support</div></div>
+      </div>
+ 
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Student Performance Summary</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Submissions</th><th>Avg Grade</th><th>Milestone Progress</th><th>Risk Level</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>PhD CS</td><td>8 submitted</td><td style="color:var(--green);font-weight:700">92%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val">85%</span></div></td><td><span class="pill pill-green">Low</span></td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>MSc CS</td><td>5 submitted</td><td style="color:var(--green);font-weight:700">88%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">Low</span></td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>PhD CS</td><td>6 submitted</td><td style="color:var(--orange);font-weight:700">67%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val">45%</span></div></td><td><span class="pill pill-red">High</span></td></tr>
+              <tr><td class="td-bold">David Lee</td><td>MSc Data Sci</td><td>7 submitted</td><td style="color:var(--green);font-weight:700">95%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val">90%</span></div></td><td><span class="pill pill-green">Low</span></td></tr>
+              <tr><td class="td-bold">Maria Garcia</td><td>MSc CS</td><td>4 submitted</td><td style="color:var(--green);font-weight:700">84%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><span class="pill pill-blue">Medium</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ───────── SETTINGS ───────── -->
+    <section class="section-view" id="view-settings">
+      <div class="page-hdr"><div class="page-hdr-left"><h2>Account Settings</h2><p>Manage your profile and preferences</p></div></div>
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Profile Information</div></div>
+          <div class="card-body">
+            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="Dr. Michael Chen"/></div><div class="form-group"><label class="form-label">Email Address</label><input class="form-control" type="email" value="m.chen@uni.edu"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="SUP/2018/004" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="Computer Science"/></div></div>
+            <div class="form-group"><label class="form-label">Office Location</label><input class="form-control" value="Room 214B, Engineering Block"/></div>
+            <div class="form-group"><label class="form-label">Research Interests</label><textarea class="form-control">Machine Learning, Natural Language Processing, AI Ethics, Computational Linguistics</textarea></div>
+            <button class="btn btn-navy" onclick="showToast('Profile updated successfully')">Save Changes</button>
+          </div>
+        </div>
+        <div class="card" style="align-self:start">
+          <div class="card-hdr"><div class="card-title">Notification Preferences</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:.65rem">
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>New submission alerts</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Overdue review warnings</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Student milestone updates</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Weekly digest email</span><input type="checkbox"/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Department announcements</span><input type="checkbox" checked/></label>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<!-- ═══════════ MODALS ═══════════ -->
+<!-- Feedback modal -->
+<div class="modal-overlay" id="feedback-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Provide Feedback</div><button class="modal-close" onclick="closeModal('feedback-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Student</label><select class="form-control"><option>Sarah Johnson — PhD CS</option><option>James Wilson — MSc CS</option><option>Emily Brown — PhD CS</option><option>David Lee — MSc Data Sci</option></select></div>
+        <div class="form-group"><label class="form-label">Submission</label><select class="form-control"><option>Chapter 4: Data Analysis</option><option>Literature Review Final</option><option>Research Methodology</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Grade (%)</label><input class="form-control" type="number" min="0" max="100" placeholder="e.g. 85"/></div>
+        <div class="form-group"><label class="form-label">Decision</label><select class="form-control"><option>Approved</option><option>Minor Revision Required</option><option>Major Revision Required</option><option>Rejected</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Detailed Feedback</label><textarea class="form-control" rows="5" placeholder="Provide your detailed feedback and comments here…"></textarea></div>
+      <div class="form-group"><label class="form-label">Private Notes (not visible to student)</label><textarea class="form-control" rows="2" placeholder="Internal notes…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('feedback-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('feedback-modal');showToast('Feedback submitted successfully')">Submit Feedback</button></div>
+  </div>
+</div>
+ 
+<!-- Review modal -->
+<div class="modal-overlay" id="review-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hdr"><div class="modal-title">Review: Chapter 4 — Data Analysis (Sarah Johnson)</div><button class="modal-close" onclick="closeModal('review-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:var(--off);border:1px solid var(--border);padding:1rem;margin-bottom:1rem">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem">Submission Details</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem">
+          <div><span style="color:var(--muted)">Student:</span> <strong>Sarah Johnson</strong></div>
+          <div><span style="color:var(--muted)">Type:</span> <strong>Draft — Chapter 4</strong></div>
+          <div><span style="color:var(--muted)">Submitted:</span> <strong>16 Mar 2026</strong></div>
+          <div><span style="color:var(--muted)">Word Count:</span> <strong>8,432 words</strong></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Grade (%)</label><input class="form-control" type="number" placeholder="0–100"/></div>
+        <div class="form-group"><label class="form-label">Decision</label><select class="form-control"><option>Approved</option><option>Minor Revision</option><option>Major Revision</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Review Comments</label><textarea class="form-control" rows="5" placeholder="Write your detailed review here…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('review-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('review-modal');showToast('Review submitted')">Submit Review</button></div>
+  </div>
+</div>
+ 
+<!-- Meeting modal -->
+<div class="modal-overlay" id="meeting-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Schedule Meeting</div><button class="modal-close" onclick="closeModal('meeting-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Student</label><select class="form-control"><option>Sarah Johnson</option><option>James Wilson</option><option>Emily Brown</option><option>David Lee</option><option>Maria Garcia</option></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Date</label><input class="form-control" type="date"/></div>
+        <div class="form-group"><label class="form-label">Time</label><input class="form-control" type="time"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Meeting Type</label><select class="form-control"><option>In-Person</option><option>Zoom</option><option>Teams</option><option>Phone Call</option></select></div>
+      <div class="form-group"><label class="form-label">Agenda / Topic</label><textarea class="form-control" rows="3" placeholder="What will you discuss?"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('meeting-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('meeting-modal');showToast('Meeting scheduled and student notified')">Schedule Meeting</button></div>
+  </div>
+</div>
+ 
+<!-- Student profile modal -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-hdr"><div class="modal-title">Student Profile — Sarah Johnson</div><button class="modal-close" onclick="closeModal('student-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="profile-card" style="padding:0;margin-bottom:1rem">
+        <div class="profile-av">SJ</div>
+        <div>
+          <div class="profile-name">Sarah Johnson</div>
+          <div class="profile-meta">PhD Computer Science · Year 2 · ID: PG/2024/001</div>
+          <div class="profile-meta">s.j@university.edu · +254 700 123 456</div>
+          <div class="profile-tags"><span class="pill pill-green">On Track</span><span class="pill pill-navy">PhD</span></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div style="background:var(--off);padding:.9rem;text-align:center"><div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--navy)">85%</div><div style="font-size:.7rem;color:var(--muted)">Overall Progress</div></div>
+        <div style="background:var(--off);padding:.9rem;text-align:center"><div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--green)">92%</div><div style="font-size:.7rem;color:var(--muted)">Avg Score</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem">Recent Submissions</div>
+      <div style="border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.8rem"><span>Chapter 3: Methodology</span><span class="pill pill-green">Approved · 92%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.8rem"><span>Literature Review Final</span><span class="pill pill-green">Approved · 88%</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;font-size:.8rem"><span>Chapter 4: Data Analysis</span><span class="pill pill-amber">Under Review</span></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline btn-sm" onclick="closeModal('student-modal')">Close</button><button class="btn btn-navy btn-sm" onclick="closeModal('student-modal');openModal('feedback-modal')">Give Feedback</button></div>
+  </div>
+</div>
+ 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+ 
+<script>
+// NAV
+function nav(el,id){
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const view=document.getElementById('view-'+id);
+  if(view) view.classList.add('active');
+  document.querySelector('.topbar-title') && (document.querySelector('.topbar-title').textContent='');
+}
+// TABS
+function switchTab(groupId,panelId,btn){
+  const group=document.getElementById(groupId);
+  group.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  group.parentElement.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+// MODALS
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+// Handle nav clicks properly
+document.querySelectorAll('.nav-link[onclick]').forEach(link=>{
+  link.addEventListener('click',function(){
+    document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+function showPage(pageId) {
+    // 1. Hide all elements with the class 'page'
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+
+    // 2. Show the specific page that was clicked
+    document.getElementById(pageId).classList.add('active');
+}
+</script>
+</body>
+</html>

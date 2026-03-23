@@ -57,7 +57,7 @@ def login_view(request):
             if user.role == 'student':
                 return redirect('/students/dashboard/')
             else:
-                return redirect('/staff/dashboard/')
+                return redirect('/supervisor/dashboard/')
         else:
             messages.error(request, "Invalid Admission Number/Staff ID or Password")
 

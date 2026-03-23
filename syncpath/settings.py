@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'assessments',
     'erp_integration',
     'pipeline', 
-    'notifications'    
+    'notifications',
+    'core',
+    'supervisor',    
 ]
 
 MIDDLEWARE = [
@@ -58,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'syncpath.urls'
@@ -126,6 +129,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 from datetime import timedelta
 
 REST_FRAMEWORK = {
@@ -143,3 +149,4 @@ AUTH_USER_MODEL = 'users.User'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
