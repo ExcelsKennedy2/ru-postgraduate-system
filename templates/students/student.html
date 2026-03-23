@@ -2179,8 +2179,8 @@ a.link-btn:hover{
       <div class="section-sub">Progress reports and performance summaries</div>
     </div>
     <!-- Optional: single button for overall PDF generation -->
-    <button class="btn btn-primary btn-sm" onclick="alert('Generating PDF…')">📄 Download PDF</button>
-     <!-- <a class="btn btn-primary btn-sm" href="{% url 'download_all_submissions' %}">📄 Download PDF</a> -->
+    <!-- <button class="btn btn-primary btn-sm" onclick="alert('Generating PDF…')">📄 Download PDF</button> -->
+     <a class="btn btn-primary btn-sm" href="{% url 'download_all_submissions' %}">📄 Download PDF</a>
     
   </div>
 
@@ -2243,8 +2243,7 @@ a.link-btn:hover{
             </td>
             <td>
               <!-- Download PDF link -->
-              <!-- <a class="link-btn" href="{% url 'download_submission' sub.id %}">Download</a> -->
-              <button class="link-btn" onclick="alert('Generating PDF…')">📄 Download PDF</button>
+              <a class="link-btn" href="{% url 'download_submission' sub.id %}">Download</a>
             </td>
           </tr>
           {% empty %}

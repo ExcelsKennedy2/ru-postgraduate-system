@@ -624,68 +624,68 @@ def submissions_api(request):
 
 
 
-# import io
-# from django.http import HttpResponse
-# from django.template.loader import render_to_string
-# from django.contrib.auth.decorators import login_required
-# from django.shortcuts import get_object_or_404
-# from xhtml2pdf import pisa
+import io
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from xhtml2pdf import pisa
 
-# from students.models import Student
-# from assessments.models import Submission, Feedback
-# from pipeline.models import Milestone, StudentProgress
+from students.models import Student
+from assessments.models import Submission, Feedback
+from pipeline.models import Milestone, StudentProgress
 
-# @login_required
-# def download_submission(request, submission_id):
-#     # Get the student and submission
-#     student = get_object_or_404(Student, user=request.user)
-#     submission = get_object_or_404(Submission, id=submission_id, student=student)
-#     feedbacks = Feedback.objects.filter(submission=submission)
+@login_required
+def download_submission(request, submission_id):
+    # Get the student and submission
+    student = get_object_or_404(Student, user=request.user)
+    submission = get_object_or_404(Submission, id=submission_id, student=student)
+    feedbacks = Feedback.objects.filter(submission=submission)
 
-#     # Render HTML template
-#     html_string = render_to_string("students/submission_pdf.html", {
-#         "student": student,
-#         "submission": submission,
-#         "feedbacks": feedbacks,
-#     })
+    # Render HTML template
+    html_string = render_to_string("students/submission_pdf.html", {
+        "student": student,
+        "submission": submission,
+        "feedbacks": feedbacks,
+    })
 
-#     # Create a PDF file in memory
-#     pdf_file = io.BytesIO()
-#     pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
+    # Create a PDF file in memory
+    pdf_file = io.BytesIO()
+    pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
 
-#     if pisa_status.err:
-#         return HttpResponse("We had some errors generating the PDF.", content_type="text/plain")
+    if pisa_status.err:
+        return HttpResponse("We had some errors generating the PDF.", content_type="text/plain")
 
-#     pdf_file.seek(0)
-#     response = HttpResponse(pdf_file, content_type='application/pdf')
-#     response['Content-Disposition'] = f'attachment; filename="{submission.title}.pdf"'
-#     return response
+    pdf_file.seek(0)
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{submission.title}.pdf"'
+    return response
 
-# @login_required
-# def download_all_submissions(request):
-#     student = get_object_or_404(Student, user=request.user)
-#     submissions = Submission.objects.filter(student=student).order_by('-submitted_at')
+@login_required
+def download_all_submissions(request):
+    student = get_object_or_404(Student, user=request.user)
+    submissions = Submission.objects.filter(student=student).order_by('-submitted_at')
     
-#     all_feedbacks = Feedback.objects.filter(submission__in=submissions).select_related('submission')
+    all_feedbacks = Feedback.objects.filter(submission__in=submissions).select_related('submission')
 
-#     # Render all submissions in a single template
-#     html_string = render_to_string("students/all_submissions_pdf.html", {
-#         "student": student,
-#         "submissions": submissions,
-#         "feedbacks": all_feedbacks,
-#     })
+    # Render all submissions in a single template
+    html_string = render_to_string("students/all_submissions_pdf.html", {
+        "student": student,
+        "submissions": submissions,
+        "feedbacks": all_feedbacks,
+    })
 
-#     pdf_file = io.BytesIO()
-#     pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
+    pdf_file = io.BytesIO()
+    pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
 
-#     if pisa_status.err:
-#         return HttpResponse("Error generating PDF.", content_type="text/plain")
+    if pisa_status.err:
+        return HttpResponse("Error generating PDF.", content_type="text/plain")
 
-#     pdf_file.seek(0)
-#     response = HttpResponse(pdf_file, content_type='application/pdf')
-#     # response['Content-Disposition'] = f'attachment; filename="{student.full_name}_all_reports.pdf"'
-#     response['Content-Disposition'] = f'attachment; filename="{student.user.get_full_name() or student.user.username}_all_reports.pdf"'
-#     return response
+    pdf_file.seek(0)
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    # response['Content-Disposition'] = f'attachment; filename="{student.full_name}_all_reports.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="{student.user.get_full_name() or student.user.username}_all_reports.pdf"'
+    return response
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
