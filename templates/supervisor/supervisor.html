@@ -1259,20 +1259,29 @@ select.form-control{appearance:none;cursor:pointer}
 <!-- Feedback modal -->
 <div class="modal-overlay" id="feedback-modal">
   <div class="modal">
-    <div class="modal-hdr"><div class="modal-title">Provide Feedback</div><button class="modal-close" onclick="closeModal('feedback-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Student</label><select class="form-control"><option>Sarah Johnson — PhD CS</option><option>James Wilson — MSc CS</option><option>Emily Brown — PhD CS</option><option>David Lee — MSc Data Sci</option></select></div>
-        <div class="form-group"><label class="form-label">Submission</label><select class="form-control"><option>Chapter 4: Data Analysis</option><option>Literature Review Final</option><option>Research Methodology</option></select></div>
+    <form method="POST" action="{% url 'give_feedback' %}">
+      {% csrf_token %}
+      <div class="modal-hdr"><div class="modal-title">Provide Feedback</div><button class="modal-close" type="button" onclick="closeModal('feedback-modal')">✕</button></div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Submission</label>
+            {{ feedback_form.submission }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Grade (%)</label>
+            {{ feedback_form.score }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Detailed Feedback</label>
+          {{ feedback_form.comment }}
+        </div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Grade (%)</label><input class="form-control" type="number" min="0" max="100" placeholder="e.g. 85"/></div>
-        <div class="form-group"><label class="form-label">Decision</label><select class="form-control"><option>Approved</option><option>Minor Revision Required</option><option>Major Revision Required</option><option>Rejected</option></select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Detailed Feedback</label><textarea class="form-control" rows="5" placeholder="Provide your detailed feedback and comments here…"></textarea></div>
-      <div class="form-group"><label class="form-label">Private Notes (not visible to student)</label><textarea class="form-control" rows="2" placeholder="Internal notes…"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('feedback-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('feedback-modal');showToast('Feedback submitted successfully')">Submit Feedback</button></div>
+      <div class="modal-footer"><button class="btn btn-outline" type="button" onclick="closeModal('feedback-modal')">Cancel</button><button class="btn btn-navy" type="submit">Submit Feedback</button></div>
+    </form>
   </div>
 </div>
  

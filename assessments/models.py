@@ -16,6 +16,7 @@ class Submission(models.Model):
     file = models.FileField(upload_to='submissions/')
     submitted_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    notes = models.TextField(blank=True, null=True)
     # score = models.IntegerField(null=True, blank=True)
     stage = models.CharField(max_length=50, choices=PipelineStage.choices, default="concept_note")
 

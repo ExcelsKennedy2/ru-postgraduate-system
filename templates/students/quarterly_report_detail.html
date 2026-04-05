@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quarterly Report Detail — R.U</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0A194E;
+  --navy2:#0D2260;
+  --amber:#FFC107;
+  --amber2:#FFD54F;
+  --amber-dark:#E6AD00;
+  --white:#FFFFFF;
+  --off:#F7F8FC;
+  --off2:#EEF1F8;
+  --text:#1A2340;
+  --muted:#5A6A8A;
+  --soft:#9AAAC0;
+  --border:#DDE3F0;
+  --green:#1DA462;
+  --green-dim:rgba(29,164,98,0.1);
+  --red:#E53935;
+  --red-dim:rgba(229,57,53,0.1);
+  --blue:#1E7EDE;
+  --blue-dim:rgba(30,126,222,0.1);
+  --orange:#F57C00;
+  --orange-dim:rgba(245,124,0,0.1);
+  --sidebar-w:230px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--off);
+  color:var(--text);
+  min-height:100vh;
+}
+.container{
+  max-width:800px;
+  margin:0 auto;
+  padding:2rem;
+}
+h1{
+  color:var(--navy);
+  margin-bottom:2rem;
+}
+.report-section{
+  background:var(--white);
+  padding:1.5rem;
+  border-radius:0.5rem;
+  margin-bottom:1.5rem;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+.report-section h2{
+  color:var(--navy);
+  margin-bottom:1rem;
+  font-size:1.25rem;
+}
+.report-section p{
+  line-height:1.6;
+  margin-bottom:1rem;
+}
+.status{
+  padding:0.25rem 0.5rem;
+  border-radius:0.25rem;
+  font-size:0.875rem;
+  font-weight:500;
+  display:inline-block;
+  margin-bottom:1rem;
+}
+.status.draft{
+  background:var(--orange-dim);
+  color:var(--orange);
+}
+.status.submitted{
+  background:var(--blue-dim);
+  color:var(--blue);
+}
+.status.reviewed{
+  background:var(--green-dim);
+  color:var(--green);
+}
+.btn{
+  background:var(--navy);
+  color:var(--white);
+  padding:0.75rem 1.5rem;
+  border:none;
+  border-radius:0.5rem;
+  cursor:pointer;
+  font-size:1rem;
+  text-decoration:none;
+  display:inline-block;
+  margin-right:1rem;
+}
+.btn:hover{
+  background:var(--navy2);
+}
+.btn-secondary{
+  background:var(--soft);
+  color:var(--white);
+}
+.btn-secondary:hover{
+  background:var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Quarterly Report: {{ report.get_quarter_display }} {{ report.year }}</h1>
+    <p><strong>Status:</strong> <span class="status {{ report.status }}">{{ report.get_status_display }}</span></p>
+    {% if report.is_late %}
+    <p><strong style="color:red;">Late Submission</strong></p>
+    {% endif %}
+    <p><strong>Submitted At:</strong> {{ report.submitted_at|date:"F d, Y" }}</p>
+    
+    <div class="report-section">
+        <h2>Work Done</h2>
+        <p>{{ report.work_done|linebreaks }}</p>
+    </div>
+    
+    <div class="report-section">
+        <h2>Progress</h2>
+        <p>{{ report.progress|linebreaks }}</p>
+    </div>
+    
+    {% if report.challenges %}
+    <div class="report-section">
+        <h2>Challenges</h2>
+        <p>{{ report.challenges|linebreaks }}</p>
+    </div>
+    {% endif %}
+    
+    <div class="report-section">
+        <h2>Next Plan</h2>
+        <p>{{ report.next_plan|linebreaks }}</p>
+    </div>
+    
+    {% if report.supervisor_feedback %}
+    <div class="report-section">
+        <h2>Supervisor Feedback</h2>
+        <p>{{ report.supervisor_feedback|linebreaks }}</p>
+    </div>
+    {% endif %}
+    
+    <div>
+        <a href="{% url 'list_quarterly_reports' %}" class="btn btn-secondary">Back to Reports</a>
+        <a href="{% url 'student_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+        {% if report.status == 'draft' %}
+        <a href="{% url 'update_quarterly_report' report.pk %}" class="btn">Edit</a>
+        <a href="{% url 'submit_quarterly_report' report.pk %}" class="btn" onclick="return confirm('Are you sure you want to submit this report?')">Submit Report</a>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

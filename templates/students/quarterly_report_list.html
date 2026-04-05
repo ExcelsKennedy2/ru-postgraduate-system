@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quarterly Reports — R.U</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0A194E;
+  --navy2:#0D2260;
+  --amber:#FFC107;
+  --amber2:#FFD54F;
+  --amber-dark:#E6AD00;
+  --white:#FFFFFF;
+  --off:#F7F8FC;
+  --off2:#EEF1F8;
+  --text:#1A2340;
+  --muted:#5A6A8A;
+  --soft:#9AAAC0;
+  --border:#DDE3F0;
+  --green:#1DA462;
+  --green-dim:rgba(29,164,98,0.1);
+  --red:#E53935;
+  --red-dim:rgba(229,57,53,0.1);
+  --blue:#1E7EDE;
+  --blue-dim:rgba(30,126,222,0.1);
+  --orange:#F57C00;
+  --orange-dim:rgba(245,124,0,0.1);
+  --sidebar-w:230px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--off);
+  color:var(--text);
+  min-height:100vh;
+}
+.container{
+  max-width:1000px;
+  margin:0 auto;
+  padding:2rem;
+}
+h1{
+  color:var(--navy);
+  margin-bottom:2rem;
+}
+.btn{
+  background:var(--navy);
+  color:var(--white);
+  padding:0.75rem 1.5rem;
+  border:none;
+  border-radius:0.5rem;
+  cursor:pointer;
+  font-size:1rem;
+  text-decoration:none;
+  display:inline-block;
+  margin-bottom:1rem;
+}
+.btn:hover{
+  background:var(--navy2);
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--white);
+  border-radius:0.5rem;
+  overflow:hidden;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+.table th, .table td{
+  padding:1rem;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.table th{
+  background:var(--navy);
+  color:var(--white);
+  font-weight:600;
+}
+.table tr:hover{
+  background:var(--off2);
+}
+.status{
+  padding:0.25rem 0.5rem;
+  border-radius:0.25rem;
+  font-size:0.875rem;
+  font-weight:500;
+}
+.status.draft{
+  background:var(--orange-dim);
+  color:var(--orange);
+}
+.status.submitted{
+  background:var(--blue-dim);
+  color:var(--blue);
+}
+.status.reviewed{
+  background:var(--green-dim);
+  color:var(--green);
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Quarterly Reports</h1>
+    <a href="{% url 'student_dashboard' %}" class="btn btn-secondary" style="margin-bottom:1rem;">Back to Dashboard</a>
+    <a href="{% url 'create_quarterly_report' %}" class="btn">Create New Report</a>
+    {% if reports %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Quarter</th>
+                <th>Status</th>
+                <th>Submitted At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td>{{ report.get_quarter_display }} {{ report.year }}{% if report.is_late %} <span style="color:red;">(Late)</span>{% endif %}</td>
+                <td><span class="status {{ report.status }}">{{ report.get_status_display }}</span></td>
+                <td>{{ report.submitted_at|date:"M d, Y" }}</td>
+                <td>
+                    <a href="{% url 'detail_quarterly_report' report.pk %}">View</a>
+                    {% if report.status == 'draft' %}
+                    | <a href="{% url 'update_quarterly_report' report.pk %}">Edit</a>
+                    | <a href="{% url 'submit_quarterly_report' report.pk %}" onclick="return confirm('Are you sure you want to submit this report?')">Submit</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No quarterly reports yet. <a href="{% url 'create_quarterly_report' %}">Create your first report</a>.</p>
+    {% endif %}
+</div>
+</body>
+</html>

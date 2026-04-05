@@ -1,350 +1,3 @@
-# import json
-# from urllib import request
-
-# from django.shortcuts import render
-# from django.contrib.auth.decorators import login_required
-# from erp_integration.services import get_finance_clearance
-# from students.models import Student
-# from assessments.models import Submission, Feedback
-# from pipeline.models import Milestone
-# from notifications.models import Notification
-# from django.shortcuts import get_object_or_404
-# from pipeline.models import StudentProgress
-# from erp_integration.services import get_finance_clearance
-# from datetime import timedelta
-# from django.utils import timezone
-# from django.db.models import Avg
-
-
-# # @login_required
-# # def student_dashboard(request):
-# #     # student = Student.objects.get(user=request.user)
-# #     student = get_object_or_404(Student, user=request.user)
-# #     submissions = Submission.objects.filter(student=student)
-# #     feedbacks = Feedback.objects.filter(submission__student=student)
-# #     milestones = Milestone.objects.filter(student=student)
-# #     # notifications = Notification.objects.filter(student=student).order_by('-created_at')[:5]
-# #     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
-# #     progress = StudentProgress.objects.filter(student=student).first()
-
-# #     context = {
-# #         'student': student,
-# #         'submissions': submissions,
-# #         'feedbacks': feedbacks,
-# #         'milestones': milestones,
-# #         'notifications': notifications,
-# #         'pending_tasks': milestones.filter(status='upcoming').count(),
-# #         'completed_milestones': milestones.filter(status='done').count(),
-# #         'progress': progress,
-# #     }
-
-# #     return render(request, 'students/student.html', context)
-
-# # @login_required
-# # def student_dashboard(request):
-# #     student = get_object_or_404(Student, user=request.user)
-# #     submissions = Submission.objects.filter(student=student)
-# #     feedbacks = Feedback.objects.filter(submission__student=student)
-# #     milestones = Milestone.objects.filter(student=student)
-# #     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
-# #     progress = StudentProgress.objects.filter(student=student).first()
-# #     # Get the index of the active step
-# #     active_step = next((step for step in pipeline_steps if step['status'] == 'active'), None)
-# #     active_index = pipeline_steps.index(active_step) + 1 if active_step else 0
-
-# #     # Define the pipeline steps
-# #     step_titles = [
-# #         "Concept Note",
-# #         "Proposal Seminar",
-# #         "Ethics/NACOSTI",
-# #         "Data & Analysis",
-# #         "Notice of Submission",
-# #         "Thesis Exam",
-# #         "Oral Defense",
-# #         "Graduation"
-# #     ]
-
-# #     pipeline_steps = []
-    
-# #     current_stage = progress.stage if progress else 0  # assuming StudentProgress.stage is an integer 1-8
-
-# #     for index, title in enumerate(step_titles, start=1):
-# #         if index < current_stage:
-# #             status = "done"
-# #         elif index == current_stage:
-# #             status = "active"
-# #         else:
-# #             status = "pending"
-# #         pipeline_steps.append({"title": title, "status": status})
-
-# #     context = {
-# #         'student': student,
-# #         "active_step": active_step,
-# #         "active_index": active_index,
-# #         'submissions': submissions,
-# #         'feedbacks': feedbacks,
-# #         'milestones': milestones,
-# #         'notifications': notifications,
-# #         'pending_tasks': milestones.filter(status='upcoming').count(),
-# #         'completed_milestones': milestones.filter(status='done').count(),
-# #         'progress': progress,
-# #         'pipeline_steps': pipeline_steps,  # dynamic pipeline
-# #     }
-
-# #     return render(request, 'students/student.html', context)
-
-# # @login_required
-# # def student_dashboard(request):
-# #     student = get_object_or_404(Student, user=request.user)
-# #     submissions = Submission.objects.filter(student=student)
-# #     feedbacks = Feedback.objects.filter(submission__student=student)
-# #     milestones = Milestone.objects.filter(student=student)
-# #     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
-# #     progress = StudentProgress.objects.filter(student=student).first()
-# #     # Find first step that is not done
-# #     in_progress_step = next((step for step in pipeline_steps if step['status'] != 'done'), None)
-# #     in_progress_text = "In Progress" if in_progress_step else "Completed"
-
-# #     # -----------------------------
-# #     # Define pipeline steps here
-# #     # -----------------------------
-# #     pipeline_steps = [
-# #         {"title": "Concept Note", "status": "done"},
-# #         {"title": "Proposal Seminar", "status": "done"},
-# #         {"title": "Ethics/NACOSTI", "status": "done"},
-# #         {"title": "Data & Analysis", "status": "active"},
-# #         {"title": "Notice of Submission", "status": "pending"},
-# #         {"title": "Thesis Exam", "status": "pending"},
-# #         {"title": "Oral Defense", "status": "pending"},
-# #         {"title": "Graduation", "status": "pending"},
-# #     ]
-
-# #     # Get active step info
-# #     active_step = next((step for step in pipeline_steps if step['status'] == 'active'), None)
-# #     active_index = pipeline_steps.index(active_step) + 1 if active_step else 0
-
-# #     context = {
-# #         'student': student,
-# #         'submissions': submissions,
-# #         'feedbacks': feedbacks,
-# #         'milestones': milestones,
-# #         'notifications': notifications,
-# #         'pending_tasks': milestones.filter(status='upcoming').count(),
-# #         'completed_milestones': milestones.filter(status='done').count(),
-# #         'progress': progress,
-# #         'pipeline_steps': pipeline_steps,
-# #         'active_step': active_step,
-# #         'active_index': active_index,
-# #         'in_progress_text': in_progress_text,  # <-- new variable
-# #     }
-
-# #     return render(request, 'students/student.html', context)
-
-# @login_required
-# def student_dashboard(request):
-#     student = get_object_or_404(Student, user=request.user)
-#     submissions = Submission.objects.filter(student=student)
-#     feedbacks = Feedback.objects.filter(submission__student=student)
-#     milestones = Milestone.objects.filter(student=student)
-#     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
-#     progress = StudentProgress.objects.filter(student=student).first()
-    
-
-#     scores = {
-#         "Literature Review": feedbacks.filter(category="literature").aggregate(avg=Avg("score"))["avg"] or 0,
-#         "Methodology": feedbacks.filter(category="methodology").aggregate(avg=Avg("score"))["avg"] or 0,
-#         "Data Analysis": feedbacks.filter(category="analysis").aggregate(avg=Avg("score"))["avg"] or 0,
-#         "Writing Quality": feedbacks.filter(category="writing").aggregate(avg=Avg("score"))["avg"] or 0,
-#     }
-
-#     # ✅ STEP 1: DEFINE pipeline_steps FIRST
-#     # pipeline_steps = [
-#     #     {"title": "Concept Note", "status": "done"},
-#     #     {"title": "Proposal Seminar", "status": "done"},
-#     #     {"title": "Ethics/NACOSTI", "status": "done"},
-#     #     {"title": "Data & Analysis", "status": "active"},
-#     #     {"title": "Notice of Submission", "status": "pending"},
-#     #     {"title": "Thesis Exam", "status": "pending"},
-#     #     {"title": "Oral Defense", "status": "pending"},
-#     #     {"title": "Graduation", "status": "pending"},
-#     # ]
-
-#     # pipeline_steps = []
-
-#     # # Define the correct order (VERY IMPORTANT)
-#     # pipeline_order = [
-#     #     "Concept Note",
-#     #     "Proposal Seminar",
-#     #     "Ethics/NACOSTI",
-#     #     "Data & Analysis",
-#     #     "Notice of Submission",
-#     #     "Thesis Exam",
-#     #     "Oral Defense",
-#     #     "Graduation",
-#     # ]
-
-#     # # Convert milestones queryset to dict for quick lookup
-#     # milestone_dict = {m.title: m for m in milestones}
-
-#     # for stage in pipeline_order:
-#     #     milestone = milestone_dict.get(stage)
-
-#     #     if milestone:
-#     #         if milestone.status == "done":
-#     #             status = "done"
-#     #         elif milestone.status in ["in_progress", "ongoing"]:
-#     #             status = "active"
-#     #         else:
-#     #             status = "pending"
-#     #     else:
-#     #         status = "pending"
-
-#     #     pipeline_steps.append({
-#     #         "title": stage,
-#     #         "status": status,
-#     #     })
-#     pipeline_steps = []
-#     pipeline_order = [
-#         "Concept Note",
-#         "Proposal Seminar",
-#         "Ethics/NACOSTI",
-#         "Data & Analysis",
-#         "Notice of Submission",
-#         "Thesis Exam",
-#         "Oral Defense",
-#         "Graduation",
-#     ]
-
-#     milestone_dict = {m.title: m for m in milestones}
-
-#     has_active = False
-
-#     for stage in pipeline_order:
-#         milestone = milestone_dict.get(stage)
-
-#         if milestone:
-#             if milestone.status == "done":
-#                 status = "done"
-#             elif milestone.status in ["in_progress", "ongoing"] and not has_active:
-#                 status = "active"
-#                 has_active = True
-#             else:
-#                 status = "pending"
-#         else:
-#             status = "pending"
-
-#         pipeline_steps.append({
-#             "title": stage,
-#             "status": status,
-#         })
-
-#     # fallback if no active stage
-#     if not has_active:
-#         for step in pipeline_steps:
-#             if step["status"] == "pending":
-#                 step["status"] = "active"
-#                 break
-
-#     # ✅ STEP 2: NOW use pipeline_steps safely
-#     active_step = next((step for step in pipeline_steps if step['status'] == 'active'), None)
-#     active_index = pipeline_steps.index(active_step) + 1 if active_step else 0
-
-#     in_progress_step = next((step for step in pipeline_steps if step['status'] != 'done'), None)
-#     in_progress_text = "In Progress" if in_progress_step else "Completed"
-
-#     tasks_due_this_week = milestones.filter(
-#         status='upcoming'
-#     ).count()
-
-#     total_milestones = milestones.count()
-#     new_feedback = feedbacks.filter(is_read=False).count()
-
-#     finance = get_finance_clearance(student)
-
-#     # Last 6 months
-#     today = timezone.now().date()
-
-#     months = []
-#     progress_values = []
-
-#     total = milestones.count()
-#     completed = milestones.filter(status="done").count()
-#     progress_percent = int((completed / total) * 100) if total else 0
-
-#     for i in range(5, -1, -1):
-#         month_date = today - timedelta(days=30 * i)
-#         months.append(month_date.strftime("%b"))
-
-#         # simulate growth curve
-#         factor = (6 - i) / 6
-#         progress_values.append(int(progress_percent * factor))
-    
-#     import json
-
-#     # Example dynamic data
-#     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
-
-#     total = milestones.count()
-#     completed = milestones.filter(status="done").count()
-
-#     progress_percent = int((completed / total) * 100) if total else 0
-
-#     # simulate monthly growth for now
-#     progress_values = [
-#         int(progress_percent * 0.2),
-#         int(progress_percent * 0.4),
-#         int(progress_percent * 0.6),
-#         int(progress_percent * 0.8),
-#         int(progress_percent * 0.9),
-#         progress_percent,
-#     ]
-
-#     # Example scores (you can compute from Feedback model later)
-#     # scores = {
-#     #     "Literature Review": 82,
-#     #     "Methodology": 78,
-#     #     "Data Analysis": 91,
-#     #     "Writing Quality": 86,
-#     # }
-
-    
-
-#     # ✅ STEP 3: context
-#     context = {
-#         'student': student,
-#         'submissions': submissions,
-#         'feedbacks': feedbacks,
-#         'milestones': milestones,
-#         'notifications': notifications,
-#         'pending_tasks': milestones.filter(status='upcoming').count(),
-#         'completed_milestones': milestones.filter(status='done').count(),
-#         'progress': progress,
-#         'pipeline_steps': pipeline_steps,
-#         'active_step': active_step,
-#         'active_index': active_index,
-#         'in_progress_text': in_progress_text,
-#         'tasks_due_this_week': tasks_due_this_week,
-#         'total_milestones': total_milestones,
-#         'new_feedback': new_feedback,
-#         'finance': finance,
-#         "months": months,
-#         # "progress_data": progress_data,
-#         'progress_values': progress_values,
-#         'scores_labels': scores_labels,
-#         'scores_values': scores_values,
-#     }
-#     context.update({
-#             "months": json.dumps(months),
-#             "progress_values": json.dumps(progress_values),
-#             "scores_labels": json.dumps(list(scores.keys())),
-#             "scores_values": json.dumps(list(scores.values())),
-#         })
-    
-#     scores_labels = json.dumps(list(scores.keys()))
-#     scores_values = json.dumps(list(scores.values()))
-
-#     return render(request, 'students/student.html', context)
-
 import json
 from datetime import timedelta
 from django.utils import timezone
@@ -371,16 +24,6 @@ def student_dashboard(request):
     milestones = Milestone.objects.filter(student=student)
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
     progress = StudentProgress.objects.filter(student=student).first()
-
-    # -----------------------------
-    # 📊 SCORES (Dynamic)
-    # -----------------------------
-    # scores = {
-    #     "Literature Review": feedbacks.filter(category="literature").aggregate(avg=Avg("score"))["avg"] or 0,
-    #     "Methodology": feedbacks.filter(category="methodology").aggregate(avg=Avg("score"))["avg"] or 0,
-    #     "Data Analysis": feedbacks.filter(category="analysis").aggregate(avg=Avg("score"))["avg"] or 0,
-    #     "Writing Quality": feedbacks.filter(category="writing").aggregate(avg=Avg("score"))["avg"] or 0,
-    # }
     scores = {
         "Literature Review": feedbacks.filter(submission__type="literature").aggregate(avg=Avg("score"))["avg"] or 0,
         "Methodology": feedbacks.filter(submission__type="methodology").aggregate(avg=Avg("score"))["avg"] or 0,
@@ -691,30 +334,96 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from .models import PresentationBooking
+from .forms import PresentationBookingForm
+from .models import QuarterlyReport
+from .forms import QuarterlyReportForm
 
 @login_required
 def book_presentation(request):
     student = request.user.student
 
     if request.method == "POST":
-        title = request.POST.get("title")
-        date_str = request.POST.get("date")  # e.g., "2026-04-30T10:00"
-        try:
-            date = timezone.datetime.fromisoformat(date_str)
-            date = timezone.make_aware(date, timezone.get_current_timezone())
-        except Exception:
-            messages.error(request, "Invalid date format.")
-            return redirect("student_dashboard")
-
-        booking = PresentationBooking(student=student, title=title, date=date)
-        try:
-            booking.full_clean()  # runs the clean() method
-            booking.save()
-            messages.success(request, "Presentation booked successfully!")
-        except ValidationError as e:
-            messages.error(request, e.message_dict or e.messages)
+        form = PresentationBookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.student = student
+            try:
+                booking.full_clean()  # runs the clean() method
+                booking.save()
+                messages.success(request, "Presentation booked successfully!")
+            except ValidationError as e:
+                messages.error(request, e.message_dict or e.messages)
+        else:
+            messages.error(request, "Form is invalid.")
         return redirect("student_dashboard")
+    else:
+        form = PresentationBookingForm()
+
+    return render(request, 'students/book_presentation.html', {'form': form})
+
+
+@login_required
+def list_quarterly_reports(request):
+    student = get_object_or_404(Student, user=request.user)
+    reports = QuarterlyReport.objects.filter(student=student).order_by('-submitted_at')
+    return render(request, 'students/quarterly_report_list.html', {'reports': reports})
+
+
+@login_required
+def create_quarterly_report(request):
+    student = get_object_or_404(Student, user=request.user)
+    if request.method == 'POST':
+        form = QuarterlyReportForm(request.POST)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.student = student
+            report.save()
+            messages.success(request, 'Quarterly report saved as draft.')
+            return redirect('list_quarterly_reports')
+    else:
+        form = QuarterlyReportForm()
+    return render(request, 'students/quarterly_report_form.html', {'form': form})
+
+
+@login_required
+def detail_quarterly_report(request, pk):
+    student = get_object_or_404(Student, user=request.user)
+    report = get_object_or_404(QuarterlyReport, pk=pk, student=student)
+    return render(request, 'students/quarterly_report_detail.html', {'report': report})
+
+
+@login_required
+def update_quarterly_report(request, pk):
+    student = get_object_or_404(Student, user=request.user)
+    report = get_object_or_404(QuarterlyReport, pk=pk, student=student)
+    if report.status != 'draft':
+        messages.error(request, 'You can only edit draft reports.')
+        return redirect('detail_quarterly_report', pk=pk)
+    
+    if request.method == 'POST':
+        form = QuarterlyReportForm(request.POST, instance=report)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Report updated.')
+            return redirect('detail_quarterly_report', pk=pk)
+    else:
+        form = QuarterlyReportForm(instance=report)
+    return render(request, 'students/quarterly_report_form.html', {'form': form, 'report': report})
+
+
+@login_required
+def submit_quarterly_report(request, pk):
+    student = get_object_or_404(Student, user=request.user)
+    report = get_object_or_404(QuarterlyReport, pk=pk, student=student)
+    if report.status == 'draft':
+        report.status = 'submitted'
+        report.save()
+        messages.success(request, 'Report submitted successfully.')
+    else:
+        messages.error(request, 'Report is not in draft status.')
+    return redirect('detail_quarterly_report', pk=pk)
 
 
 # import io
