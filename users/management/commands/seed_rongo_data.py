@@ -16,7 +16,7 @@ class Command(BaseCommand):
     help = "Seed the database with Rongo University postgrad data"
 
     def handle(self, *args, **kwargs):
-        self.stdout.write("🌱 Seeding Rongo University data...")
+        self.stdout.write("Seeding Rongo University data...")
 
         # -----------------------------
         # 1. USERS
@@ -44,7 +44,7 @@ class Command(BaseCommand):
             if created:
                 user.set_password("password123")
                 user.save()
-                self.stdout.write(f"✅ Created user: {user.username}")
+                self.stdout.write(f"Created user: {user.username}")
             users[data["username"]] = user
 
         # -----------------------------
@@ -62,7 +62,7 @@ class Command(BaseCommand):
                 }
             )
             if created:
-                self.stdout.write(f"🎓 Created student: {username}")
+                self.stdout.write(f"Created student: {username}")
             students[username] = student
 
         # -----------------------------
@@ -112,9 +112,9 @@ class Command(BaseCommand):
         ]
 
         stage_mapping = {
-            "concept": PipelineStage.CONCEPT,
-            "analysis": PipelineStage.DATA_COLLECTION,
-            "methodology": PipelineStage.DATA_COLLECTION,
+            "concept_note": PipelineStage.CONCEPT,
+            "chapter_draft": PipelineStage.DATA_COLLECTION,
+            "progress_report": PipelineStage.DATA_COLLECTION,
         }
 
         # -----------------------------
@@ -141,26 +141,26 @@ class Command(BaseCommand):
                 )
 
             # Submissions + Feedback
-            submission_types = ["concept", "analysis", "methodology"]
+            submission_types = ["concept_note", "chapter_draft", "progress_report"]
             for sub_type in random.sample(submission_types, k=2):
                 submission, _ = Submission.objects.get_or_create(
                     student=student,
                     title=f"{sub_type.title()} Draft",
                     defaults={
                         "type": sub_type,
-                        "chapter": "3" if sub_type == "analysis" else "",
+                        "chapter": "chapter_3" if sub_type == "chapter_draft" else "not_applicable",
                         "status": random.choice(["approved", "pending", "revision"]),
-                        "stage": stage_mapping[sub_type],
+                        "stage": stage_mapping.get(sub_type, PipelineStage.CONCEPT),
                     },
                 )
-                Feedback.objects.get_or_create(
-                    submission=submission,
-                    defaults={
-                        "comment": f"Feedback on {sub_type}. Improve clarity.",
-                        "score": random.randint(60, 95),
-                        "is_read": random.choice([True, False]),
-                    },
-                )
+                feedback = Feedback.objects.filter(submission=submission).order_by("id").first()
+                if feedback is None:
+                    Feedback.objects.create(
+                        submission=submission,
+                        comment=f"Feedback on {sub_type}. Improve clarity.",
+                        score=random.randint(60, 95),
+                        is_read=random.choice([True, False]),
+                    )
 
             # AI Corrections
             correction, _ = Correction.objects.get_or_create(
@@ -201,4 +201,4 @@ class Command(BaseCommand):
                 defaults={"message": f"Welcome {user.username} to the Postgraduate System", "is_read": False},
             )
 
-        self.stdout.write(self.style.SUCCESS("✅ Seeding completed successfully!"))
+        self.stdout.write(self.style.SUCCESS("Seeding completed successfully!"))

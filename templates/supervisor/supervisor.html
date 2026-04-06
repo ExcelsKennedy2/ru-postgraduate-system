@@ -1414,6 +1414,8 @@ select.form-control{appearance:none;cursor:pointer}
 <!-- Toast -->
 <div class="toast" id="toast"></div>
  
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <script>
 // NAV
 function nav(el,id){
@@ -1495,159 +1497,86 @@ function submitMeetingAction(){
   if(form) form.submit();
 }
 function exportReportsPdf(){
-  const reportView=document.getElementById('view-reports');
-  if(!reportView){
-    showToast('Reports section not found');
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    showToast('PDF library failed to load');
     return;
   }
-  const printableRoot=reportView.cloneNode(true);
-  printableRoot.querySelectorAll('button').forEach(button=>button.remove());
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
+  const margin=40;
+  let y=50;
+  const pageWidth=doc.internal.pageSize.getWidth();
+  const stats=[...document.querySelectorAll('#view-reports .stat-card')];
+  const tables=[...document.querySelectorAll('#view-reports table')];
 
-  const printWindow=window.open('', '_blank', 'width=1200,height=900');
-  if(!printWindow){
-    showToast('Please allow popups to export the report');
-    return;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(20);
+  doc.text('Supervisor Report Export', margin, y);
+  y+=18;
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text(`Generated on ${new Date().toLocaleString()}`, margin, y);
+  y+=28;
+
+  if(stats.length){
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.text('Summary', margin, y);
+    y+=14;
+
+    const statRows=stats.map(card=>{
+      const label=card.querySelector('.stat-lbl')?.textContent?.trim() || '';
+      const value=card.querySelector('.stat-val')?.textContent?.trim() || '';
+      const sub=card.querySelector('.stat-sub')?.textContent?.trim() || '';
+      return [label, value, sub];
+    });
+
+    doc.autoTable({
+      startY:y,
+      head:[['Metric','Value','Notes']],
+      body:statRows,
+      theme:'grid',
+      styles:{font:'helvetica', fontSize:9, cellPadding:6, textColor:[26,35,64]},
+      headStyles:{fillColor:[10,25,78], textColor:[255,255,255]},
+      margin:{left:margin,right:margin}
+    });
+    y=doc.lastAutoTable.finalY+24;
   }
 
-  const printableHtml=`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Supervisor Report Export</title>
-      <style>
-        body{
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          color:#1A2340;
-          background:#ffffff;
-          margin:0;
-          padding:32px;
-        }
-        h1,h2{
-          margin:0;
-          color:#0A194E;
-        }
-        p{
-          color:#5A6A8A;
-        }
-        .page-hdr,.card-hdr{
-          display:flex;
-          justify-content:space-between;
-          align-items:flex-start;
-          gap:16px;
-          margin-bottom:16px;
-        }
-        .stat-grid{
-          display:grid;
-          grid-template-columns:repeat(2, minmax(0, 1fr));
-          gap:16px;
-          margin:24px 0;
-        }
-        .stat-card,.card{
-          border:1px solid #DDE3F0;
-          border-radius:12px;
-          background:#ffffff;
-          padding:18px;
-          margin-bottom:18px;
-          break-inside:avoid;
-        }
-        .stat-head{
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          margin-bottom:10px;
-        }
-        .stat-lbl,.card-sub{
-          color:#5A6A8A;
-          font-size:12px;
-          text-transform:uppercase;
-          letter-spacing:.06em;
-        }
-        .stat-val{
-          font-size:28px;
-          font-weight:800;
-          color:#0A194E;
-        }
-        .stat-sub{
-          color:#5A6A8A;
-          font-size:13px;
-        }
-        table{
-          width:100%;
-          border-collapse:collapse;
-          font-size:13px;
-        }
-        th,td{
-          text-align:left;
-          padding:10px 12px;
-          border-bottom:1px solid #DDE3F0;
-          vertical-align:top;
-        }
-        th{
-          font-size:12px;
-          color:#5A6A8A;
-          text-transform:uppercase;
-          letter-spacing:.05em;
-        }
-        .pill{
-          display:inline-block;
-          padding:4px 10px;
-          border-radius:999px;
-          font-size:12px;
-          font-weight:700;
-          border:1px solid #DDE3F0;
-        }
-        .pill-green{background:#E9F8EF;color:#1DA462;border-color:#BDE7CC;}
-        .pill-amber{background:#FFF7E0;color:#B77900;border-color:#F2D58A;}
-        .pill-red{background:#FDECEC;color:#E53935;border-color:#F4B8B6;}
-        .pill-gray{background:#F3F5FA;color:#5A6A8A;border-color:#DDE3F0;}
-        .td-bold{font-weight:700;}
-        .td-muted{color:#5A6A8A;}
-        .prog-wrap{
-          display:flex;
-          align-items:center;
-          gap:8px;
-        }
-        .prog-bar{
-          width:110px;
-          height:8px;
-          background:#EEF1F8;
-          border-radius:999px;
-          overflow:hidden;
-        }
-        .prog-fill{
-          height:100%;
-          border-radius:999px;
-        }
-        .prog-val{
-          font-size:12px;
-          font-weight:700;
-          color:#1A2340;
-        }
-        @media print{
-          body{padding:0}
-          .card,.stat-card{box-shadow:none}
-        }
-      </style>
-    </head>
-    <body>
-      <div style="margin-bottom:24px">
-        <h1>Supervisor Report Export</h1>
-        <p>Generated on ${new Date().toLocaleString()}</p>
-      </div>
-      ${printableRoot.innerHTML}
-    </body>
-    </html>
-  `;
-
-  printWindow.document.open();
-  printWindow.document.write(printableHtml);
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.onload=()=>{
-    printWindow.print();
+  const addTableFromDom=(tableIndex,title)=>{
+    const table=tables[tableIndex];
+    if(!table) return;
+    const headers=[...table.querySelectorAll('thead th')].map(th=>th.textContent.trim());
+    const rows=[...table.querySelectorAll('tbody tr')].map(tr=>
+      [...tr.querySelectorAll('td')].map(td=>td.textContent.replace(/\s+/g,' ').trim())
+    );
+    if(y>720){
+      doc.addPage();
+      y=50;
+    }
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.text(title, margin, y);
+    y+=14;
+    doc.autoTable({
+      startY:y,
+      head:[headers],
+      body:rows.length ? rows : [['No data available']],
+      theme:'striped',
+      styles:{font:'helvetica', fontSize:8, cellPadding:5, textColor:[26,35,64], overflow:'linebreak'},
+      headStyles:{fillColor:[10,25,78], textColor:[255,255,255]},
+      alternateRowStyles:{fillColor:[247,248,252]},
+      margin:{left:margin,right:margin},
+      tableWidth:pageWidth-(margin*2)
+    });
+    y=doc.lastAutoTable.finalY+24;
   };
+
+  addTableFromDom(0, 'Student Performance Summary');
+  addTableFromDom(1, 'Quarterly Reports');
+
+  doc.save(`supervisor-report-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Report exported as PDF');
 }
 // TOAST
 function showToast(msg){
