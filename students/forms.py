@@ -1,5 +1,5 @@
 from django import forms
-from .models import PresentationBooking, QuarterlyReport
+from .models import PresentationBooking, QuarterlyReport, Student
 
 class PresentationBookingForm(forms.ModelForm):
     class Meta:
@@ -23,6 +23,52 @@ class PresentationBookingForm(forms.ModelForm):
                 'placeholder': 'Any specific topics or documents to review…'
             }),
         }
+
+class StudentProfileForm(forms.ModelForm):
+    first_name = forms.CharField(
+        label='First Name',
+        widget=forms.TextInput(attrs={'class': 'form-input'})
+    )
+    last_name = forms.CharField(
+        label='Last Name',
+        widget=forms.TextInput(attrs={'class': 'form-input'})
+    )
+    email = forms.EmailField(
+        label='Email Address',
+        widget=forms.EmailInput(attrs={'class': 'form-input'})
+    )
+
+    class Meta:
+        model = Student
+        fields = ['student_number', 'programme']
+        widgets = {
+            'student_number': forms.TextInput(attrs={
+                'class': 'form-input',
+                'readonly': 'readonly'
+            }),
+            'programme': forms.TextInput(attrs={
+                'class': 'form-input',
+                'readonly': 'readonly'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
+
+    def save(self, commit=True):
+        student = super().save(commit=False)
+        user = student.user
+        user.first_name = self.cleaned_data.get('first_name', user.first_name)
+        user.last_name = self.cleaned_data.get('last_name', user.last_name)
+        user.email = self.cleaned_data.get('email', user.email)
+        if commit:
+            user.save()
+            student.save()
+        return student
 
 class QuarterlyReportForm(forms.ModelForm):
     class Meta:

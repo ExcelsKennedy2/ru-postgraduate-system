@@ -10,7 +10,7 @@ from students.models import Student, QuarterlyReport, PresentationBooking
 from notifications.models import Notification
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.role in ['supervisor', 'admin', 'dean'])
 def supervisor_dashboard(request):
     supervisor = request.user
 
@@ -214,7 +214,7 @@ def supervisor_dashboard(request):
     return render(request, 'supervisor/supervisor.html', context)
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.role in ['supervisor', 'admin', 'dean'])
 def review_quarterly_report(request, pk):
     report = get_object_or_404(QuarterlyReport, pk=pk)
     if request.method == 'POST':

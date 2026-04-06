@@ -46,6 +46,7 @@
         </div>
 <form method="POST" action="{% url 'login' %}">
     {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
     <div class="form-group">
         <label>Admission Number</label>
         <input type="text" name="unique_id" placeholder="Admission Number or Staff ID">

@@ -159,6 +159,15 @@ body{
   color:var(--muted);
   line-height:1.75;
 }
+.form-errors{
+  margin-bottom:1rem;
+  padding:1rem 1rem;
+  background:rgba(229,57,53,0.08);
+  border:1px solid rgba(229,57,53,0.25);
+  border-radius:0.75rem;
+  color:#B91C1C;
+  font-weight:600;
+}
 .btn{
   background:var(--navy);
   color:var(--white);
@@ -189,6 +198,9 @@ body{
   </div>
   <form method="POST" class="form-card">
     {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="form-errors">{{ form.non_field_errors }}</div>
+    {% endif %}
     <div class="form-group">
       <div class="section-title">New Booking Request</div>
       <div class="section-text">Select the type and your preferred date</div>

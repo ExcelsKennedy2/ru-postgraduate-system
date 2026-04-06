@@ -2,13 +2,14 @@ import json
 from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Avg
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from students.models import Student
 from assessments.models import Submission, Feedback
 from assessments.forms import SubmissionForm
-from students.forms import PresentationBookingForm
+from students.forms import PresentationBookingForm, StudentProfileForm
 from pipeline.models import Milestone, StudentProgress
 from notifications.models import Notification
 from erp_integration.services import get_finance_clearance
@@ -23,6 +24,14 @@ def student_dashboard(request):
     feedbacks = Feedback.objects.filter(
         submission__student=student
     ).select_related('submission')
+
+    profile_form = StudentProfileForm(instance=student)
+    if request.method == 'POST' and request.POST.get('profile_update'):
+        profile_form = StudentProfileForm(request.POST, instance=student)
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('student_dashboard')
     milestones = Milestone.objects.filter(student=student)
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
     progress = StudentProgress.objects.filter(student=student).first()
@@ -232,6 +241,7 @@ def student_dashboard(request):
         "bookings": bookings,
         "submission_form": SubmissionForm(),
         "presentation_booking_form": PresentationBookingForm(),
+        "student_profile_form": profile_form,
     }
     
 
@@ -378,7 +388,7 @@ def book_presentation(request):
                 messages.success(request, "Presentation booked successfully!")
                 return redirect('book_presentation')
             except ValidationError as e:
-                messages.error(request, e.message_dict or e.messages)
+                form.add_error(None, e)
         else:
             messages.error(request, "Form is invalid.")
     else:

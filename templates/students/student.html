@@ -2321,19 +2321,25 @@ a.link-btn:hover{
           <div class="card" style="margin-bottom:1.1rem">
             <div class="card-header"><div class="card-title">Profile Information</div></div>
             <div class="card-body">
-              <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)">
-                <div style="width:60px;height:60px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--amber);flex-shrink:0">{{ student.user.username|slice:":2"|upper }}</div>
-                <div><div style="font-weight:700;color:var(--navy)">{{ student.user.get_full_name|default:student.user.username }}</div><div style="font-size:0.75rem;color:var(--muted)">{{ student.programme }} · {{ student.student_number }}</div><button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="alert('Photo upload')">Change Photo</button></div>
-              </div>
-              <div class="form-row">
-                <div class="form-group"><label class="form-label">First Name</label><input class="form-input" value="{{ student.user.first_name }}"/></div>
-                <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" value="{{ student.user.last_name }}"/></div>
-              </div>
-              <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" value="{{ student.user.email }}"/></div>
-              <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" value="{{ student.user.phone|default:'' }}"/></div>
-              <div class="form-group"><label class="form-label">Student ID</label><input class="form-input" value="{{ student.student_number }}" readonly style="background:var(--off2);color:var(--muted)"/></div>
-              <div class="form-group"><label class="form-label">Programme</label><input class="form-input" value="{{ student.programme }}" readonly style="background:var(--off2);color:var(--muted)"/></div>
-              <button class="btn btn-primary" onclick="alert('Profile updated successfully!')">Save Changes</button>
+              <form method="POST" action="{% url 'student_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="profile_update" value="1" />
+                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)">
+                  <div style="width:60px;height:60px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--amber);flex-shrink:0">{{ student.user.username|slice:":2"|upper }}</div>
+                  <div><div style="font-weight:700;color:var(--navy)">{{ student.user.get_full_name|default:student.user.username }}</div><div style="font-size:0.75rem;color:var(--muted)">{{ student.programme }} · {{ student.student_number }}</div><button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" type="button" onclick="alert('Photo upload')">Change Photo</button></div>
+                </div>
+                {% if student_profile_form.non_field_errors %}
+                <div class="form-errors">{{ student_profile_form.non_field_errors }}</div>
+                {% endif %}
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label" for="id_first_name">First Name</label>{{ student_profile_form.first_name }}</div>
+                  <div class="form-group"><label class="form-label" for="id_last_name">Last Name</label>{{ student_profile_form.last_name }}</div>
+                </div>
+                <div class="form-group"><label class="form-label" for="id_email">Email Address</label>{{ student_profile_form.email }}</div>
+                <div class="form-group"><label class="form-label" for="id_student_number">Student ID</label>{{ student_profile_form.student_number }}</div>
+                <div class="form-group"><label class="form-label" for="id_programme">Programme</label>{{ student_profile_form.programme }}</div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </form>
             </div>
           </div>
         </div>
