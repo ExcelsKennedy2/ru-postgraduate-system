@@ -22,8 +22,9 @@ class PresentationBooking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     MEETING_TYPE_CHOICES = [
-        ("in_person", "In-Person"),
-        ("video_call", "Video Call"),
+        ("in_person", "In-Person (Boardroom)"),
+        ("video_call", "Video Call (Zoom/Teams/Google Meet)"),
+        ("hybrid", "Hybrid (In-person + Virtual)"),
         ("phone_call", "Phone Call"),
     ]
     meeting_type = models.CharField(max_length=20, choices=MEETING_TYPE_CHOICES, default="in_person")
