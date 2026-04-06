@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'erp_integration',     
     'ai_module',
     'core',
-    'supervisor',    
+    'supervisor',
+    'dean',
+    'chair',    
 ]
 
 MIDDLEWARE = [
