@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import SET_NULL
 from users.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -9,8 +10,7 @@ class Student(models.Model):
     student_number = models.CharField(max_length=50)
     programme = models.CharField(max_length=100)
 
-    supervisor_name = models.CharField(max_length=100)
-    supervisor_email = models.EmailField()
+    supervisor = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name="supervised_students")
 
     def __str__(self):
         return self.user.username

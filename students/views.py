@@ -124,12 +124,18 @@ def student_dashboard(request):
     # -----------------------------
     finance = get_finance_clearance(student)
 
-    supervisor_name = student.supervisor_name
+    if student.supervisor:
+        supervisor_name = student.supervisor.get_full_name() or student.supervisor.username
+        supervisor_email = student.supervisor.email
+    else:
+        supervisor_name = "Assigned Supervisor"
+        supervisor_email = "noreply@university.edu"
+
     initials = "".join([part[0] for part in supervisor_name.split()][:2]).upper()
 
     supervisor = {
         "name": supervisor_name,
-        "email": student.supervisor_email,
+        "email": supervisor_email,
         "initials": initials,
         # If you have role/department stored somewhere else, add here
         "role": "Research Supervisor",

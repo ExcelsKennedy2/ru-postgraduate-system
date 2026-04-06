@@ -809,8 +809,8 @@ select.form-control{appearance:none;cursor:pointer}
   <nav class="nav-section">
     <span class="nav-section-title">Main</span>
     <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
-    <a class="nav-link" onclick="nav(this,'students')"><span class="ni">🎓</span> My Students <span class="nav-badge">15</span></a>
-    <a class="nav-link" onclick="nav(this,'reviews')"><span class="ni">📋</span> Submissions <span class="nav-badge">8</span></a>
+    <a class="nav-link" onclick="nav(this,'students')"><span class="ni">🎓</span> My Students <span class="nav-badge">{{ stats.total_students }}</span></a>
+    <a class="nav-link" onclick="nav(this,'reviews')"><span class="ni">📋</span> Submissions <span class="nav-badge">{{ stats.pending_reviews }}</span></a>
     <a class="nav-link" onclick="nav(this,'feedback')"><span class="ni">💬</span> Feedback</a>
     <a class="nav-link" onclick="nav(this,'schedule')"><span class="ni">📅</span> Schedule</a>
     <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📊</span> Reports</a>
@@ -823,12 +823,11 @@ select.form-control{appearance:none;cursor:pointer}
  
   <div class="sidebar-footer">
     <div class="user-mini">
-      <div class="user-av">MC</div>
+      <div class="user-av">{{ supervisor_initials }}</div>
       <div>
-        <div class="user-mini-name">Dr. Michael Chen</div>
+        <div class="user-mini-name">{{ supervisor.get_full_name }}</div>
         <div class="user-mini-role">Research Supervisor</div>
       </div>
-      <!-- <button class="logout-btn" onclick="window.location.href='login.html'">⍈Log out </button> -->
       <a href="{% url 'logout' %}" class="logout-btn">⍈ Logout</a>
     </div>
   </div>
@@ -843,8 +842,8 @@ select.form-control{appearance:none;cursor:pointer}
     <div class="topbar-right">
       <div class="tb-notif" onclick="showToast('No new notifications')">🔔<span class="tb-notif-dot"></span></div>
       <div class="tb-pill">
-        <div class="tb-av">MC</div>
-        <div><div class="tb-name">Dr. Michael Chen</div><div class="tb-role">Supervisor</div></div>
+        <div class="tb-av">{{ supervisor_initials }}</div>
+        <div><div class="tb-name">{{ supervisor.get_full_name }}</div><div class="tb-role">Supervisor</div></div>
       </div>
       <button class="btn btn-green" onclick="openModal('feedback-modal')">💬 Give Feedback</button>
     </div>
@@ -869,22 +868,22 @@ select.form-control{appearance:none;cursor:pointer}
       <div class="stat-grid">
         <div class="stat-card s-navy">
           <div class="stat-head"><span class="stat-lbl">Total Students</span><div class="stat-ico ico-navy">👥</div></div>
-          <div class="stat-val">15</div>
-          <div class="stat-sub">3 PhD · 12 Masters</div>
+          <div class="stat-val">{{ stats.total_students }}</div>
+          <div class="stat-sub">Supervised students</div>
         </div>
         <div class="stat-card s-red">
           <div class="stat-head"><span class="stat-lbl">Pending Reviews</span><div class="stat-ico ico-red">📋</div></div>
-          <div class="stat-val">8</div>
-          <div class="stat-sub"><span class="dn">4 urgent — action needed</span></div>
+          <div class="stat-val">{{ stats.pending_reviews }}</div>
+          <div class="stat-sub"><span class="dn">Action needed</span></div>
         </div>
         <div class="stat-card s-green">
           <div class="stat-head"><span class="stat-lbl">Avg. Progress</span><div class="stat-ico ico-green">📈</div></div>
-          <div class="stat-val">72%</div>
-          <div class="stat-sub"><span class="up">↑ 1.8%</span> from last month</div>
+          <div class="stat-val">{{ stats.avg_progress }}%</div>
+          <div class="stat-sub"><span class="up">Based on reviews</span></div>
         </div>
         <div class="stat-card s-amber">
           <div class="stat-head"><span class="stat-lbl">Reviewed This Month</span><div class="stat-ico ico-amber">✅</div></div>
-          <div class="stat-val">25</div>
+          <div class="stat-val">{{ stats.reviewed_this_month }}</div>
           <div class="stat-sub">submissions completed</div>
         </div>
       </div>
@@ -894,7 +893,7 @@ select.form-control{appearance:none;cursor:pointer}
         <!-- Progress distribution pie -->
         <div class="card">
           <div class="card-hdr">
-            <div class="card-hdr-left"><div class="card-title">Student Progress Distribution</div><div class="card-sub">Overview of all 15 students' current status</div></div>
+            <div class="card-hdr-left"><div class="card-title">Student Progress Distribution</div><div class="card-sub">Overview of all {{ stats.total_students }} students' current status</div></div>
           </div>
           <div class="pie-section">
             <div class="pie-wrap">
@@ -907,15 +906,15 @@ select.form-control{appearance:none;cursor:pointer}
                 <circle cx="70" cy="70" r="54" fill="none" stroke="#EA580C" stroke-width="22" stroke-dasharray="44 226" stroke-dashoffset="-273" transform="rotate(-90 70 70)"/>
                 <!-- Stalled 7% red -->
                 <circle cx="70" cy="70" r="54" fill="none" stroke="#DC2626" stroke-width="22" stroke-dasharray="24 226" stroke-dashoffset="-317" transform="rotate(-90 70 70)"/>
-                <text x="70" y="67" text-anchor="middle" font-size="18" font-weight="800" fill="#111827" font-family="Lora,serif">15</text>
+                <text x="70" y="67" text-anchor="middle" font-size="18" font-weight="800" fill="#111827" font-family="Lora,serif">{{ stats.total_students }}</text>
                 <text x="70" y="82" text-anchor="middle" font-size="9" fill="#5B6F8A" font-family='Plus Jakarta Sans,sans-serif'>students</text>
               </svg>
             </div>
             <div class="pie-legend">
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#16A34A"></div><span class="pie-leg-label">On Track</span><span class="pie-leg-val">5</span><span class="pie-leg-pct">33%</span></div>
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#FFC107"></div><span class="pie-leg-label">In Progress</span><span class="pie-leg-val">7</span><span class="pie-leg-pct">47%</span></div>
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#EA580C"></div><span class="pie-leg-label">At Risk</span><span class="pie-leg-val">2</span><span class="pie-leg-pct">13%</span></div>
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#DC2626"></div><span class="pie-leg-label">Stalled</span><span class="pie-leg-val">1</span><span class="pie-leg-pct">7%</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#16A34A"></div><span class="pie-leg-label">On Track</span><span class="pie-leg-val">{{ progress_distribution.on_track }}</span><span class="pie-leg-pct">{{ progress_distribution.on_track|default:0 }}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#FFC107"></div><span class="pie-leg-label">In Progress</span><span class="pie-leg-val">{{ progress_distribution.needs_attention }}</span><span class="pie-leg-pct">{{ progress_distribution.needs_attention|default:0 }}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#EA580C"></div><span class="pie-leg-label">At Risk</span><span class="pie-leg-val">{{ progress_distribution.at_risk }}</span><span class="pie-leg-pct">{{ progress_distribution.at_risk|default:0 }}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#DC2626"></div><span class="pie-leg-label">Stalled</span><span class="pie-leg-val">{{ progress_distribution.stalled }}</span><span class="pie-leg-pct">{{ progress_distribution.stalled|default:0 }}</span></div>
             </div>
           </div>
         </div>
@@ -954,11 +953,18 @@ select.form-control{appearance:none;cursor:pointer}
             <table>
               <thead><tr><th>Student</th><th>Programme</th><th>Progress</th><th>Status</th><th>Last Active</th><th></th></tr></thead>
               <tbody>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><div><div class="td-bold">Sarah Johnson</div><div class="td-muted" style="font-size:.67rem">s.j@uni.edu</div></div></div></td><td class="td-muted">PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></td><td><span class="pill pill-green">On Track</span></td><td class="td-muted">Today</td><td><button class="btn btn-navy btn-xs" onclick="nav(document.querySelectorAll('.nav-link')[1],'students')">View</button></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">James Wilson</div><div class="td-muted" style="font-size:.67rem">j.w@uni.edu</div></div></div></td><td class="td-muted">MSc CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">On Track</span></td><td class="td-muted">Yesterday</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><div><div class="td-bold">Emily Brown</div><div class="td-muted" style="font-size:.67rem">e.b@uni.edu</div></div></div></td><td class="td-muted">PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Needs Attention</span></td><td class="td-muted">3 days ago</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">DL</div><div><div class="td-bold">David Lee</div><div class="td-muted" style="font-size:.67rem">d.l@uni.edu</div></div></div></td><td class="td-muted">MSc Data Sci</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">90%</span></div></td><td><span class="pill pill-amber">Excellent</span></td><td class="td-muted">Today</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">MG</div><div><div class="td-bold">Maria Garcia</div><div class="td-muted" style="font-size:.67rem">m.g@uni.edu</div></div></div></td><td class="td-muted">MSc CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><span class="pill pill-green">On Track</span></td><td class="td-muted">2 days ago</td><td><button class="btn btn-navy btn-xs">View</button></td></tr>
+                {% for card in students %}
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:var(--navy);color:var(--amber)">{{ card.profile_initials }}</div><div><div class="td-bold">{{ card.student.user.get_full_name }}</div><div class="td-muted" style="font-size:.67rem">{{ card.email }}</div></div></div></td>
+                  <td class="td-muted">{{ card.programme }}</td>
+                  <td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ card.progress }}%;background:{{ card.progress_color }}"></div></div><span class="prog-val" style="color:{{ card.progress_color }}">{{ card.progress }}%</span></div></td>
+                  <td><span class="pill {{ card.status_badge }}">{{ card.status_label }}</span></td>
+                  <td class="td-muted">{% if card.last_active %}{{ card.last_active|timesince }} ago{% else %}No submissions{% endif %}</td>
+                  <td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="td-muted">No supervised students yet.</td></tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -978,10 +984,11 @@ select.form-control{appearance:none;cursor:pointer}
  
           <div class="card" style="flex:1">
             <div class="card-hdr"><div class="card-title">Recent Notifications</div></div>
-            <div class="feed-item"><div class="feed-ico" style="background:var(--blue-dim)">📄</div><div><div class="feed-text"><strong>Sarah Johnson</strong> submitted Chapter 4 draft for review</div><div class="feed-time">2h ago</div></div></div>
-            <div class="feed-item"><div class="feed-ico" style="background:var(--amber-dim)">📅</div><div><div class="feed-text"><strong>Meeting request</strong> from James Wilson — Week of 24 Mar</div><div class="feed-time">5h ago</div></div></div>
-            <div class="feed-item"><div class="feed-ico" style="background:var(--red-dim)">⚠️</div><div><div class="feed-text"><strong>Emily Brown</strong> needs urgent feedback on methodology revision</div><div class="feed-time">1d ago</div></div></div>
-            <div class="feed-item"><div class="feed-ico" style="background:var(--green-dim)">✅</div><div><div class="feed-text"><strong>David Lee</strong> completed milestone — Data Collection Phase</div><div class="feed-time">2d ago</div></div></div>
+            {% for notif in notifications %}
+            <div class="feed-item"><div class="feed-ico" style="background:var(--blue-dim)">📄</div><div><div class="feed-text">{{ notif.message }}</div><div class="feed-time">{{ notif.created_at|timesince }} ago</div></div></div>
+            {% empty %}
+            <div class="feed-item"><div class="feed-ico" style="background:var(--blue-dim)">✔️</div><div><div class="feed-text">No notifications yet.</div><div class="feed-time">All caught up</div></div></div>
+            {% endfor %}
           </div>
         </div>
       </div>
@@ -990,17 +997,25 @@ select.form-control{appearance:none;cursor:pointer}
       <div class="card">
         <div class="card-hdr">
           <div class="card-hdr-left"><div class="card-title">Pending Reviews</div><div class="card-sub">Submissions awaiting your evaluation</div></div>
-          <span class="pill pill-red" style="font-size:.7rem;padding:.3rem .7rem">8 Pending</span>
+          <span class="pill pill-red" style="font-size:.7rem;padding:.3rem .7rem">{{ stats.pending_reviews }} Pending</span>
         </div>
         <div class="tbl-wrap">
           <table>
             <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Submitted</th><th>Days Waiting</th><th>Priority</th><th>Action</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 4: Data Analysis & Results</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-16</td><td><span style="color:var(--red);font-weight:700">3 days</span></td><td><span class="pill pill-red"><span class="prio prio-high"></span>High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">James Wilson</td><td>Literature Review — Final Version</td><td class="td-muted">Final</td><td class="td-muted">2026-03-15</td><td><span style="color:var(--orange);font-weight:700">4 days</span></td><td><span class="pill pill-red"><span class="prio prio-high"></span>High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td>Research Methodology Chapter</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-14</td><td><span style="color:var(--orange);font-weight:700">5 days</span></td><td><span class="pill pill-orange"><span class="prio prio-med"></span>Medium</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">David Lee</td><td>Thesis Proposal Revision v2</td><td class="td-muted">Revision</td><td class="td-muted">2026-03-13</td><td class="td-muted">6 days</td><td><span class="pill pill-blue"><span class="prio prio-low"></span>Low</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">Maria Garcia</td><td>Introduction Chapter Draft</td><td class="td-muted">Draft</td><td class="td-muted">2026-03-12</td><td class="td-muted">7 days</td><td><span class="pill pill-blue"><span class="prio prio-low"></span>Low</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              {% for item in pending_reviews %}
+              <tr>
+                <td class="td-bold">{{ item.student_name }}</td>
+                <td>{{ item.submission.title }}</td>
+                <td class="td-muted">{{ item.submission.get_type_display }}</td>
+                <td class="td-muted">{{ item.submitted_date|date:'d M Y' }}</td>
+                <td><span style="color:{{ item.days_color }};font-weight:700">{{ item.days_waiting }} days</span></td>
+                <td><span class="pill {{ item.priority_badge }}"><span class="prio {{ item.priority_dot_class }}"></span>{{ item.priority }}</span></td>
+                <td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="7" class="td-muted">No pending reviews at the moment.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1024,13 +1039,22 @@ select.form-control{appearance:none;cursor:pointer}
       <div class="card">
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>Student</th><th>Programme</th><th>Year</th><th>Progress</th><th>Avg Score</th><th>Last Submission</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Student</th><th>Programme</th><th>Student ID</th><th>Progress</th><th>Avg Score</th><th>Last Submission</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="students-tbody">
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><div><div class="td-bold">Sarah Johnson</div><div class="td-muted" style="font-size:.67rem">s.j@uni.edu · ID: PG/2024/001</div></div></div></td><td>PhD CS</td><td>Year 2</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></td><td style="color:var(--green);font-weight:700">92%</td><td class="td-muted">2026-03-15</td><td><span class="pill pill-green">On Track</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">James Wilson</div><div class="td-muted" style="font-size:.67rem">j.w@uni.edu · ID: PG/2024/007</div></div></div></td><td>MSc CS</td><td>Year 1</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td style="color:var(--green);font-weight:700">88%</td><td class="td-muted">2026-03-10</td><td><span class="pill pill-green">On Track</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><div><div class="td-bold">Emily Brown</div><div class="td-muted" style="font-size:.67rem">e.b@uni.edu · ID: PG/2023/019</div></div></div></td><td>PhD CS</td><td>Year 3</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td style="color:var(--orange);font-weight:700">67%</td><td class="td-muted">2026-03-08</td><td><span class="pill pill-red">Needs Attention</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">DL</div><div><div class="td-bold">David Lee</div><div class="td-muted" style="font-size:.67rem">d.l@uni.edu · ID: PG/2024/012</div></div></div></td><td>MSc Data Sci</td><td>Year 1</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">90%</span></div></td><td style="color:var(--green);font-weight:700">95%</td><td class="td-muted">2026-03-12</td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">MG</div><div><div class="td-bold">Maria Garcia</div><div class="td-muted" style="font-size:.67rem">m.g@uni.edu · ID: PG/2024/021</div></div></div></td><td>MSc CS</td><td>Year 1</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td style="color:var(--green);font-weight:700">84%</td><td class="td-muted">2026-03-11</td><td><span class="pill pill-green">On Track</span></td><td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td></tr>
+              {% for card in students %}
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:var(--navy);color:var(--amber)">{{ card.profile_initials }}</div><div><div class="td-bold">{{ card.student.user.get_full_name }}</div><div class="td-muted" style="font-size:.67rem">{{ card.email }}</div></div></div></td>
+                <td>{{ card.programme }}</td>
+                <td>{{ card.student_number }}</td>
+                <td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ card.progress }}%;background:{{ card.progress_color }}"></div></div><span class="prog-val" style="color:{{ card.progress_color }}">{{ card.progress }}%</span></div></td>
+                <td style="color:{{ card.progress_color }};font-weight:700">{{ card.avg_score|default:'—' }}</td>
+                <td class="td-muted">{% if card.last_active %}{{ card.last_active|date:'d M Y' }}{% else %}—{% endif %}</td>
+                <td><span class="pill {{ card.status_badge }}">{{ card.status_label }}</span></td>
+                <td><button class="btn btn-navy btn-xs" onclick="openModal('student-modal')">Profile</button> <button class="btn btn-outline btn-xs" onclick="openModal('feedback-modal')">Feedback</button></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="8" class="td-muted">No students assigned yet.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1045,9 +1069,9 @@ select.form-control{appearance:none;cursor:pointer}
  
       <div class="card" style="margin-bottom:1rem">
         <div class="tabs" id="review-tabs">
-          <button class="tab-btn active" onclick="switchTab('review-tabs','rt-pending',this)">Pending (8)</button>
-          <button class="tab-btn" onclick="switchTab('review-tabs','rt-reviewed',this)">Reviewed (25)</button>
-          <button class="tab-btn" onclick="switchTab('review-tabs','rt-all',this)">All Submissions</button>
+          <button class="tab-btn active" onclick="switchTab('review-tabs','rt-pending',this)">Pending ({{ stats.pending_reviews }})</button>
+          <button class="tab-btn" onclick="switchTab('review-tabs','rt-reviewed',this)">Reviewed ({{ reviewed_submissions.count }})</button>
+          <button class="tab-btn" onclick="switchTab('review-tabs','rt-all',this)">All Submissions ({{ submissions.count }})</button>
         </div>
         <div id="rt-pending" class="tab-panel active tbl-wrap">
           <table>
@@ -1064,10 +1088,18 @@ select.form-control{appearance:none;cursor:pointer}
           <table>
             <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Score Given</th><th>Decision</th><th>Reviewed On</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 3: Methodology</td><td class="td-muted">Draft</td><td style="color:var(--green);font-weight:700">92%</td><td><span class="pill pill-green">Approved</span></td><td class="td-muted">2026-03-10</td></tr>
-              <tr><td class="td-bold">David Lee</td><td>Research Proposal v1</td><td class="td-muted">Proposal</td><td style="color:var(--green);font-weight:700">88%</td><td><span class="pill pill-green">Approved</span></td><td class="td-muted">2026-03-08</td></tr>
-              <tr><td class="td-bold">James Wilson</td><td>Introduction Chapter</td><td class="td-muted">Draft</td><td style="color:var(--orange);font-weight:700">74%</td><td><span class="pill pill-amber">Minor Revision</span></td><td class="td-muted">2026-03-05</td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td>Literature Survey</td><td class="td-muted">Draft</td><td style="color:var(--red);font-weight:700">58%</td><td><span class="pill pill-red">Major Revision</span></td><td class="td-muted">2026-03-01</td></tr>
+              {% for item in reviewed_items %}
+              <tr>
+                <td class="td-bold">{{ item.submission.student.user.get_full_name }}</td>
+                <td>{{ item.submission.title }}</td>
+                <td class="td-muted">{{ item.submission.get_type_display }}</td>
+                <td style="color:{{ item.score_color }};font-weight:700">{{ item.score_display }}</td>
+                <td><span class="pill {{ item.decision_class }}">{{ item.decision_label }}</span></td>
+                <td class="td-muted">{% if item.reviewed_date %}{{ item.reviewed_date|date:'d M Y' }}{% else %}—{% endif %}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" class="td-muted">No reviewed submissions yet.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1075,11 +1107,18 @@ select.form-control{appearance:none;cursor:pointer}
           <table>
             <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Status</th><th>Score</th><th>Submitted</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 4: Data Analysis</td><td class="td-muted">Draft</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-16</td></tr>
-              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 3: Methodology</td><td class="td-muted">Draft</td><td><span class="pill pill-green">Approved</span></td><td style="color:var(--green);font-weight:700">92%</td><td class="td-muted">2026-03-05</td></tr>
-              <tr><td class="td-bold">James Wilson</td><td>Literature Review Final</td><td class="td-muted">Final</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-15</td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td>Research Methodology</td><td class="td-muted">Draft</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-14</td></tr>
-              <tr><td class="td-bold">David Lee</td><td>Proposal Revision v2</td><td class="td-muted">Revision</td><td><span class="pill pill-amber">Under Review</span></td><td class="td-muted">—</td><td class="td-muted">2026-03-13</td></tr>
+              {% for item in all_items %}
+              <tr>
+                <td class="td-bold">{{ item.submission.student.user.get_full_name }}</td>
+                <td>{{ item.submission.title }}</td>
+                <td class="td-muted">{{ item.submission.get_type_display }}</td>
+                <td><span class="pill {{ item.status_pill }}">{{ item.submission.get_status_display }}</span></td>
+                <td class="td-muted">{{ item.feedback_score }}</td>
+                <td class="td-muted">{{ item.submission.submitted_at|date:'d M Y' }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" class="td-muted">No submissions found.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1097,30 +1136,18 @@ select.form-control{appearance:none;cursor:pointer}
         <div class="card">
           <div class="card-hdr"><div class="card-title">Feedback Sent</div><div class="card-sub">Sorted by most recent</div></div>
           <div>
-            <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)">
+            {% for feedback in feedbacks %}
+            <div style="padding:1.1rem 1.25rem;{% if not forloop.last %}border-bottom:1px solid var(--border){% endif %}">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
-                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">Sarah Johnson — Chapter 3 Review</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent 2 hours ago · Draft Submission</div></div>
-                <span class="pill pill-green">Delivered</span>
+                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">{{ feedback.submission.student.user.get_full_name }} — {{ feedback.submission.title }}</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent {{ feedback.created_at|timesince }} ago · {{ feedback.submission.get_type_display }}</div></div>
+                <span class="pill {% if feedback.score >= 80 %}pill-green{% elif feedback.score >= 65 %}pill-amber{% else %}pill-red{% endif %}">Delivered</span>
               </div>
-              <p style="font-size:.8rem;color:var(--text);line-height:1.65">Great work on the methodology chapter. Your justification for using grounded theory is particularly well-argued. Please expand on the sampling strategy in section 3.2 and add more detail on data validation procedures. Overall this is strong — approve with minor revisions.</p>
-              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: 92%</span><span class="pill pill-green">Approved</span></div>
+              <p style="font-size:.8rem;color:var(--text);line-height:1.65">{{ feedback.comment }}</p>
+              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: {{ feedback.score|default:'—' }}{% if feedback.score != None %}%{% endif %}</span><span class="pill {% if feedback.score >= 80 %}pill-green{% elif feedback.score >= 65 %}pill-amber{% else %}pill-red{% endif %}">{% if feedback.score >= 80 %}Approved{% elif feedback.score >= 65 %}Minor Revision{% else %}Major Revision{% endif %}</span></div>
             </div>
-            <div style="padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
-                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">Emily Brown — Literature Survey</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent 5 days ago · Draft Submission</div></div>
-                <span class="pill pill-green">Delivered</span>
-              </div>
-              <p style="font-size:.8rem;color:var(--text);line-height:1.65">The literature coverage is broad but lacks depth in the AI-ethics section which is central to your thesis. You need to cite at least 15 more recent papers (2022-2026) and critically compare the theoretical frameworks. Please revise and resubmit.</p>
-              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: 58%</span><span class="pill pill-red">Major Revision</span></div>
-            </div>
-            <div style="padding:1.1rem 1.25rem">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
-                <div><div style="font-size:.85rem;font-weight:700;color:var(--navy)">David Lee — Research Proposal v1</div><div style="font-size:.68rem;color:var(--muted);margin-top:.1rem">Sent 8 days ago · Proposal</div></div>
-                <span class="pill pill-green">Delivered</span>
-              </div>
-              <p style="font-size:.8rem;color:var(--text);line-height:1.65">Excellent proposal — the research questions are clearly defined and the methodology is appropriate. The timeline looks realistic. Approved to proceed. Please begin the literature review and have a draft ready by end of April.</p>
-              <div style="margin-top:.6rem;display:flex;gap:.5rem"><span class="pill pill-navy">Grade: 88%</span><span class="pill pill-green">Approved</span></div>
-            </div>
+            {% empty %}
+            <div class="empty"><div class="empty-ico">💬</div><p>No feedback has been recorded yet.</p></div>
+            {% endfor %}
           </div>
         </div>
         <div class="card" style="align-self:start">

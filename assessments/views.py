@@ -14,7 +14,7 @@ def submit_work(request):
         if form.is_valid():
             submission = form.save(commit=False)
             submission.student = student
-            submission.status = 'pending'
+            submission.status = 'submitted'
             submission.save()
             return redirect("/students/dashboard/")
     else:
@@ -29,7 +29,14 @@ def give_feedback(request):
     if request.method == "POST":
         form = FeedbackForm(request.POST)
         if form.is_valid():
-            form.save()
+            feedback = form.save(commit=False)
+            feedback.supervisor = request.user
+            feedback.save()
+
+            submission = feedback.submission
+            submission.status = 'reviewed'
+            submission.save(update_fields=['status'])
+
             return redirect("/supervisor/dashboard/")
     else:
         form = FeedbackForm()

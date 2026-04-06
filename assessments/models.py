@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 from students.models import Student
 from pipeline.models import PipelineStage
 
@@ -30,6 +31,8 @@ class Submission(models.Model):
     ]
 
     STATUS_CHOICES = [
+        ('submitted', 'Submitted'),
+        ('reviewed', 'Reviewed'),
         ('approved', 'Approved'),
         ('pending', 'Pending'),
         ('revision', 'Needs Revision'),
@@ -41,9 +44,8 @@ class Submission(models.Model):
     chapter = models.CharField(max_length=50, choices=CHAPTER_CHOICES, default='not_applicable', blank=True, null=True)
     file = models.FileField(upload_to='submissions/')
     submitted_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
     notes = models.TextField(blank=True, null=True)
-    # score = models.IntegerField(null=True, blank=True)
     stage = models.CharField(max_length=50, choices=PipelineStage.choices, default="concept_note")
 
     def __str__(self):
@@ -51,7 +53,8 @@ class Submission(models.Model):
     
 class Feedback(models.Model):
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
+    supervisor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='feedback_given')
     comment = models.TextField()
-    score = models.IntegerField()
+    score = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)

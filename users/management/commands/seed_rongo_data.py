@@ -57,8 +57,7 @@ class Command(BaseCommand):
                 defaults={
                     "student_number": f"INF/{str(i).zfill(3)}/2022",
                     "programme": "Informatics",
-                    "supervisor_name": "Dr. John Doe",
-                    "supervisor_email": "sup1@rongo.ac.ke",
+                    "supervisor": users['supervisor1'],
                 }
             )
             if created:
