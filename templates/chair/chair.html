@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Department Chair — R.U</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0A194E;--navy-light:#1a3580;--amber:#FFC107;--amber-dim:rgba(255,193,7,.13);--amber-dark:#c9960a;--white:#fff;--off:#F5F7FC;--off2:#EBEEf8;--text:#111827;--muted:#5B6F8A;--soft:#94A3B8;--border:#DDE4F0;--green:#16A34A;--green-dim:rgba(22,163,74,.1);--red:#DC2626;--red-dim:rgba(220,38,38,.1);--blue:#2563EB;--blue-dim:rgba(37,99,235,.1);--orange:#EA580C;--orange-dim:rgba(234,88,12,.1);--sidebar:228px;--topbar:60px}
+html{font-size:14px}
+body{font-family:'Plus Jakarta Sans',sans-serif;
+background:var(--off);
+color:var(--text);
+display:flex;
+min-height:100vh}
+.sidebar{
+  width:var(--sidebar);
+  background:var(--navy);
+  display:flex;flex-direction:column;
+  position:fixed;
+  top:0;left:0;
+  height:100vh;
+  z-index:100;
+  overflow-y:auto}
+.sidebar-logo{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  padding:1.25rem 1.25rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{
+  width:34px;
+  height:34px;
+  background:var(--amber);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0}
+.logo-badge{
+  width:150px;
+  height:50px;
+  background:white;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  flex-shrink:0;
+  margin-left: 10px;
+}
+.logo-img {
+    height: 110px;    
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); 
+    margin-left: 0px
+}
+.nav-section{
+  padding:.75rem 0}
+.nav-section-title{
+  font-size:.6rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgb(255, 255, 255);
+  padding:.4rem 1.25rem;
+  display:block;
+  margin-left: 10px;
+}
+.nav-link{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:1.05rem .25rem;
+  color:rgb(255, 255, 255);
+  font-size:.92rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .18s;
+  border-left:2.5px solid transparent;
+  text-decoration:none;
+  margin-left: 10px;
+}
+
+.nav-link:hover{
+  color:#FFC107;
+  background:rgba(255,255,255,.06)}
+.nav-link.active{
+  color:#FFC107;
+  background:rgba(255,255,255,.09);
+  border-left-color:var(--amber)}
+.nav-link .ni{
+  width:17px;
+  text-align:center;
+  font-size:.88rem;
+  flex-shrink:0}
+.nav-badge{
+  margin-left:auto;
+  background:var(--red);
+  color:#fff;
+  font-size:.58rem;
+  font-weight:700;
+  padding:.1rem .38rem;
+  border-radius:20px}
+.sidebar-footer{
+  margin-top:auto;
+  padding:1rem 1.25rem;
+  border-top:1px solid rgba(255,255,255,.07)}
+.user-mini{
+  display:flex;
+  align-items:center;
+  gap:.65rem}
+.user-av{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:var(--amber);
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  font-weight:800;
+  flex-shrink:0}
+.user-mini-name{
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  line-height:1.2}
+.user-mini-role{
+  font-size:.65rem;
+  color:rgba(255,255,255,.38)}
+.logout-btn{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.28);font-size:.9rem;cursor:pointer;padding:.25rem}
+.logout-btn:hover{color:var(--red)}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--topbar);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;padding:0 1.75rem;position:sticky;top:0;z-index:50}
+.topbar-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+.tb-notif{position:relative;width:34px;height:34px;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
+.tb-pill{display:flex;align-items:center;gap:.5rem;background:var(--off);border:1px solid var(--border);padding:.3rem .75rem;cursor:pointer}
+.tb-av{width:24px;height:24px;border-radius:50%;background:var(--navy);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800}
+.tb-name{font-size:.78rem;font-weight:600}
+.tb-role{font-size:.62rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem 1rem;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy-light)}
+.btn-amber{background:var(--amber);color:var(--navy)}.btn-amber:hover{background:#e6ad00}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--navy);background:rgba(10,25,78,.04)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.65rem}
+.content{padding:1.5rem 1.75rem;flex:1}
+.context-card{
+  background:#fff;
+  border:1px solid var(--border);
+  padding:1.25rem;
+  margin-bottom:1.5rem;
+  display:flex;
+  align-items:center;
+  gap:1.5rem;
+  flex-wrap:wrap}
+
+  .context-badge{
+  background:var(--navy);
+  color:var(--amber);
+  font-size:.7rem;
+  font-weight:800;
+  padding:.3rem .75rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  flex-shrink:0}
+
+  .context-info{
+  flex:1}
+
+.context-title{
+  font-size:.95rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:.2rem}
+
+.context-meta{
+  font-size:.75rem;
+  color:var(--muted);
+  display:flex;gap:1rem;
+  flex-wrap:wrap}
+  .context-meta span{
+  display:flex;
+  align-items:center;
+  gap:.3rem}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  font-size:.63rem;
+  font-weight:700;
+  padding:.2rem .55rem}
+  
+  /* Step indicator */
+.steps{
+  display:flex;
+  align-items:center;
+  gap:0;
+  margin-bottom:1.75rem}
+.step{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  flex:1}
+.step-circle{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  font-weight:800;
+  flex-shrink:0;
+  transition:all .3s}
+  .step-done .step-circle{
+  background:var(--green);
+  color:#fff}
+.step-active .step-circle{
+  background:var(--navy);
+  color:var(--amber);
+  border:2px solid var(--amber)}
+.step-pending .step-circle{
+  background:var(--off2);
+  color:var(--soft);
+  border:1.5px solid var(--border)}
+.step-label{
+  font-size:.72rem;
+  font-weight:600;
+  color:var(--muted)}
+  .step-active .step-label{
+  color:var(--navy);
+  font-weight:700}
+.step-done .step-label{
+  color:var(--green)}
+.step-connector{
+  flex:1;height:2px;
+  background:var(--border);
+  margin:0 .25rem}
+.step-connector.done{
+  background:var(--green)}
+  .upload-zone{
+    border:2px dashed var(--border);
+    padding:1.5rem;
+    text-align:center;
+    cursor:pointer;
+    transition:all .2s;
+    background:var(--off);
+    margin-bottom:1rem}
+.upload-zone:hover{
+  border-color:var(--navy);
+  background:rgba(10,25,78,.03)}
+.upload-icon{
+  font-size:1.75rem;
+  margin-bottom:.5rem}
+.upload-label{
+  font-size:.82rem;
+  font-weight:600;
+  color:var(--navy);
+  margin-bottom:.2rem}
+.upload-sub{
+  font-size:.72rem;
+  color:var(--muted)}
+/* Divider */
+.or-divider{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  margin:.75rem 0;
+  color:var(--soft);
+  font-size:.72rem;
+  font-weight:600}
+.or-divider::before,.or-divider::after{
+  content:'';flex:1;
+  height:1px;
+  background:var(--border)}
+  /* Transcript area */
+.transcript-zone{
+  position:relative}
+.transcript-textarea{
+  width:100%;
+  min-height:220px;
+  background:var(--off);
+  border:1.5px solid var(--border);
+  padding:1rem;
+  font-family:inherit;
+  font-size:.82rem;
+  color:var(--text);
+  outline:none;
+  resize:vertical;
+  transition:border-color .2s;
+  line-height:1.7}
+.transcript-textarea:focus{
+  border-color:var(--navy);
+  background:#fff}
+.transcript-textarea::placeholder{
+  color:var(--soft)}
+  .char-count{
+  font-size:.68rem;
+  color:var(--soft);
+  text-align:right;
+  margin-top:.35rem}
+/* ── AI PROCESSING STATE ── */
+.ai-processing{
+  background:var(--navy);
+  padding:1.5rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.75rem;
+  text-align:center}
+.ai-spinner-wrap{
+  position:relative;
+  width:56px;
+  height:56px}
+.ai-ring{
+  width:56px;
+  height:56px;
+  border:3px solid rgba(255,193,7,.2);
+  border-top-color:var(--amber);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  position:absolute;
+  top:0;
+  left:0}
+.ai-ring-2{
+  width:44px;
+  height:44px;
+  border:2px solid rgba(255,193,7,.12);
+  border-bottom-color:rgba(255,193,7,.5);
+  border-radius:50%;
+  animation:spin 1.2s linear infinite reverse;
+  position:absolute;
+  top:6px;
+  left:6px}
+@keyframes spin{to{
+  transform:rotate(360deg)}}
+.ai-icon-center{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-size:1.1rem}
+.ai-processing-title{
+  font-size:.9rem;
+  font-weight:700;
+  color:#fff}
+.ai-processing-sub{
+  font-size:.75rem;
+  color:rgba(255,255,255,.5)}
+.ai-progress-bar{
+  width:200px;
+  height:3px;
+  background:rgba(255,255,255,.12);
+  overflow:hidden}
+.ai-progress-fill{
+  height:100%;
+  background:var(--amber);
+  width:0%;
+  animation:progress 2.8s ease-in-out forwards}
+
+  /* ── CORRECTIONS LIST ── */
+.corrections-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:1rem;
+  flex-wrap:wrap;
+  gap:.75rem}
+.corrections-title{
+  font-size:.9rem;
+  font-weight:700;
+  color:var(--navy)}
+.corrections-meta{
+  font-size:.75rem;
+  color:var(--muted)}
+.corrections-filters{
+  display:flex;
+  gap:.4rem}
+.filter-btn{
+  padding:.25rem .65rem;
+  font-size:.65rem;
+  font-weight:700;
+  cursor:pointer;
+  border:1.5px solid var(--border);
+  background:#fff;
+  color:var(--muted);
+  font-family:inherit;
+  transition:all .18s}
+.filter-btn:hover,.filter-btn.active{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy)}
+.filter-btn.f-critical.active{
+  background:var(--red);
+  border-color:var(--red)}
+.filter-btn.f-major.active{
+  background:var(--orange);
+  border-color:var(--orange)}
+.filter-btn.f-minor.active{
+  background:var(--blue);
+  border-color:var(--blue)}
+
+.summary-strip{
+  display:flex;
+  gap:.75rem;
+  margin-bottom:1.25rem;
+  flex-wrap:wrap}
+.summary-chip{
+  padding:.4rem .85rem;
+  font-size:.72rem;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:.4rem}
+.sc-critical{
+  background:var(--red-dim);
+  color:var(--red);
+  border:1px solid rgba(220,38,38,.2)}
+.sc-major{
+  background:var(--orange-dim);
+  color:var(--orange);
+  border:1px solid rgba(234,88,12,.2)}
+.sc-minor{
+  background:var(--blue-dim);
+  color:var(--blue);
+  border:1px solid rgba(37,99,235,.2)}
+.sc-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  flex-shrink:0}
+
+  /* Correction item */
+.correction-item{
+border:1px solid var(--border);
+margin-bottom:.65rem;
+transition:all .2s;
+animation:slideIn .3s ease}
+@keyframes slideIn{from{
+opacity:0;
+transform:translateY(6px)}to{
+opacity:1;transform:translateY(0)}}
+.correction-item.deleted{
+opacity:.4;
+pointer-events:none}
+.correction-item.approved{
+border-color:rgba(22,163,74,.35);
+background:rgba(22,163,74,.02)}
+.correction-item-hdr{
+display:flex;
+align-items:flex-start;
+gap:.75rem;
+padding:.85rem 1rem;
+cursor:pointer}
+.urgency-tag{
+font-size:.6rem;
+font-weight:800;
+padding:.25rem .6rem;
+text-transform:uppercase;letter-spacing:.07em;flex-shrink:0;margin-top:.05rem}
+.tag-critical{background:var(--red-dim);color:var(--red);border:1px solid rgba(220,38,38,.25)}
+.tag-major{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(234,88,12,.25)}
+.tag-minor{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(37,99,235,.25)}
+.correction-text{flex:1;font-size:.82rem;color:var(--text);line-height:1.55}
+.correction-text.editing{display:none}
+.correction-edit-input{flex:1;background:rgba(10,25,78,.04);border:1.5px solid var(--navy);padding:.45rem .65rem;font-family:inherit;font-size:.82rem;color:var(--text);outline:none;resize:vertical;min-height:52px;line-height:1.55}
+.correction-category{font-size:.65rem;color:var(--soft);margin-top:.3rem}
+.correction-actions{display:flex;align-items:center;gap:.35rem;flex-shrink:0;margin-top:.05rem}
+.ca-btn{width:28px;height:28px;border:none;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all .18s;flex-shrink:0}
+.ca-approve{background:var(--green-dim);color:var(--green)}.ca-approve:hover{background:var(--green);color:#fff}
+.ca-edit{background:var(--blue-dim);color:var(--blue)}.ca-edit:hover{background:var(--blue);color:#fff}
+.ca-delete{background:var(--red-dim);color:var(--red)}.ca-delete:hover{background:var(--red);color:#fff}
+.ca-save{background:var(--navy);color:#fff;width:auto;padding:0 .65rem;font-size:.65rem;font-weight:700}
+.ca-cancel{background:var(--off2);color:var(--muted);width:auto;padding:0 .65rem;font-size:.65rem}
+.approved-check{color:var(--green);font-size:.82rem;flex-shrink:0}
+@keyframes progress{0%{width:0%}60%{width:65%}85%{width:82%}100%{width:95%}}
+
+* Add item */
+.add-item-row{border:1.5px dashed var(--border);padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;transition:all .2s;margin-top:.35rem}
+.add-item-row:hover{border-color:var(--navy);background:rgba(10,25,78,.02)}
+.add-item-row input{flex:1;border:none;background:transparent;font-family:inherit;font-size:.82rem;color:var(--text);outline:none}
+.add-item-row input::placeholder{color:var(--soft)}
+.urgency-select{background:var(--off);border:1.5px solid var(--border);font-family:inherit;font-size:.7rem;padding:.3rem .5rem;color:var(--text);outline:none;cursor:pointer}
+
+/* Validation summary */
+.validation-summary{background:var(--off);border:1px solid var(--border);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.vs-stat{text-align:center}
+.vs-num{font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:var(--navy);line-height:1}
+.vs-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.15rem}
+.vs-divider{width:1px;height:36px;background:var(--border)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem 1rem;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy2)}
+.btn-amber{background:var(--amber);color:var(--navy)}.btn-amber:hover{background:#e6ad00}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--navy)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#15803d}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#b91c1c}
+.btn-sm{padding:.32rem .75rem;font-size:.72rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Action bar */
+.action-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding:1rem 1.25rem;background:#fff;border:1px solid var(--border);border-top:none}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:#fff;border-left:4px solid var(--amber);padding:.8rem 1.25rem;font-size:.8rem;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* Confirm sent state */
+.sent-state{background:var(--green-dim);border:1px solid rgba(22,163,74,.25);padding:2rem;text-align:center;display:none}
+.sent-icon{font-size:2.5rem;margin-bottom:.75rem}
+.sent-title{font-family:'Lora',serif;font-size:1.2rem;font-weight:700;color:var(--green);margin-bottom:.4rem}
+.sent-sub{font-size:.8rem;color:var(--muted)}
+
+.hidden{display:none!important}
+.section-view{display:none}
+.section-view.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.page-hdr h2{font-family:'Lora',serif;font-size:1.45rem;font-weight:700;color:var(--navy)}
+.page-hdr p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.page-hdr-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid var(--border);padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:3.5px}
+.s-navy::after{background:var(--navy)}.s-green::after{background:var(--green)}.s-amber::after{background:var(--amber)}.s-red::after{background:var(--red)}.s-blue::after{background:var(--blue)}
+.stat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem}
+.stat-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.ico-navy{background:rgba(10,25,78,.08)}.ico-green{background:var(--green-dim)}.ico-amber{background:var(--amber-dim)}.ico-red{background:var(--red-dim)}.ico-blue{background:var(--blue-dim)}
+.stat-val{font-family:'Lora',serif;font-size:1.9rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.25rem}
+.stat-sub{font-size:.7rem;color:var(--muted)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+.card{background:#fff;border:1px solid var(--border)}
+.card-hdr{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.card-hdr-left{flex:1}
+.card-title{font-size:.9rem;font-weight:700;color:var(--navy)}
+.card-sub{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.card-body{padding:1.25rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-65-35{display:grid;grid-template-columns:1.85fr 1fr;gap:1rem}
+.grid-55-45{display:grid;grid-template-columns:1.2fr 1fr;gap:1rem}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:.65rem 1.1rem;font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;background:var(--off);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:.8rem 1.1rem;font-size:.8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover td{background:rgba(10,25,78,.018)}
+tbody tr:last-child td{border-bottom:none}
+.td-bold{font-weight:600}.td-muted{color:var(--muted)}
+.prog-wrap{display:flex;align-items:center;gap:.6rem}
+.prog-bar{height:6px;background:var(--off2);flex:1;overflow:hidden;min-width:60px}
+.prog-fill{height:100%}
+.prog-val{font-size:.72rem;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+.pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.63rem;font-weight:700;padding:.2rem .55rem}
+.pill-green{background:var(--green-dim);color:var(--green)}.pill-red{background:var(--red-dim);color:var(--red)}.pill-amber{background:var(--amber-dim);color:var(--amber-dark)}.pill-blue{background:var(--blue-dim);color:var(--blue)}.pill-orange{background:var(--orange-dim);color:var(--orange)}.pill-navy{background:rgba(10,25,78,.1);color:var(--navy)}.pill-gray{background:var(--off2);color:var(--muted)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0}
+.stars{color:var(--amber);letter-spacing:.05em;font-size:.78rem}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab-btn{padding:.7rem 1.1rem;font-size:.78rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .18s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn:hover{color:var(--navy)}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.modal-overlay{position:fixed;inset:0;background:rgba(6,15,48,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)}
+.modal-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.modal-body{padding:1.25rem}
+.modal-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.form-control{width:100%;background:var(--off);border:1.5px solid var(--border);padding:.65rem .9rem;font-family:inherit;font-size:.82rem;color:var(--text);outline:none;transition:border-color .2s}
+.form-control:focus{border-color:var(--navy);background:#fff}
+textarea.form-control{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:#fff;border-left:4px solid var(--amber);padding:.8rem 1.25rem;font-size:.8rem;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+/* Alert cards */
+.alert-card{border:1px solid var(--border);padding:1rem;display:flex;gap:.85rem;align-items:flex-start;transition:background .2s;cursor:pointer;margin-bottom:.65rem}
+.alert-card:hover{background:var(--off)}
+.alert-card:last-child{margin-bottom:0}
+.alert-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.alert-title{font-size:.83rem;font-weight:700;color:var(--navy);margin-bottom:.18rem}
+.alert-desc{font-size:.73rem;color:var(--muted)}
+.alert-action{font-size:.7rem;font-weight:700;margin-top:.35rem}
+.alert-action-red{color:var(--red)}
+.alert-action-amber{color:var(--amber-dark)}
+.alert-action-blue{color:var(--blue)}
+.alert-action-green{color:var(--green)}
+/* Prog stat row */
+.prog-stat{display:flex;align-items:center;gap:1rem;padding:.9rem 1.25rem;border-bottom:1px solid var(--border)}
+.prog-stat:last-child{border-bottom:none}
+.ps-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.ps-name{font-size:.85rem;font-weight:700;color:var(--navy)}
+.ps-meta{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+/* Bar chart horizontal */
+.hbar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.hbar-label{width:110px;font-size:.74rem;color:var(--muted);text-align:right;flex-shrink:0}
+.hbar-track{flex:1;height:9px;background:var(--off2);overflow:hidden}
+.hbar-fill{height:100%}
+.hbar-val{font-size:.7rem;font-weight:700;color:var(--text);width:32px}
+/* SVG chart inline */
+svg.chart{overflow:visible;width:100%}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--off2);border-radius:10px}
+</style>
+</head>
+<body>
+ 
+<aside class="sidebar">
+  <a class="sidebar-logo" href="index.html">
+    <div class="logo-badge">
+      <img src="assets/R.U logo.png" alt="R.U logo" class="logo-img">
+    </div>
+    
+  </a>
+  <nav class="nav-section">
+    <span class="nav-section-title">Main</span>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'corrections')"><span class="ni">📋</span> Post-Seminar Actions</a>
+    <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni">👥</span> Faculty & Students</a>
+    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📊</span> Reports</a>
+    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">📈</span> Analytics</a>
+    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">✅</span> Approvals <span class="nav-badge">8</span></a>
+    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">⚙️</span> Settings</a>
+  </nav>
+  <nav class="nav-section">
+    <span class="nav-section-title">Navigate</span>
+    <a class="nav-link" href="login.html"><span class="ni">🏠</span> Back to Portal</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="user-av">ER</div>
+      <div><div class="user-mini-name">Prof. Emily Rodriguez</div><div class="user-mini-role">Department Chair</div></div>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⍈Log out </button>
+    </div>
+  </div>
+</aside>
+ 
+<div class="main">
+  <header class="topbar">
+    <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">Department Chair Dashboard</div>
+    <div class="topbar-right">
+      <div class="tb-notif" onclick="showToast('5 new alerts')">🔔<span class="tb-notif-dot"></span></div>
+      <div class="tb-pill"><div class="tb-av">ER</div><div><div class="tb-name">Prof. Emily Rodriguez</div><div class="tb-role">Chair</div></div></div>
+      <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
+    </div>
+  </header>
+ 
+  <main class="content">
+ 
+    <!-- DASHBOARD -->
+    <section class="section-view active" id="view-dashboard">
+      <div class="page-hdr">
+        <div><h2>Department Chair Dashboard 📊</h2><p>Computer Science Department — Q1 2026 Overview</p></div>
+        <div class="page-hdr-actions">
+          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')">📊 Reports</button>
+          <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
+        </div>
+      </div>
+ 
+      <div class="stat-grid">
+        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red">📋</div></div><div class="stat-val">4</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
+        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber">🚨</div></div><div class="stat-val">5</div><div class="stat-sub"><span class="dn">2 urgent — action needed</span></div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">👥</div></div><div class="stat-val">12</div><div class="stat-sub">8 Full-time · 4 Part-time</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">5</div><div class="stat-sub"><span class="dn">2 urgent cases</span></div></div>
+
+          
+        </div>
+      
+
+
+ 
+      <!-- Charts -->
+      <!-- Supervisor performance + Priority Alerts -->
+      <div class="grid-65-35" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Faculty Supervisor Performance</div><div class="card-sub">Ratings and student outcomes by supervisor</div></div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Supervisor</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Submissions Reviewed</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">MC</div><span class="td-bold">Dr. Michael Chen</span></div></td><td>15</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.8/5.0</div></div></td><td class="td-muted">25</td><td><span class="pill pill-amber">Excellent</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">SS</div><span class="td-bold">Dr. Sarah Smith</span></div></td><td>12</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.5/5.0</div></div></td><td class="td-muted">18</td><td><span class="pill pill-green">Good</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><span class="td-bold">Dr. John Williams</span></div></td><td>10</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--green)"></div></div><span class="prog-val">75%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.7/5.0</div></div></td><td class="td-muted">22</td><td><span class="pill pill-amber">Excellent</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">LJ</div><span class="td-bold">Dr. Lisa Johnson</span></div></td><td>8</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--navy)"></div></div><span class="prog-val">65%</span></div></td><td><div><div class="stars">★★★★☆</div><div style="font-size:.65rem;color:var(--muted)">4.3/5.0</div></div></td><td class="td-muted">14</td><td><span class="pill pill-green">Good</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#EA580C;color:#fff">RD</div><span class="td-bold">Dr. Robert Davis</span></div></td><td>9</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:58%;background:var(--orange)"></div></div><span class="prog-val" style="color:var(--orange)">58%</span></div></td><td><div><div class="stars">★★★★☆</div><div style="font-size:.65rem;color:var(--muted)">4.0/5.0</div></div></td><td class="td-muted">12</td><td><span class="pill pill-orange">Fair</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <div>
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-hdr"><div class="card-title">Priority Alerts</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Issues needing immediate attention</div></div>
+            <div style="padding:.85rem 1.25rem">
+              <div class="alert-card"><div class="alert-ico" style="background:var(--red-dim)">⚠️</div><div><div class="alert-title">Student Progress Review</div><div class="alert-desc">3 students below 50% progress threshold in PhD CS</div><div class="alert-action alert-action-red">Review Now →</div></div></div>
+              <div class="alert-card"><div class="alert-ico" style="background:var(--amber-dim)">👥</div><div><div class="alert-title">Supervisor Overload</div><div class="alert-desc">Dr. Chen has 15 students — max is 12</div><div class="alert-action alert-action-amber">Rebalance Load →</div></div></div>
+              <div class="alert-card"><div class="alert-ico" style="background:var(--blue-dim)">⏰</div><div><div class="alert-title">8 Pending Approvals</div><div class="alert-desc">Thesis proposals awaiting chair sign-off</div><div class="alert-action alert-action-blue" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">View All →</div></div></div>
+              <div class="alert-card"><div class="alert-ico" style="background:var(--green-dim)">🎉</div><div><div class="alert-title">Recent Completions</div><div class="alert-desc">5 students completed their programme this month</div><div class="alert-action alert-action-green">View Details →</div></div></div>
+            </div>
+          </div>
+ 
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-hdr"><div class="card-title">📅 Upcoming Meetings</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Next 7 days</div></div>
+            <div style="padding:.85rem 1.25rem;display:flex;flex-direction:column;gap:.6rem">
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--amber-dim);border:1px solid rgba(255,193,7,.25)">
+                <div style="font-size:1rem;flex-shrink:0">🎓</div>
+                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">Sarah Johnson — School Seminar</div><div style="font-size:.7rem;color:var(--muted)">24 Mar 2026 · 10:00 AM · Room B204</div></div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)">
+                <div style="font-size:1rem;flex-shrink:0">👥</div>
+                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">Faculty Supervisors Meeting</div><div style="font-size:.7rem;color:var(--muted)">26 Mar 2026 · 2:00 PM · Boardroom</div></div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)">
+                <div style="font-size:1rem;flex-shrink:0">📋</div>
+                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">Alex Turner — Progress Review</div><div style="font-size:.7rem;color:var(--muted)">28 Mar 2026 · 11:00 AM · Office 310</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Quick Actions</div></div>
+            <div style="padding:.75rem;display:flex;flex-direction:column;gap:.5rem">
+              <button class="btn btn-amber" style="justify-content:center" onclick="showToast('Report generated')">📄 Generate Department Report</button>
+              <button class="btn btn-navy" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[1],'faculty')">👥 Manage Faculty Assignments</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[3],'analytics')">📈 View Analytics Dashboard</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">✅ Approve Pending Requests</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Program stats -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type — CS Department</div></div></div>
+        <div class="prog-stat">
+          <div class="ps-icon" style="background:rgba(10,25,78,.08)">🎓</div>
+          <div style="flex:1"><div class="ps-name">PhD Computer Science</div><div class="ps-meta">Avg. Duration: 4.2 years · 20 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></div></div>
+          <span class="pill pill-navy">20 Students</span>
+        </div>
+        <div class="prog-stat">
+          <div class="ps-icon" style="background:var(--green-dim)">📚</div>
+          <div style="flex:1"><div class="ps-name">Masters Computer Science</div><div class="ps-meta">Avg. Duration: 2.1 years · 30 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">92%</span></div></div></div>
+          <span class="pill pill-navy">30 Students</span>
+        </div>
+        <div class="prog-stat">
+          <div class="ps-icon" style="background:var(--amber-dim)">💻</div>
+          <div style="flex:1"><div class="ps-name">Masters Data Science</div><div class="ps-meta">Avg. Duration: 2.0 years · 10 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div></div></div>
+          <span class="pill pill-navy">10 Students</span>
+        </div>
+      </div>
+    </section>
+
+
+
+ <section class="section-view" id="view-corrections">
+  <div class="page-hdr">
+    <h2>AI-Powered Transcript to Corrections</h2>
+    <p>Upload or paste seminar minutes · AI extracts structured corrections · You validate before sending to student</p>
+  </div>
+
+      <!-- PRESENTATION CONTEXT -->
+<div class="context-card">
+  <div class="context-badge">Stage 3 · School Seminar</div>
+  <div class="context-info">
+    <div class="context-title">Sarah Johnson — PhD Computer Science: Proposal Presentation</div>
+    <div class="context-meta">
+      <span>📅 21 March 2026, 10:00 AM</span>
+      <span>🏛 Room B204, Science Block</span>
+      <span>👥 Panel: Dr. M. Chen, Dr. L. Johnson, Dr. R. Davis</span>
+    </div>
+  </div>
+  <span class="pill pill-amber">Assessment Score: 78%</span>
+</div>
+  <!-- STEP INDICATOR -->
+  <div class="steps">
+    <div class="step step-done" id="step1">
+      <div class="step-circle">✓</div>
+      <div class="step-label">Assessment<br>Recorded</div>
+    </div>
+    <div class="step-connector done"></div>
+    <div class="step step-active" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Upload<br>Transcript</div>
+    </div>
+    <div class="step-connector" id="conn2"></div>
+    <div class="step step-pending" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-label">AI Extracts<br>Corrections</div>
+    </div>
+    <div class="step-connector" id="conn3"></div>
+    <div class="step step-pending" id="step4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Chair<br>Validates</div>
+    </div>
+    <div class="step-connector" id="conn4"></div>
+    <div class="step step-pending" id="step5">
+      <div class="step-circle">5</div>
+      <div class="step-label">Send to<br>Student</div>
+    </div>
+  </div>
+ <!-- STEP 2: TRANSCRIPT INPUT -->
+ <div class="card" id="panel-transcript">
+  <div class="card-hdr">
+    <div>
+      <div class="card-title">📄 Upload or Paste Seminar Minutes</div>
+      <div class="card-sub">The AI will extract structured, categorised corrections from the raw transcript</div>
+    </div>
+  </div>
+  <div class="card-body">
+ <!-- File upload zone -->
+ <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone">
+  <div class="upload-icon">📁</div>
+  <div class="upload-label">Click to upload transcript file</div>
+  <div class="upload-sub">Supports .txt, .docx, .pdf · Max 10MB</div>
+  <input type="file" id="file-input" accept=".txt,.docx,.pdf" style="display:none" onchange="handleFileUpload(this)"/>
+</div>
+<div id="file-loaded" class="hidden" style="background:var(--green-dim);border:1px solid rgba(22,163,74,.25);padding:.65rem 1rem;display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem">
+          <span style="font-size:1rem">✅</span>
+          <span id="file-name" style="font-size:.8rem;font-weight:600;color:var(--green)">file.txt</span>
+          <button onclick="clearFile()" style="margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem">✕ Remove</button>
+        </div>
+        <div class="or-divider">or paste below</div>
+
+        <div class="transcript-zone">
+          <textarea class="transcript-textarea" id="transcript-input" placeholder="Paste the raw seminar minutes here…
+
+Example:
+Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-driven healthcare diagnostics. Panel members reviewed methodology. Dr. Chen noted that the literature review lacks coverage of post-2022 publications — this must be addressed before advancing. Dr. Johnson raised a critical concern regarding the sample size justification, which needs a formal power analysis. The statistical framework in Section 3.2 needs minor corrections to notation. Panel agreed presentation quality was good but the theoretical framework requires stronger grounding. Action: student to revise Chapters 2 and 3 and resubmit within 30 days.">
+          </textarea>
+          <div class="char-count"><span id="char-count">0</span> characters</div>
+        </div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:.65rem">
+  <div style="font-size:.75rem;color:var(--muted)">
+    💡 Tip: Include panel member names, section references, and specific concerns for best results
+  </div>
+ <div style="display:flex;gap:.5rem">
+  <button class="btn btn-outline btn-sm" onclick="loadSampleTranscript()">📋 Load Sample</button>
+  <button class="btn btn-amber" id="process-btn" onclick="processTranscript()" disabled>
+    ✨ Extract Corrections with AI
+  </button>
+</div>
+     </div>
+    </div>
+    </div>
+
+      <!-- STEP 3: AI PROCESSING (hidden initially) -->
+    <div class="card hidden" id="panel-processing">
+      <div class="ai-processing">
+        <div class="ai-spinner-wrap">
+          <div class="ai-ring"></div>
+          <div class="ai-ring-2"></div>
+          <div class="ai-icon-center">✨</div>
+        </div>
+        <div class="ai-processing-title">AI is analysing the transcript…</div>
+        <div class="ai-processing-sub">Extracting corrections · Categorising by urgency · Identifying responsible sections</div>
+        <div class="ai-progress-bar"><div class="ai-progress-fill"></div></div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:.25rem" id="processing-stage-text">Reading transcript…</div>
+     
+  </div>
+</div><!-- close panel-processing card -->
+
+<!-- STEP 4: CORRECTIONS VALIDATION (hidden initially) -->
+<div class="card hidden" id="panel-corrections">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">✨ AI-Generated Corrections — Awaiting Your Validation</div>
+          <div class="card-sub">Review each item · Approve, edit, or delete · Add manual items · Then send to student</div>
+        </div>
+        <div class="corrections-filters">
+          <button class="filter-btn active" onclick="filterCorrections('all',this)">All</button>
+          <button class="filter-btn f-critical" onclick="filterCorrections('critical',this)">Critical</button>
+          <button class="filter-btn f-major" onclick="filterCorrections('major',this)">Major</button>
+          <button class="filter-btn f-minor" onclick="filterCorrections('minor',this)">Minor</button>
+        </div>
+      </div>
+      <div class="card-body">
+
+          <!-- Summary strip -->
+          <div class="summary-strip" id="summary-strip">
+            <!-- populated by JS -->
+          </div>
+
+          <!-- AI note -->
+        <div style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;gap:.65rem;align-items:flex-start">
+          <span style="font-size:1rem;flex-shrink:0">🤖</span>
+          <div style="font-size:.78rem;color:var(--text);line-height:1.6">
+            <strong style="color:var(--blue)">AI extracted <span id="total-count">0</span> corrections</strong> from the seminar transcript. 
+            Please review each item carefully — approve those that are accurate, edit for clarity, or delete any that are incorrect. 
+            You can also add manual items below. Only validated items will be sent to the student.
+          </div>
+        </div>
+
+        <!-- Corrections list -->
+        <div id="corrections-list">
+          <!-- populated by JS -->
+        </div>
+
+        <!-- Add manual item -->
+        <div class="add-item-row" id="add-item-row">
+          <span style="font-size:.8rem;color:var(--soft);flex-shrink:0">＋</span>
+          <input type="text" id="new-item-text" placeholder="Add a manual correction item…" onkeydown="if(event.key==='Enter')addManualItem()"/>
+          <select class="urgency-select" id="new-item-urgency">
+            <option value="critical">🔴 Critical</option>
+            <option value="major" selected>🟠 Major</option>
+            <option value="minor">🔵 Minor</option>
+          </select>
+          <button class="btn btn-navy btn-sm" onclick="addManualItem()">Add</button>
+        </div>
+      </div>
+
+      <!-- Validation summary & actions -->
+      <div class="validation-summary" id="validation-summary">
+        <div class="vs-stat">
+          <div class="vs-num" id="vs-approved">0</div>
+          <div class="vs-label">Approved</div>
+        </div>
+        <div class="vs-divider"></div>
+        <div class="vs-stat">
+          <div class="vs-num" id="vs-pending" style="color:var(--orange)">0</div>
+          <div class="vs-label">Pending Review</div>
+        </div>
+        <div class="vs-divider"></div>
+        <div class="vs-stat">
+          <div class="vs-num" id="vs-deleted" style="color:var(--red)">0</div>
+          <div class="vs-label">Deleted</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="approveAll()">✓ Approve All</button>
+          <button class="btn btn-green" id="submit-btn" onclick="validateAndSend()" disabled>
+            📨 Validate & Send to Student
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: SENT CONFIRMATION -->
+    <div class="sent-state" id="panel-sent">
+      <div class="sent-icon">🎉</div>
+      <div class="sent-title">Corrections Sent to Student</div>
+      <div class="sent-sub">
+        Sarah Johnson has been notified of <strong id="sent-count">0</strong> validated corrections.<br>
+        She will see these as a checklist on her student dashboard and must mark each item complete before requesting supervisor sign-off.
+      </div>
+      <div style="margin-top:1.25rem;display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-navy" onclick="location.reload()">↩ Back to Dashboard</button>
+        <button class="btn btn-amber" onclick="showToast('PDF downloaded')">📄 Download Corrections PDF</button>
+      </div>
+     </div><!-- close panel-sent -->
+    </section><!-- close view-corrections -->
+
+    <!-- FACULTY & STUDENTS -->
+    <section class="section-view" id="view-faculty">
+      <div class="page-hdr"><div><h2>Faculty & Students</h2><p>Complete directory for Computer Science Department</p></div></div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="tabs" id="fac-tabs">
+          <button class="tab-btn active" onclick="switchTab('fac-tabs','ft-supervisors',this)">Supervisors (12)</button>
+          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-students',this)">All Students (60)</button>
+          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-at-risk',this)">At Risk (5)</button>
+        </div>
+        <div id="ft-supervisors" class="tab-panel active tbl-wrap">
+          <table>
+            <thead><tr><th>Supervisor</th><th>Role</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">MC</div><div><div class="td-bold">Dr. Michael Chen</div><div class="td-muted" style="font-size:.67rem">m.chen@uni.edu</div></div></div></td><td>Senior Supervisor</td><td style="color:var(--red);font-weight:700">15 ⚠</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">SS</div><div><div class="td-bold">Dr. Sarah Smith</div><div class="td-muted" style="font-size:.67rem">s.smith@uni.edu</div></div></div></td><td>Supervisor</td><td>12</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-green">Good</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">Dr. John Williams</div><div class="td-muted" style="font-size:.67rem">j.williams@uni.edu</div></div></div></td><td>Supervisor</td><td>10</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--green)"></div></div><span class="prog-val">75%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-outline btn-xs">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">LJ</div><div><div class="td-bold">Dr. Lisa Johnson</div><div class="td-muted" style="font-size:.67rem">l.johnson@uni.edu</div></div></div></td><td>Part-time Supervisor</td><td style="color:var(--green);font-weight:700">8</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--navy)"></div></div><span class="prog-val">65%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★☆</div></td><td><span class="pill pill-green">Good</span></td><td><button class="btn btn-outline btn-xs">Assign</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="ft-students" class="tab-panel tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Supervisor</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><span class="td-bold">Sarah Johnson</span></div></td><td>PhD CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val">85%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><span class="td-bold">James Wilson</span></div></td><td>MSc CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><span class="td-bold">Emily Brown</span></div></td><td>PhD CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Needs Attention</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="ft-at-risk" class="tab-panel tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Progress</th><th>Risk Factor</th><th>Supervisor</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Emily Brown</td><td>PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Delayed — 3 months behind</span></td><td class="td-muted">Dr. Chen</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
+              <tr><td class="td-bold">Alex Turner</td><td>PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">38%</span></div></td><td><span class="pill pill-red">No submission in 6 weeks</span></td><td class="td-muted">Dr. Davis</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- REPORTS -->
+    <section class="section-view" id="view-reports">
+      <div class="page-hdr"><div><h2>Reports</h2><p>Department performance reports and summaries</p></div><button class="btn btn-amber" onclick="showToast('New report generated')">+ Generate Report</button></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Reports Generated</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">24</div><div class="stat-sub">This academic year</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">87%</div><div class="stat-sub"><span class="up">↑ 1.5%</span> YoY</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Submission Score</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">81%</div><div class="stat-sub">department average</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span> last year</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Report Archive</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Report Title</th><th>Type</th><th>Generated</th><th>Scope</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Q1 2026 Department Performance</td><td class="td-muted">Quarterly</td><td class="td-muted">15 Mar 2026</td><td>All programmes</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Annual Completion Analysis 2025</td><td class="td-muted">Annual</td><td class="td-muted">10 Jan 2026</td><td>CS Dept</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Supervisor Load Distribution — Mar</td><td class="td-muted">Monthly</td><td class="td-muted">01 Mar 2026</td><td>Supervisors</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">At-Risk Student Intervention Report</td><td class="td-muted">Ad hoc</td><td class="td-muted">20 Feb 2026</td><td>PhD students</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ANALYTICS -->
+    <section class="section-view" id="view-analytics">
+      <div class="page-hdr"><div><h2>Analytics</h2><p>Detailed performance analytics — Computer Science</p></div></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Completion Rate</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">85%</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Completion</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">92%</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Time to Complete</span><div class="stat-ico ico-amber">⏱️</div></div><div class="stat-val">2.8y</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Progress by Programme</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.7rem">
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">PhD CS</span><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--navy)"></div></div><span class="prog-val">85%</span></div>
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">MSc CS</span><div class="prog-bar"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">92%</span></div>
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">MSc Data Science</span><div class="prog-bar"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Supervisor Performance Avg</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.7rem">
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Student Satisfaction</span><div class="prog-bar"><div class="prog-fill" style="width:91%;background:var(--amber)"></div></div><span class="prog-val">4.5</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Review Timeliness</span><div class="prog-bar"><div class="prog-fill" style="width:78%;background:var(--navy)"></div></div><span class="prog-val">78%</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Approval Rate</span><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--green)"></div></div><span class="prog-val">82%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- APPROVALS -->
+    <section class="section-view" id="view-approvals">
+      <div class="page-hdr"><div><h2>Pending Approvals</h2><p>Thesis proposals and other requests awaiting your sign-off</p></div></div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Request Type</th><th>Details</th><th>Submitted</th><th>Priority</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Sarah Johnson</td><td>Thesis Proposal</td><td class="td-muted">PhD CS — Data Analysis Chapter approval</td><td class="td-muted">16 Mar</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+              <tr><td class="td-bold">James Wilson</td><td>Supervisor Change</td><td class="td-muted">Request to change from Dr. Chen to Dr. Smith</td><td class="td-muted">15 Mar</td><td><span class="pill pill-amber">Medium</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Deny</button></td></tr>
+              <tr><td class="td-bold">Emily Brown</td><td>Extension Request</td><td class="td-muted">3-month extension on PhD submission deadline</td><td class="td-muted">14 Mar</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Deny</button></td></tr>
+              <tr><td class="td-bold">David Lee</td><td>Thesis Proposal</td><td class="td-muted">MSc Data Science — Research Proposal sign-off</td><td class="td-muted">13 Mar</td><td><span class="pill pill-blue">Low</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- SETTINGS -->
+    <section class="section-view" id="view-settings">
+      <div class="page-hdr"><div><h2>Settings</h2><p>Manage your profile and department preferences</p></div></div>
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Profile Information</div></div>
+          <div class="card-body">
+            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="Prof. Emily Rodriguez"/></div><div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" value="e.rodriguez@uni.edu"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="CHR/2015/001" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="Computer Science" readonly style="background:var(--off2);color:var(--muted)"/></div></div>
+            <div class="form-group"><label class="form-label">Office</label><input class="form-control" value="Office 310, Science Block"/></div>
+            <button class="btn btn-navy" onclick="showToast('Profile saved')">Save Changes</button>
+          </div>
+        </div>
+        <div class="card" style="align-self:start">
+          <div class="card-hdr"><div class="card-title">Preferences</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:.65rem">
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Alert emails</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Weekly digest</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Approval reminders</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Faculty announcements</span><input type="checkbox"/></label>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<!-- MODALS -->
+<div class="modal-overlay" id="assign-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Reassign Students</div><button class="modal-close" onclick="closeModal('assign-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">From Supervisor</label><select class="form-control"><option>Dr. Michael Chen (15 students)</option></select></div>
+      <div class="form-group"><label class="form-label">To Supervisor</label><select class="form-control"><option>Dr. Lisa Johnson (8 students — capacity available)</option><option>Dr. John Williams (10 students)</option></select></div>
+      <div class="form-group"><label class="form-label">Students to Reassign</label>
+        <div style="border:1px solid var(--border);padding:.5rem">
+          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox" checked/> Emily Brown — PhD CS</label>
+          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox"/> James Wilson — MSc CS</label>
+          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox"/> Maria Garcia — MSc CS</label>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Reason for Reassignment</label><textarea class="form-control" placeholder="e.g., Workload balancing…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('assign-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('assign-modal');showToast('Students reassigned successfully')">Confirm Reassignment</button></div>
+  </div>
+</div>
+ 
+<div class="modal-overlay" id="intervention-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Student Intervention — Emily Brown</div><button class="modal-close" onclick="closeModal('intervention-modal')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:var(--red-dim);border:1px solid rgba(220,38,38,.2);padding:1rem;margin-bottom:1rem"><div style="font-weight:700;color:var(--red);margin-bottom:.3rem">⚠ At-Risk Alert</div><div style="font-size:.8rem;color:var(--text)">Emily Brown is 3 months behind schedule with 45% progress. Immediate intervention recommended.</div></div>
+      <div class="form-group"><label class="form-label">Intervention Type</label><select class="form-control"><option>Academic Support Plan</option><option>Supervisor Meeting Required</option><option>Extension Granted</option><option>Academic Probation Notice</option></select></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" placeholder="Document the intervention plan…"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('intervention-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('intervention-modal');showToast('Intervention recorded')">Record Intervention</button></div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+ 
+<script>
+function nav(el,id){
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const v=document.getElementById('view-'+id);
+  if(v) v.classList.add('active');
+  const titles={dashboard:'Department Chair Dashboard',Corrections:'AI corrections' ,faculty:'Faculty & Students',reports:'Reports',analytics:'Analytics',approvals:'Pending Approvals',settings:'Settings'};
+  document.getElementById('topbar-title').textContent=titles[id]||'Dashboard';
+}
+function switchTab(gId,pId,btn){
+  const g=document.getElementById(gId);
+  g.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  g.parentElement.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(pId).classList.add('active');
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+document.querySelectorAll('.nav-link[onclick]').forEach(link=>{
+  link.addEventListener('click',function(){
+    document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+let corrections = [];
+let nextId = 1;
+
+const SAMPLE_TRANSCRIPT = `Seminar Minutes — School Seminar, 21 March 2026
+Student: Sarah Johnson | Programme: PhD Computer Science | Stage: Proposal Presentation
+
+Chair Prof. A. Patel opened the session at 10:00 AM. Panel members present: Dr. Michael Chen, Dr. Lisa Johnson, Dr. Robert Davis.
+
+Student presented her proposal on "Machine Learning Approaches to Early Diagnosis of Chronic Disease Using Wearable Sensor Data."
+
+PANEL FEEDBACK:
+
+Dr. Chen: The literature review (Chapter 2) critically lacks coverage of post-2022 publications in the wearable health monitoring domain. The student must expand the review to include recent work by Kumar et al. (2023) and Zhang et al. (2024). This is a critical gap that undermines the novelty claim of the research.
+
+Dr. Johnson: The proposed sample size of 80 participants is not justified statistically. A formal power analysis must be conducted and documented in Section 3.2 before the proposal can advance. This is a critical issue — without proper justification the methodology cannot be approved.
+
+Dr. Davis: The theoretical framework in Section 2.4 needs strengthening. The connection between the Technology Acceptance Model and the proposed IoT sensor architecture is underdeveloped. This is a major concern. Additionally, all figures and tables must include descriptive captions — currently only Figure 1 has a proper caption.
+
+Chair (general): The notation in the statistical analysis section (Section 3.3) uses inconsistent variable naming throughout. Minor issue — please standardise before resubmission. Presentation delivery was clear and confident. The introduction and conclusion chapters were well-structured.
+
+Panel agreed: student to revise Chapters 2 and 3 and resubmit within 30 days for re-evaluation.`;
+
+const AI_CORRECTIONS = [
+  { urgency:'critical', text:'Literature Review (Chapter 2) must be expanded to include post-2022 publications in wearable health monitoring, specifically Kumar et al. (2023) and Zhang et al. (2024).', category:'Literature Review · Section 2' },
+  { urgency:'critical', text:'A formal statistical power analysis must be conducted and documented in Section 3.2 to justify the proposed sample size of 80 participants.', category:'Methodology · Section 3.2' },
+  { urgency:'major', text:'The theoretical framework in Section 2.4 must be strengthened — the connection between the Technology Acceptance Model and the IoT sensor architecture needs fuller development.', category:'Theoretical Framework · Section 2.4' },
+  { urgency:'major', text:'All figures and tables must include descriptive captions. Currently only Figure 1 has a proper caption; all other figures are non-compliant.', category:'Presentation Quality · All Chapters' },
+  { urgency:'minor', text:'Variable naming notation in the statistical analysis section (Section 3.3) is inconsistent throughout. Standardise all variable names before resubmission.', category:'Statistical Analysis · Section 3.3' },
+];
+
+// ── CHAR COUNT ──
+document.getElementById('transcript-input').addEventListener('input', function(){
+  const len = this.value.trim().length;
+  document.getElementById('char-count').textContent = this.value.length.toLocaleString();
+  document.getElementById('process-btn').disabled = len < 50;
+});
+
+// ── FILE UPLOAD ──
+function handleFileUpload(input){
+  if(input.files && input.files[0]){
+    document.getElementById('file-name').textContent = input.files[0].name;
+    document.getElementById('file-loaded').classList.remove('hidden');
+    document.getElementById('upload-zone').style.display = 'none';
+    document.getElementById('process-btn').disabled = false;
+    // Simulate loading sample text for demo
+    setTimeout(()=>{
+      document.getElementById('transcript-input').value = SAMPLE_TRANSCRIPT;
+      document.getElementById('char-count').textContent = SAMPLE_TRANSCRIPT.length.toLocaleString();
+    }, 300);
+  }
+}
+
+function clearFile(){
+  document.getElementById('file-loaded').classList.add('hidden');
+  document.getElementById('upload-zone').style.display = '';
+  document.getElementById('file-input').value = '';
+  const txt = document.getElementById('transcript-input').value.trim();
+  document.getElementById('process-btn').disabled = txt.length < 50;
+}
+
+function loadSampleTranscript(){
+  document.getElementById('transcript-input').value = SAMPLE_TRANSCRIPT;
+  document.getElementById('char-count').textContent = SAMPLE_TRANSCRIPT.length.toLocaleString();
+  document.getElementById('process-btn').disabled = false;
+  showToast('Sample transcript loaded');
+}
+
+// ── PROCESS ──
+function processTranscript(){
+  // Advance steps
+  setStep(2,'done'); setStep(3,'active');
+  document.getElementById('conn2').classList.add('done');
+  document.getElementById('panel-transcript').classList.add('hidden');
+  document.getElementById('panel-processing').classList.remove('hidden');
+
+  const stages = ['Reading transcript…','Identifying panel feedback…','Categorising corrections…','Ranking by urgency…','Finalising structured output…'];
+  let si = 0;
+  const stageEl = document.getElementById('processing-stage-text');
+  const stageTimer = setInterval(()=>{
+    if(si < stages.length){ stageEl.textContent = stages[si++]; }
+  }, 560);
+
+  setTimeout(()=>{
+    clearInterval(stageTimer);
+    setStep(3,'done'); setStep(4,'active');
+    document.getElementById('conn3').classList.add('done');
+    document.getElementById('panel-processing').classList.add('hidden');
+    document.getElementById('panel-corrections').classList.remove('hidden');
+    buildCorrections();
+  }, 3200);
+}
+
+function setStep(n, state){
+  const el = document.getElementById('step'+n);
+  el.className = 'step step-'+state;
+  const circle = el.querySelector('.step-circle');
+  if(state==='done') circle.textContent = '✓';
+}
+
+// ── BUILD CORRECTIONS ──
+function buildCorrections(){
+  corrections = AI_CORRECTIONS.map((c,i)=>({
+    id: ++nextId, urgency: c.urgency, text: c.text,
+    category: c.category, state:'pending', isAI:true
+  }));
+  renderCorrections();
+  updateSummary();
+}
+
+function renderCorrections(filter='all'){
+  const list = document.getElementById('corrections-list');
+  list.innerHTML = '';
+  const visible = filter==='all' ? corrections : corrections.filter(c=>c.urgency===filter);
+  if(!visible.length){
+    list.innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--soft);font-size:.82rem">No corrections in this category</div>';
+    return;
+  }
+  visible.forEach(c => {
+    if(!document.getElementById('c-'+c.id)){
+      list.appendChild(buildItem(c));
+    }
+  });
+  document.getElementById('total-count').textContent = corrections.length;
+  updateSummaryStrip();
+}
+
+function buildItem(c){
+  const div = document.createElement('div');
+  div.className = 'correction-item' + (c.state==='deleted'?' deleted':'') + (c.state==='approved'?' approved':'');
+  div.id = 'c-'+c.id;
+
+  const tagClass = {critical:'tag-critical',major:'tag-major',minor:'tag-minor'}[c.urgency];
+  const tagLabel = {critical:'🔴 Critical',major:'🟠 Major',minor:'🔵 Minor'}[c.urgency];
+
+  div.innerHTML = `
+    <div class="correction-item-hdr">
+      <span class="urgency-tag ${tagClass}">${tagLabel}</span>
+      <div style="flex:1">
+        <div class="correction-text" id="ct-${c.id}">${c.text}</div>
+        <textarea class="correction-edit-input hidden" id="ce-${c.id}">${c.text}</textarea>
+        <div class="correction-category">${c.category} ${c.isAI?'· <em style="color:var(--blue);font-style:normal">AI</em>':'· <em style="color:var(--green);font-style:normal">Manual</em>'}</div>
+      </div>
+      <div class="correction-actions" id="ca-${c.id}">
+        ${c.state==='approved'
+          ? `<span class="approved-check" title="Approved">✅</span><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${c.id})">✏</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${c.id})">🗑</button>`
+          : `<button class="ca-btn ca-approve" title="Approve" onclick="approveItem(${c.id})">✓</button><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${c.id})">✏</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${c.id})">🗑</button>`
+        }
+      </div>
+    </div>`;
+  return div;
+}
+
+function approveItem(id){
+  const c = corrections.find(x=>x.id===id);
+  if(!c) return;
+  c.state = 'approved';
+  const el = document.getElementById('c-'+id);
+  el.classList.add('approved');
+  const ca = document.getElementById('ca-'+id);
+  ca.innerHTML = `<span class="approved-check" title="Approved">✅</span><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${id})">🗑</button>`;
+  updateSummary();
+}
+
+function editItem(id){
+  const c = corrections.find(x=>x.id===id);
+  if(!c) return;
+  const textEl = document.getElementById('ct-'+id);
+  const editEl = document.getElementById('ce-'+id);
+  const ca = document.getElementById('ca-'+id);
+  textEl.classList.add('hidden');
+  editEl.classList.remove('hidden');
+  editEl.focus();
+  ca.innerHTML = `<button class="ca-btn ca-save" onclick="saveEdit(${id})">Save</button><button class="ca-btn ca-cancel" onclick="cancelEdit(${id})">Cancel</button>`;
+}
+
+function saveEdit(id){
+  const c = corrections.find(x=>x.id===id);
+  if(!c) return;
+  const editEl = document.getElementById('ce-'+id);
+  c.text = editEl.value.trim() || c.text;
+  c.state = 'approved';
+  const textEl = document.getElementById('ct-'+id);
+  textEl.textContent = c.text;
+  textEl.classList.remove('hidden');
+  editEl.classList.add('hidden');
+  const el = document.getElementById('c-'+id);
+  el.classList.add('approved');
+  const ca = document.getElementById('ca-'+id);
+  ca.innerHTML = `<span class="approved-check">✅</span><button class="ca-btn ca-edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">🗑</button>`;
+  updateSummary();
+  showToast('Correction saved & approved');
+}
+
+function cancelEdit(id){
+  const c = corrections.find(x=>x.id===id);
+  if(!c) return;
+  const textEl = document.getElementById('ct-'+id);
+  const editEl = document.getElementById('ce-'+id);
+  textEl.classList.remove('hidden');
+  editEl.classList.add('hidden');
+  const ca = document.getElementById('ca-'+id);
+  ca.innerHTML = c.state==='approved'
+    ? `<span class="approved-check">✅</span><button class="ca-btn ca-edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">🗑</button>`
+    : `<button class="ca-btn ca-approve" onclick="approveItem(${id})">✓</button><button class="ca-btn ca-edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">🗑</button>`;
+}
+
+function deleteItem(id){
+  const c = corrections.find(x=>x.id===id);
+  if(!c) return;
+  c.state = 'deleted';
+  const el = document.getElementById('c-'+id);
+  el.classList.add('deleted');
+  updateSummary();
+  showToast('Item removed');
+}
+
+function approveAll(){
+  corrections.forEach(c=>{ if(c.state!=='deleted') c.state='approved'; });
+  renderCorrections();
+  updateSummary();
+  showToast('All items approved');
+}
+
+function addManualItem(){
+  const text = document.getElementById('new-item-text').value.trim();
+  if(!text){ showToast('Please enter correction text'); return; }
+  const urgency = document.getElementById('new-item-urgency').value;
+  const cats = {critical:'Chair Note — Critical',major:'Chair Note — Major',minor:'Chair Note — Minor'};
+  const c = { id:++nextId, urgency, text, category:cats[urgency], state:'pending', isAI:false };
+  corrections.push(c);
+  document.getElementById('new-item-text').value = '';
+  const list = document.getElementById('corrections-list');
+  list.appendChild(buildItem(c));
+  updateSummary();
+  showToast('Manual item added');
+}
+
+function filterCorrections(filter, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('corrections-list').innerHTML = '';
+  const visible = filter==='all' ? corrections : corrections.filter(c=>c.urgency===filter);
+  if(!visible.length){
+    document.getElementById('corrections-list').innerHTML = '<div style="padding:1.5rem;text-align:center;color:var(--soft);font-size:.82rem">No corrections in this category</div>';
+    return;
+  }
+  visible.forEach(c => {
+    document.getElementById('corrections-list').appendChild(buildItem(c));
+  });
+}
+
+function updateSummaryStrip(){
+  const counts = { critical:0, major:0, minor:0 };
+  corrections.filter(c=>c.state!=='deleted').forEach(c=>counts[c.urgency]++);
+  document.getElementById('summary-strip').innerHTML = `
+    <div class="summary-chip sc-critical"><div class="sc-dot" style="background:var(--red)"></div>${counts.critical} Critical</div>
+    <div class="summary-chip sc-major"><div class="sc-dot" style="background:var(--orange)"></div>${counts.major} Major</div>
+    <div class="summary-chip sc-minor"><div class="sc-dot" style="background:var(--blue)"></div>${counts.minor} Minor</div>`;
+}
+
+function updateSummary(){
+  const approved = corrections.filter(c=>c.state==='approved').length;
+  const pending  = corrections.filter(c=>c.state==='pending').length;
+  const deleted  = corrections.filter(c=>c.state==='deleted').length;
+  document.getElementById('vs-approved').textContent = approved;
+  document.getElementById('vs-pending').textContent  = pending;
+  document.getElementById('vs-deleted').textContent  = deleted;
+  document.getElementById('submit-btn').disabled = approved === 0 || pending > 0;
+  updateSummaryStrip();
+}
+
+// ── SUBMIT ──
+function validateAndSend(){
+  const approved = corrections.filter(c=>c.state==='approved');
+  setStep(4,'done'); setStep(5,'active');
+  document.getElementById('conn4').classList.add('done');
+  document.getElementById('panel-corrections').classList.add('hidden');
+  document.getElementById('sent-count').textContent = approved.length;
+  document.getElementById('panel-sent').style.display = 'block';
+  // Store for student page demo (localStorage for demo only)
+  const payload = approved.map(c=>({ id:c.id, urgency:c.urgency, text:c.text, category:c.category, done:false }));
+  try{ localStorage.setItem('papms_corrections', JSON.stringify(payload)); }catch(e){}
+  showToast('✅ Corrections sent to Sarah Johnson');
+}
+
+// ── TOAST ──
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

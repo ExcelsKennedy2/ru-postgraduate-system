@@ -898,23 +898,18 @@ select.form-control{appearance:none;cursor:pointer}
           <div class="pie-section">
             <div class="pie-wrap">
               <svg viewBox="0 0 140 140" style="width:140px;height:140px">
-                <!-- On Track 33% green -->
-                <circle cx="70" cy="70" r="54" fill="none" stroke="#16A34A" stroke-width="22" stroke-dasharray="113 226" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
-                <!-- In Progress 47% amber -->
-                <circle cx="70" cy="70" r="54" fill="none" stroke="#FFC107" stroke-width="22" stroke-dasharray="160 226" stroke-dashoffset="-113" transform="rotate(-90 70 70)"/>
-                <!-- At Risk 13% orange -->
-                <circle cx="70" cy="70" r="54" fill="none" stroke="#EA580C" stroke-width="22" stroke-dasharray="44 226" stroke-dashoffset="-273" transform="rotate(-90 70 70)"/>
-                <!-- Stalled 7% red -->
-                <circle cx="70" cy="70" r="54" fill="none" stroke="#DC2626" stroke-width="22" stroke-dasharray="24 226" stroke-dashoffset="-317" transform="rotate(-90 70 70)"/>
+                {% for segment in progress_segments %}
+                <circle cx="70" cy="70" r="54" fill="none" stroke="{{ segment.color }}" stroke-width="22" stroke-dasharray="{{ segment.dasharray }}" stroke-dashoffset="{{ segment.dashoffset }}" transform="rotate(-90 70 70)"/>
+                {% endfor %}
                 <text x="70" y="67" text-anchor="middle" font-size="18" font-weight="800" fill="#111827" font-family="Lora,serif">{{ stats.total_students }}</text>
                 <text x="70" y="82" text-anchor="middle" font-size="9" fill="#5B6F8A" font-family='Plus Jakarta Sans,sans-serif'>students</text>
               </svg>
             </div>
             <div class="pie-legend">
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#16A34A"></div><span class="pie-leg-label">On Track</span><span class="pie-leg-val">{{ progress_distribution.on_track }}</span><span class="pie-leg-pct">{{ progress_distribution.on_track|default:0 }}</span></div>
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#FFC107"></div><span class="pie-leg-label">In Progress</span><span class="pie-leg-val">{{ progress_distribution.needs_attention }}</span><span class="pie-leg-pct">{{ progress_distribution.needs_attention|default:0 }}</span></div>
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#EA580C"></div><span class="pie-leg-label">At Risk</span><span class="pie-leg-val">{{ progress_distribution.at_risk }}</span><span class="pie-leg-pct">{{ progress_distribution.at_risk|default:0 }}</span></div>
-              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#DC2626"></div><span class="pie-leg-label">Stalled</span><span class="pie-leg-val">{{ progress_distribution.stalled }}</span><span class="pie-leg-pct">{{ progress_distribution.stalled|default:0 }}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#16A34A"></div><span class="pie-leg-label">On Track</span><span class="pie-leg-val">{{ progress_distribution.on_track }}</span><span class="pie-leg-pct">{% for segment in progress_segments %}{% if segment.key == 'on_track' %}{{ segment.percent }}%{% endif %}{% endfor %}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#FFC107"></div><span class="pie-leg-label">Needs Attention</span><span class="pie-leg-val">{{ progress_distribution.needs_attention }}</span><span class="pie-leg-pct">{% for segment in progress_segments %}{% if segment.key == 'needs_attention' %}{{ segment.percent }}%{% endif %}{% endfor %}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#EA580C"></div><span class="pie-leg-label">At Risk</span><span class="pie-leg-val">{{ progress_distribution.at_risk }}</span><span class="pie-leg-pct">{% for segment in progress_segments %}{% if segment.key == 'at_risk' %}{{ segment.percent }}%{% endif %}{% endfor %}</span></div>
+              <div class="pie-leg-row"><div class="pie-leg-dot" style="background:#DC2626"></div><span class="pie-leg-label">Stalled</span><span class="pie-leg-val">{{ progress_distribution.stalled }}</span><span class="pie-leg-pct">{% for segment in progress_segments %}{% if segment.key == 'stalled' %}{{ segment.percent }}%{% endif %}{% endfor %}</span></div>
             </div>
           </div>
         </div>
@@ -922,16 +917,13 @@ select.form-control{appearance:none;cursor:pointer}
         <!-- Submission trends bar chart -->
         <div class="card">
           <div class="card-hdr">
-            <div class="card-hdr-left"><div class="card-title">Submission Trends</div><div class="card-sub">Monthly submissions from your students (2026)</div></div>
+            <div class="card-hdr-left"><div class="card-title">Submission Trends</div><div class="card-sub">Monthly submissions from your students (last 6 months)</div></div>
           </div>
           <div class="chart-area">
             <div class="bar-wrap">
-              <div class="bar-col"><div class="bar-val">12</div><div class="bar-rect" style="height:48%;background:var(--navy)"></div><div class="bar-lbl">Jan</div></div>
-              <div class="bar-col"><div class="bar-val">18</div><div class="bar-rect" style="height:72%;background:var(--navy)"></div><div class="bar-lbl">Feb</div></div>
-              <div class="bar-col"><div class="bar-val">15</div><div class="bar-rect" style="height:60%;background:var(--navy)"></div><div class="bar-lbl">Mar</div></div>
-              <div class="bar-col"><div class="bar-val">22</div><div class="bar-rect" style="height:88%;background:var(--amber)"></div><div class="bar-lbl">Apr</div></div>
-              <div class="bar-col"><div class="bar-val">17</div><div class="bar-rect" style="height:68%;background:var(--navy)"></div><div class="bar-lbl">May</div></div>
-              <div class="bar-col"><div class="bar-val">25</div><div class="bar-rect" style="height:100%;background:var(--green)"></div><div class="bar-lbl">Jun</div></div>
+              {% for trend in submission_trends %}
+              <div class="bar-col"><div class="bar-val">{{ trend.count }}</div><div class="bar-rect" style="height:{{ trend.height }}%;background:{{ trend.color }}"></div><div class="bar-lbl">{{ trend.label }}</div></div>
+              {% endfor %}
             </div>
           </div>
           <div class="chart-legend">
@@ -976,7 +968,7 @@ select.form-control{appearance:none;cursor:pointer}
             <div class="card-hdr"><div class="card-title">Quick Actions</div></div>
             <div style="padding:.75rem">
               <button class="btn btn-green" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="openModal('feedback-modal')">💬 Provide Feedback</button>
-              <button class="btn btn-navy" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="openModal('meeting-modal')">📅 Schedule Meeting</button>
+              <button class="btn btn-navy" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="openNewMeetingModal()">📅 Schedule Meeting</button>
               <button class="btn btn-outline" style="width:100%;margin-bottom:.5rem;justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'reports')">📊 View Reports</button>
               <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[2],'reviews')">📋 Review Submissions</button>
             </div>
@@ -1025,7 +1017,7 @@ select.form-control{appearance:none;cursor:pointer}
     <!-- ───────── STUDENTS ───────── -->
     <section class="section-view" id="view-students">
       <div class="page-hdr">
-        <div class="page-hdr-left"><h2>My Students</h2><p>15 students currently under your supervision</p></div>
+        <div class="page-hdr-left"><h2>My Students</h2><p>{{ stats.total_students }} students currently under your supervision</p></div>
         <div class="page-hdr-actions">
           <select class="form-control" style="width:auto;padding:.38rem .75rem;font-size:.78rem">
             <option>All Programmes</option><option>PhD CS</option><option>MSc CS</option><option>MSc Data Science</option>
@@ -1070,17 +1062,27 @@ select.form-control{appearance:none;cursor:pointer}
       <div class="card" style="margin-bottom:1rem">
         <div class="tabs" id="review-tabs">
           <button class="tab-btn active" onclick="switchTab('review-tabs','rt-pending',this)">Pending ({{ stats.pending_reviews }})</button>
-          <button class="tab-btn" onclick="switchTab('review-tabs','rt-reviewed',this)">Reviewed ({{ reviewed_submissions.count }})</button>
-          <button class="tab-btn" onclick="switchTab('review-tabs','rt-all',this)">All Submissions ({{ submissions.count }})</button>
+          <button class="tab-btn" onclick="switchTab('review-tabs','rt-reviewed',this)">Reviewed ({{ reviewed_items|length }})</button>
+          <button class="tab-btn" onclick="switchTab('review-tabs','rt-all',this)">All Submissions ({{ stats.total_submissions }})</button>
         </div>
         <div id="rt-pending" class="tab-panel active tbl-wrap">
           <table>
             <thead><tr><th>Student</th><th>Title</th><th>Type</th><th>Programme</th><th>Submitted</th><th>Days Waiting</th><th>Priority</th><th>Action</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td>Chapter 4: Data Analysis</td><td class="td-muted">Draft</td><td class="td-muted">PhD CS</td><td class="td-muted">16 Mar 2026</td><td style="color:var(--red);font-weight:700">3 days</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">James Wilson</td><td>Literature Review Final</td><td class="td-muted">Final</td><td class="td-muted">MSc CS</td><td class="td-muted">15 Mar 2026</td><td style="color:var(--orange);font-weight:700">4 days</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td>Research Methodology</td><td class="td-muted">Draft</td><td class="td-muted">PhD CS</td><td class="td-muted">14 Mar 2026</td><td style="color:var(--orange);font-weight:700">5 days</td><td><span class="pill pill-orange">Medium</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
-              <tr><td class="td-bold">David Lee</td><td>Proposal Revision v2</td><td class="td-muted">Revision</td><td class="td-muted">MSc Data Sci</td><td class="td-muted">13 Mar 2026</td><td class="td-muted">6 days</td><td><span class="pill pill-blue">Low</span></td><td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td></tr>
+              {% for item in pending_reviews %}
+              <tr>
+                <td class="td-bold">{{ item.student_name }}</td>
+                <td>{{ item.submission.title }}</td>
+                <td class="td-muted">{{ item.submission.get_type_display }}</td>
+                <td class="td-muted">{{ item.programme }}</td>
+                <td class="td-muted">{{ item.submitted_date|date:'d M Y' }}</td>
+                <td style="color:{{ item.days_color }};font-weight:700">{{ item.days_waiting }} days</td>
+                <td><span class="pill {{ item.priority_badge }}">{{ item.priority }}</span></td>
+                <td><button class="btn btn-navy btn-sm" onclick="openModal('review-modal')">Review</button></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="8" class="td-muted">No pending submissions right now.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1153,16 +1155,16 @@ select.form-control{appearance:none;cursor:pointer}
         <div class="card" style="align-self:start">
           <div class="card-hdr"><div class="card-title">Feedback Stats</div></div>
           <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.85rem">
-            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Total feedback given</span><span style="font-weight:800;font-size:1.1rem;color:var(--navy)">47</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Avg response time</span><span style="font-weight:700;font-size:.9rem;color:var(--text)">2.3 days</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Approval rate</span><span style="font-weight:700;font-size:.9rem;color:var(--green)">68%</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Avg grade awarded</span><span style="font-weight:700;font-size:.9rem;color:var(--navy)">79.4%</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Total feedback given</span><span style="font-weight:800;font-size:1.1rem;color:var(--navy)">{{ report_stats.total_feedback }}</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Avg response time</span><span style="font-weight:700;font-size:.9rem;color:var(--text)">{{ report_stats.avg_response_time }} days</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Approval rate</span><span style="font-weight:700;font-size:.9rem;color:var(--green)">{{ report_stats.approval_rate }}%</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:.8rem;color:var(--muted)">Avg grade awarded</span><span style="font-weight:700;font-size:.9rem;color:var(--navy)">{{ report_stats.avg_grade_awarded }}%</span></div>
             <hr style="border:none;border-top:1px solid var(--border)"/>
             <div style="font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em">Decisions Breakdown</div>
             <div style="display:flex;flex-direction:column;gap:.4rem">
-              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Approved</span><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--green)"></div></div><span class="prog-val">68%</span></div>
-              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Minor Revision</span><div class="prog-bar"><div class="prog-fill" style="width:19%;background:var(--amber)"></div></div><span class="prog-val">19%</span></div>
-              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Major Revision</span><div class="prog-bar"><div class="prog-fill" style="width:13%;background:var(--red)"></div></div><span class="prog-val">13%</span></div>
+              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Approved</span><div class="prog-bar"><div class="prog-fill" style="width:{{ report_stats.approved_pct }}%;background:var(--green)"></div></div><span class="prog-val">{{ report_stats.approved_pct }}%</span></div>
+              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Minor Revision</span><div class="prog-bar"><div class="prog-fill" style="width:{{ report_stats.minor_revision_pct }}%;background:var(--amber)"></div></div><span class="prog-val">{{ report_stats.minor_revision_pct }}%</span></div>
+              <div class="prog-wrap"><span style="font-size:.75rem;color:var(--muted);width:100px">Major Revision</span><div class="prog-bar"><div class="prog-fill" style="width:{{ report_stats.major_revision_pct }}%;background:var(--red)"></div></div><span class="prog-val">{{ report_stats.major_revision_pct }}%</span></div>
             </div>
           </div>
         </div>
@@ -1172,35 +1174,22 @@ select.form-control{appearance:none;cursor:pointer}
     <!-- ───────── SCHEDULE ───────── -->
     <section class="section-view" id="view-schedule">
       <div class="page-hdr">
-        <div class="page-hdr-left"><h2>Schedule & Meetings</h2><p>Week of 17–21 March 2026</p></div>
-        <button class="btn btn-navy" onclick="openModal('meeting-modal')">+ Schedule Meeting</button>
+        <div class="page-hdr-left"><h2>Schedule & Meetings</h2><p>Week of {{ schedule_start|date:'d M Y' }}</p></div>
+        <button class="btn btn-navy" onclick="openNewMeetingModal()">+ Schedule Meeting</button>
       </div>
       <div class="card">
         <div class="card-body">
           <div class="cal-week">
+            {% for day in schedule_days %}
             <div class="cal-day">
-              <div class="cal-day-name">Mon</div><div class="cal-day-num">17</div>
-              <div class="cal-event">10:00 Sarah Johnson — Progress review</div>
-              <div class="cal-event ev-amber">14:00 Department meeting</div>
+              <div class="cal-day-name">{{ day.date|date:'D' }}</div><div class="cal-day-num"{% if day.is_today %} style="color:var(--amber)"{% endif %}>{{ day.date|date:'j' }}{% if day.is_today %} ●{% endif %}</div>
+              {% for booking in day.bookings %}
+              <div class="cal-event{% if booking.status == 'pending' %} ev-amber{% elif booking.status == 'approved' %} ev-green{% endif %}">{{ booking.date|date:'H:i' }} {{ booking.student.user.get_full_name }} — {{ booking.title }}</div>
+              {% empty %}
+              <div class="cal-event">No meetings scheduled</div>
+              {% endfor %}
             </div>
-            <div class="cal-day">
-              <div class="cal-day-name">Tue</div><div class="cal-day-num">18</div>
-              <div class="cal-event">09:00 James Wilson — Lit review check</div>
-              <div class="cal-event ev-green">15:30 Emily Brown — Urgent catch-up</div>
-            </div>
-            <div class="cal-day">
-              <div class="cal-day-name">Wed</div><div class="cal-day-num" style="color:var(--amber)">19 ●</div>
-              <div class="cal-event ev-amber">11:00 Faculty seminar</div>
-            </div>
-            <div class="cal-day">
-              <div class="cal-day-name">Thu</div><div class="cal-day-num">20</div>
-              <div class="cal-event">09:30 David Lee — Proposal sign-off</div>
-              <div class="cal-event">13:00 Maria Garcia — Monthly check</div>
-            </div>
-            <div class="cal-day">
-              <div class="cal-day-name">Fri</div><div class="cal-day-num">21</div>
-              <div class="cal-event ev-amber">10:00 Supervisor forum</div>
-            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
@@ -1211,10 +1200,11 @@ select.form-control{appearance:none;cursor:pointer}
           <table>
             <thead><tr><th>Student</th><th>Date & Time</th><th>Topic</th><th>Location</th><th>Status</th><th></th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td class="td-muted">Mon 17 Mar · 10:00</td><td>Q1 Progress Review</td><td class="td-muted">Room 214B</td><td><span class="pill pill-green">Confirmed</span></td><td><button class="btn btn-outline btn-xs">Reschedule</button></td></tr>
-              <tr><td class="td-bold">James Wilson</td><td class="td-muted">Tue 18 Mar · 09:00</td><td>Literature Review Check</td><td class="td-muted">Zoom</td><td><span class="pill pill-green">Confirmed</span></td><td><button class="btn btn-outline btn-xs">Reschedule</button></td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td class="td-muted">Tue 18 Mar · 15:30</td><td>Urgent Methodology Discussion</td><td class="td-muted">Office 118</td><td><span class="pill pill-amber">Pending</span></td><td><button class="btn btn-outline btn-xs">Confirm</button></td></tr>
-              <tr><td class="td-bold">David Lee</td><td class="td-muted">Thu 20 Mar · 09:30</td><td>Proposal Sign-Off</td><td class="td-muted">Room 214B</td><td><span class="pill pill-green">Confirmed</span></td><td><button class="btn btn-outline btn-xs">Reschedule</button></td></tr>
+              {% for item in meeting_rows %}
+              <tr><td class="td-bold">{{ item.booking.student.user.get_full_name }}</td><td class="td-muted">{{ item.booking.date|date:'D d M · H:i' }}</td><td>{{ item.booking.title }}</td><td class="td-muted">{{ item.booking.get_meeting_type_display }}</td><td><span class="pill {{ item.status_badge }}">{{ item.booking.get_status_display }}</span></td><td><button class="btn btn-outline btn-xs" onclick="handleMeetingAction(this)" data-action="{{ item.action_label }}" data-booking-id="{{ item.booking.id }}" data-student-id="{{ item.booking.student.id }}" data-student="{{ item.booking.student.user.get_full_name }}" data-topic="{{ item.booking.title }}" data-date="{{ item.booking.date|date:'Y-m-d' }}" data-time="{{ item.booking.date|date:'H:i' }}" data-meeting-type="{{ item.booking.meeting_type }}" data-status="{{ item.booking.get_status_display }}" data-notes="{{ item.booking.notes|default:'' }}">{{ item.action_label }}</button></td></tr>
+              {% empty %}
+              <tr><td colspan="6" class="td-muted">No upcoming meetings scheduled.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1229,10 +1219,10 @@ select.form-control{appearance:none;cursor:pointer}
       </div>
  
       <div class="stat-grid" style="margin-bottom:1rem">
-        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Cohort Avg Progress</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">72%</div><div class="stat-sub"><span class="up">↑ 4.2%</span> this semester</div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">On-Time Submissions</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">83%</div><div class="stat-sub">of all deadlines met</div></div>
-        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Grade Awarded</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">79%</div><div class="stat-sub">across 47 submissions</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Students At Risk</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">3</div><div class="stat-sub">require immediate support</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Cohort Avg Progress</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">{{ report_stats.cohort_avg_progress }}%</div><div class="stat-sub">based on milestone completion</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">On-Time Submissions</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">{{ report_stats.on_time_rate }}%</div><div class="stat-sub">of all submissions reviewed on time</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Grade Awarded</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">{{ report_stats.avg_grade_awarded }}%</div><div class="stat-sub">across {{ report_stats.total_feedback }} feedback items</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Students At Risk</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">{{ report_stats.students_at_risk }}</div><div class="stat-sub">require immediate support</div></div>
       </div>
  
       <div class="card">
@@ -1241,11 +1231,37 @@ select.form-control{appearance:none;cursor:pointer}
           <table>
             <thead><tr><th>Student</th><th>Programme</th><th>Submissions</th><th>Avg Grade</th><th>Milestone Progress</th><th>Risk Level</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td>PhD CS</td><td>8 submitted</td><td style="color:var(--green);font-weight:700">92%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val">85%</span></div></td><td><span class="pill pill-green">Low</span></td></tr>
-              <tr><td class="td-bold">James Wilson</td><td>MSc CS</td><td>5 submitted</td><td style="color:var(--green);font-weight:700">88%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">Low</span></td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td>PhD CS</td><td>6 submitted</td><td style="color:var(--orange);font-weight:700">67%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val">45%</span></div></td><td><span class="pill pill-red">High</span></td></tr>
-              <tr><td class="td-bold">David Lee</td><td>MSc Data Sci</td><td>7 submitted</td><td style="color:var(--green);font-weight:700">95%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val">90%</span></div></td><td><span class="pill pill-green">Low</span></td></tr>
-              <tr><td class="td-bold">Maria Garcia</td><td>MSc CS</td><td>4 submitted</td><td style="color:var(--green);font-weight:700">84%</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><span class="pill pill-blue">Medium</span></td></tr>
+              {% for card in students %}
+              <tr><td class="td-bold">{{ card.name }}</td><td>{{ card.programme }}</td><td>{{ card.submission_count }} submitted</td><td style="color:{{ card.progress_color }};font-weight:700">{{ card.avg_score_display }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ card.progress }}%;background:{{ card.progress_color }}"></div></div><span class="prog-val">{{ card.progress }}%</span></div></td><td><span class="pill {{ card.status_badge }}">{{ card.risk_level }}</span></td></tr>
+              {% empty %}
+              <tr><td colspan="6" class="td-muted">No student performance data available.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="card-hdr">
+          <div class="card-hdr-left"><div class="card-title">Quarterly Reports</div><div class="card-sub">Submitted progress reports from your supervised students</div></div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Programme</th><th>Quarter</th><th>Submitted</th><th>Status</th><th>Late</th><th>Supervisor Feedback</th></tr></thead>
+            <tbody>
+              {% for report in reports %}
+              <tr>
+                <td class="td-bold">{{ report.student.user.get_full_name }}</td>
+                <td class="td-muted">{{ report.student.programme }}</td>
+                <td>{{ report.quarter }} {{ report.year }}</td>
+                <td class="td-muted">{{ report.submitted_at|date:'d M Y' }}</td>
+                <td><span class="pill {% if report.status == 'reviewed' %}pill-green{% elif report.status == 'submitted' %}pill-amber{% else %}pill-gray{% endif %}">{{ report.get_status_display }}</span></td>
+                <td><span class="pill {% if report.is_late %}pill-red{% else %}pill-green{% endif %}">{% if report.is_late %}Late{% else %}On Time{% endif %}</span></td>
+                <td class="td-muted">{% if report.supervisor_feedback %}{{ report.supervisor_feedback|truncatechars:60 }}{% else %}No feedback yet{% endif %}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="7" class="td-muted">No quarterly reports submitted yet.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1259,10 +1275,10 @@ select.form-control{appearance:none;cursor:pointer}
         <div class="card">
           <div class="card-hdr"><div class="card-title">Profile Information</div></div>
           <div class="card-body">
-            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="Dr. Michael Chen"/></div><div class="form-group"><label class="form-label">Email Address</label><input class="form-control" type="email" value="m.chen@uni.edu"/></div></div>
-            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="SUP/2018/004" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="Computer Science"/></div></div>
-            <div class="form-group"><label class="form-label">Office Location</label><input class="form-control" value="Room 214B, Engineering Block"/></div>
-            <div class="form-group"><label class="form-label">Research Interests</label><textarea class="form-control">Machine Learning, Natural Language Processing, AI Ethics, Computational Linguistics</textarea></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="{{ supervisor.get_full_name }}"/></div><div class="form-group"><label class="form-label">Email Address</label><input class="form-control" type="email" value="{{ supervisor.email }}"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="{{ supervisor.unique_id }}" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="—"/></div></div>
+            <div class="form-group"><label class="form-label">Office Location</label><input class="form-control" value="—"/></div>
+            <div class="form-group"><label class="form-label">Research Interests</label><textarea class="form-control">—</textarea></div>
             <button class="btn btn-navy" onclick="showToast('Profile updated successfully')">Save Changes</button>
           </div>
         </div>
@@ -1315,15 +1331,15 @@ select.form-control{appearance:none;cursor:pointer}
 <!-- Review modal -->
 <div class="modal-overlay" id="review-modal">
   <div class="modal" style="max-width:600px">
-    <div class="modal-hdr"><div class="modal-title">Review: Chapter 4 — Data Analysis (Sarah Johnson)</div><button class="modal-close" onclick="closeModal('review-modal')">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Review: {% if featured_review %}{{ featured_review.submission.title }} ({{ featured_review.student_name }}){% else %}Pending Submission{% endif %}</div><button class="modal-close" onclick="closeModal('review-modal')">✕</button></div>
     <div class="modal-body">
       <div style="background:var(--off);border:1px solid var(--border);padding:1rem;margin-bottom:1rem">
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem">Submission Details</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.8rem">
-          <div><span style="color:var(--muted)">Student:</span> <strong>Sarah Johnson</strong></div>
-          <div><span style="color:var(--muted)">Type:</span> <strong>Draft — Chapter 4</strong></div>
-          <div><span style="color:var(--muted)">Submitted:</span> <strong>16 Mar 2026</strong></div>
-          <div><span style="color:var(--muted)">Word Count:</span> <strong>8,432 words</strong></div>
+          <div><span style="color:var(--muted)">Student:</span> <strong>{% if featured_review %}{{ featured_review.student_name }}{% else %}No pending review{% endif %}</strong></div>
+          <div><span style="color:var(--muted)">Type:</span> <strong>{% if featured_review %}{{ featured_review.submission.get_type_display }}{% else %}—{% endif %}</strong></div>
+          <div><span style="color:var(--muted)">Submitted:</span> <strong>{% if featured_review %}{{ featured_review.submission.submitted_at|date:"d M Y" }}{% else %}—{% endif %}</strong></div>
+          <div><span style="color:var(--muted)">Word Count:</span> <strong>—</strong></div>
         </div>
       </div>
       <div class="form-row">
@@ -1339,43 +1355,56 @@ select.form-control{appearance:none;cursor:pointer}
 <!-- Meeting modal -->
 <div class="modal-overlay" id="meeting-modal">
   <div class="modal">
-    <div class="modal-hdr"><div class="modal-title">Schedule Meeting</div><button class="modal-close" onclick="closeModal('meeting-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Student</label><select class="form-control"><option>Sarah Johnson</option><option>James Wilson</option><option>Emily Brown</option><option>David Lee</option><option>Maria Garcia</option></select></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Date</label><input class="form-control" type="date"/></div>
-        <div class="form-group"><label class="form-label">Time</label><input class="form-control" type="time"/></div>
+    <form method="POST" action="{% url 'supervisor_dashboard' %}" id="meeting-form">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="meeting_action"/>
+      <input type="hidden" name="meeting_action" id="meeting-action-input" value="schedule"/>
+      <input type="hidden" name="booking_id" id="meeting-booking-id" value=""/>
+      <div class="modal-hdr"><div class="modal-title" id="meeting-modal-title">Schedule Meeting</div><button class="modal-close" type="button" onclick="closeModal('meeting-modal')">✕</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Student</label><select class="form-control" id="meeting-student" name="student_id">{% for card in students %}<option value="{{ card.student.id }}">{{ card.name }}</option>{% empty %}<option value="">No students available</option>{% endfor %}</select></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Date</label><input class="form-control" id="meeting-date" name="date" type="date"/></div>
+          <div class="form-group"><label class="form-label">Time</label><input class="form-control" id="meeting-time" name="time" type="time"/></div>
+        </div>
+        <div class="form-group"><label class="form-label">Meeting Type</label><select class="form-control" id="meeting-type" name="meeting_type"><option value="in_person">In-Person</option><option value="video_call">Zoom</option><option value="hybrid">Teams</option><option value="phone_call">Phone Call</option></select></div>
+        <div class="form-group"><label class="form-label">Agenda / Topic</label><textarea class="form-control" id="meeting-topic" name="title" rows="3" placeholder="What will you discuss?"></textarea></div>
+        <input type="hidden" name="notes" id="meeting-notes" value=""/>
       </div>
-      <div class="form-group"><label class="form-label">Meeting Type</label><select class="form-control"><option>In-Person</option><option>Zoom</option><option>Teams</option><option>Phone Call</option></select></div>
-      <div class="form-group"><label class="form-label">Agenda / Topic</label><textarea class="form-control" rows="3" placeholder="What will you discuss?"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('meeting-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('meeting-modal');showToast('Meeting scheduled and student notified')">Schedule Meeting</button></div>
+      <div class="modal-footer"><button class="btn btn-outline" type="button" onclick="closeModal('meeting-modal')">Cancel</button><button class="btn btn-navy" type="submit" id="meeting-submit-btn">Schedule Meeting</button></div>
+    </form>
   </div>
 </div>
  
 <!-- Student profile modal -->
 <div class="modal-overlay" id="student-modal">
   <div class="modal" style="max-width:580px">
-    <div class="modal-hdr"><div class="modal-title">Student Profile — Sarah Johnson</div><button class="modal-close" onclick="closeModal('student-modal')">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Student Profile — {% if featured_student %}{{ featured_student.name }}{% else %}Student{% endif %}</div><button class="modal-close" onclick="closeModal('student-modal')">✕</button></div>
     <div class="modal-body">
       <div class="profile-card" style="padding:0;margin-bottom:1rem">
-        <div class="profile-av">SJ</div>
+        <div class="profile-av">{% if featured_student %}{{ featured_student.profile_initials }}{% else %}ST{% endif %}</div>
         <div>
-          <div class="profile-name">Sarah Johnson</div>
-          <div class="profile-meta">PhD Computer Science · Year 2 · ID: PG/2024/001</div>
-          <div class="profile-meta">s.j@university.edu · +254 700 123 456</div>
-          <div class="profile-tags"><span class="pill pill-green">On Track</span><span class="pill pill-navy">PhD</span></div>
+          <div class="profile-name">{% if featured_student %}{{ featured_student.name }}{% else %}No student selected{% endif %}</div>
+          <div class="profile-meta">{% if featured_student %}{{ featured_student.programme }} · ID: {{ featured_student.student_number }}{% else %}—{% endif %}</div>
+          <div class="profile-meta">{% if featured_student %}{{ featured_student.email }}{% else %}—{% endif %}</div>
+          <div class="profile-tags"><span class="pill {% if featured_student %}{{ featured_student.status_badge }}{% else %}pill-gray{% endif %}">{% if featured_student %}{{ featured_student.status_label }}{% else %}No Data{% endif %}</span><span class="pill pill-navy">{% if featured_student %}{{ featured_student.programme }}{% else %}Programme{% endif %}</span></div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
-        <div style="background:var(--off);padding:.9rem;text-align:center"><div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--navy)">85%</div><div style="font-size:.7rem;color:var(--muted)">Overall Progress</div></div>
-        <div style="background:var(--off);padding:.9rem;text-align:center"><div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--green)">92%</div><div style="font-size:.7rem;color:var(--muted)">Avg Score</div></div>
+        <div style="background:var(--off);padding:.9rem;text-align:center"><div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--navy)">{% if featured_student %}{{ featured_student.progress }}%{% else %}0%{% endif %}</div><div style="font-size:.7rem;color:var(--muted)">Overall Progress</div></div>
+        <div style="background:var(--off);padding:.9rem;text-align:center"><div style="font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--green)">{% if featured_student %}{{ featured_student.avg_score_display }}{% else %}—{% endif %}</div><div style="font-size:.7rem;color:var(--muted)">Avg Score</div></div>
       </div>
       <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem">Recent Submissions</div>
       <div style="border:1px solid var(--border)">
-        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.8rem"><span>Chapter 3: Methodology</span><span class="pill pill-green">Approved · 92%</span></div>
-        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.8rem"><span>Literature Review Final</span><span class="pill pill-green">Approved · 88%</span></div>
-        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;font-size:.8rem"><span>Chapter 4: Data Analysis</span><span class="pill pill-amber">Under Review</span></div>
+        {% if featured_student %}
+        {% for submission in featured_student.recent_submissions %}
+        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem{% if not forloop.last %};border-bottom:1px solid var(--border){% endif %};font-size:.8rem"><span>{{ submission.title }}</span><span class="pill {{ submission.status_class }}">{{ submission.status_label }}{% if submission.score != None %} · {{ submission.score }}%{% endif %}</span></div>
+        {% empty %}
+        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;font-size:.8rem"><span>No submissions yet</span><span class="pill pill-gray">Waiting</span></div>
+        {% endfor %}
+        {% else %}
+        <div style="display:flex;justify-content:space-between;padding:.65rem 1rem;font-size:.8rem"><span>No submissions yet</span><span class="pill pill-gray">Waiting</span></div>
+        {% endif %}
       </div>
     </div>
     <div class="modal-footer"><button class="btn btn-outline btn-sm" onclick="closeModal('student-modal')">Close</button><button class="btn btn-navy btn-sm" onclick="closeModal('student-modal');openModal('feedback-modal')">Give Feedback</button></div>
@@ -1407,12 +1436,77 @@ function switchTab(groupId,panelId,btn){
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+const meetingModalState={action:'Schedule',status:''};
+function prepareMeetingModal(config={}){
+  const title=document.getElementById('meeting-modal-title');
+  const actionInput=document.getElementById('meeting-action-input');
+  const bookingId=document.getElementById('meeting-booking-id');
+  const student=document.getElementById('meeting-student');
+  const date=document.getElementById('meeting-date');
+  const time=document.getElementById('meeting-time');
+  const type=document.getElementById('meeting-type');
+  const topic=document.getElementById('meeting-topic');
+  const notes=document.getElementById('meeting-notes');
+  const submit=document.getElementById('meeting-submit-btn');
+  meetingModalState.action=config.action || 'Schedule';
+  meetingModalState.status=config.status || '';
+  if(title) title.textContent=`${meetingModalState.action} Meeting`;
+  if(submit) submit.textContent=`${meetingModalState.action} Meeting`;
+  if(actionInput) actionInput.value=(config.action || 'schedule').toLowerCase();
+  if(bookingId) bookingId.value=config.bookingId || '';
+  if(student){
+    if(config.studentId){
+      const match=[...student.options].find(opt=>opt.value===String(config.studentId));
+      if(match) student.value=match.value;
+    }else if(config.student){
+      const match=[...student.options].find(opt=>opt.text===config.student);
+      if(match) student.value=match.value;
+    }else if(student.options.length){
+      student.selectedIndex=0;
+    }
+  }
+  if(date) date.value=config.date || '';
+  if(time) time.value=config.time || '';
+  if(type) type.value=config.meetingType || 'in_person';
+  if(topic) topic.value=config.topic || '';
+  if(notes) notes.value=config.notes || '';
+}
+function openNewMeetingModal(){
+  prepareMeetingModal();
+  openModal('meeting-modal');
+}
+function handleMeetingAction(button){
+  prepareMeetingModal({
+    action: button.dataset.action || 'Schedule',
+    bookingId: button.dataset.bookingId || '',
+    studentId: button.dataset.studentId || '',
+    student: button.dataset.student || '',
+    date: button.dataset.date || '',
+    time: button.dataset.time || '',
+    meetingType: button.dataset.meetingType || 'in_person',
+    topic: button.dataset.topic || '',
+    notes: button.dataset.notes || '',
+    status: button.dataset.status || ''
+  });
+  openModal('meeting-modal');
+}
+function submitMeetingAction(){
+  const form=document.getElementById('meeting-form');
+  if(form) form.submit();
+}
 // TOAST
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
+{% if messages %}
+window.addEventListener('DOMContentLoaded',()=>{
+  {% for message in messages %}
+  showToast('{{ message|escapejs }}');
+  {% endfor %}
+});
+{% endif %}
 // Handle nav clicks properly
 document.querySelectorAll('.nav-link[onclick]').forEach(link=>{
   link.addEventListener('click',function(){

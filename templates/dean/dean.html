@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dean's Executive Dashboard — R.U</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0A194E;--navy-light:#1a3580;--amber:#FFC107;--amber-dim:rgba(255,193,7,.13);--amber-dark:#c9960a;--white:#fff;--off:#F5F7FC;--off2:#EBEEf8;--text:#111827;--muted:#5B6F8A;--soft:#94A3B8;--border:#DDE4F0;--green:#16A34A;--green-dim:rgba(22,163,74,.1);--red:#DC2626;--red-dim:rgba(220,38,38,.1);--blue:#2563EB;--blue-dim:rgba(37,99,235,.1);--orange:#EA580C;--orange-dim:rgba(234,88,12,.1);--purple:#7C3AED;--purple-dim:rgba(124,58,237,.1);--sidebar:228px;--topbar:60px}
+html{font-size:14px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--off);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sidebar-logo{display:flex;align-items:center;gap:.75rem;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{width:34px;height:34px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+
+.logo-badge{
+  width:150px;
+  height:50px;
+  background:white;
+  border-radius:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  flex-shrink:0;
+  margin-left: 10px;
+}
+.logo-img {
+    height: 110px;    
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.08)); 
+    margin-left: 0px;
+}
+.nav-section{
+  padding:.75rem 0}
+.nav-section-title{
+  font-size:.6rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgb(255, 255, 255);
+  padding:.4rem 1.25rem .4rem;
+  display:block;
+  margin-left: 10px;
+}
+.nav-link{
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:1.05rem .25rem;
+  color:rgb(254, 254, 254);
+  font-size:.92rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .18s;
+  border-left:2.5px solid transparent;
+  text-decoration:none;
+  margin-left: 10px;
+}
+
+.nav-link:hover{
+  color:#FFC107;
+  background:rgba(255,255,255,.06)}
+.nav-link.active{
+  color:#FFC107;
+  background:rgba(255,255,255,.09);
+  border-left-color:var(--amber)}
+.nav-link .ni{
+  width:17px;
+  text-align:center;
+  font-size:.88rem;
+  flex-shrink:0}
+.sidebar-footer{
+  margin-top:auto;
+  padding:1rem 1.25rem;
+  border-top:1px solid rgba(255,255,255,.07)}
+.user-mini{
+  display:flex;
+  align-items:center;
+  gap:.65rem}
+.user-av{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:var(--amber);
+  color:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  font-weight:800;
+  flex-shrink:0}
+.user-mini-name{
+  font-size:.78rem;
+  font-weight:700;
+  color:#fff;
+  line-height:1.2}
+.user-mini-role{
+  font-size:.65rem;
+  color:rgba(255,255,255,.38)}
+.logout-btn{
+  margin-left:auto;
+  background:none;
+  border:none;
+  color:rgb(255, 255, 255);
+  font-size:.9rem;
+  cursor:pointer;
+  padding:.25rem}
+.logout-btn:hover{
+  color:var(--red)}
+.main{
+  margin-left:var(--sidebar);
+  flex:1;
+  display:flex;
+  flex-direction:column}
+.topbar{
+  height:var(--topbar);
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:0 1.75rem;
+  position:sticky;
+  top:0;z-index:50}
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  margin-left:auto}
+.tb-notif{position:relative;width:34px;height:34px;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
+.tb-pill{display:flex;align-items:center;gap:.5rem;background:var(--off);border:1px solid var(--border);padding:.3rem .75rem;cursor:pointer}
+.tb-av{width:24px;height:24px;border-radius:50%;background:var(--navy);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800}
+.tb-name{font-size:.78rem;font-weight:600}
+.tb-role{font-size:.62rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem 1rem;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy-light)}
+.btn-amber{background:var(--amber);color:var(--navy)}.btn-amber:hover{background:#e6ad00}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--navy);background:rgba(10,25,78,.04)}
+.btn-sm{padding:.3rem .65rem;font-size:.72rem}
+.btn-xs{padding:.2rem .5rem;font-size:.65rem}
+.content{padding:1.5rem 1.75rem;flex:1}
+.section-view{display:none}
+.section-view.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.page-hdr h2{font-family:'Lora',serif;font-size:1.45rem;font-weight:700;color:var(--navy)}
+.page-hdr p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.page-hdr-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid var(--border);padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:3.5px}
+.s-navy::after{background:var(--navy)}.s-green::after{background:var(--green)}.s-amber::after{background:var(--amber)}.s-red::after{background:var(--red)}.s-blue::after{background:var(--blue)}.s-purple::after{background:var(--purple)}
+.stat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.65rem}
+.stat-lbl{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.stat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.ico-navy{background:rgba(10,25,78,.08)}.ico-green{background:var(--green-dim)}.ico-amber{background:var(--amber-dim)}.ico-red{background:var(--red-dim)}.ico-blue{background:var(--blue-dim)}.ico-purple{background:var(--purple-dim)}
+.stat-val{font-family:'Lora',serif;font-size:1.9rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.25rem}
+.stat-sub{font-size:.7rem;color:var(--muted)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+.card{background:#fff;border:1px solid var(--border)}
+.card-hdr{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.card-hdr-left{flex:1}
+.card-title{font-size:.9rem;font-weight:700;color:var(--navy)}
+.card-sub{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.card-body{padding:1.25rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.grid-65-35{display:grid;grid-template-columns:1.85fr 1fr;gap:1rem}
+.grid-55-45{display:grid;grid-template-columns:1.2fr 1fr;gap:1rem}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:.65rem 1.1rem;font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;background:var(--off);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:.8rem 1.1rem;font-size:.8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover td{background:rgba(10,25,78,.018)}
+tbody tr:last-child td{border-bottom:none}
+.td-bold{font-weight:600}.td-muted{color:var(--muted)}
+.prog-wrap{display:flex;align-items:center;gap:.6rem}
+.prog-bar{height:6px;background:var(--off2);flex:1;overflow:hidden;min-width:60px}
+.prog-fill{height:100%}
+.prog-val{font-size:.72rem;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+.pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.63rem;font-weight:700;padding:.2rem .55rem}
+.pill-green{background:var(--green-dim);color:var(--green)}.pill-red{background:var(--red-dim);color:var(--red)}.pill-amber{background:var(--amber-dim);color:var(--amber-dark)}.pill-blue{background:var(--blue-dim);color:var(--blue)}.pill-orange{background:var(--orange-dim);color:var(--orange)}.pill-navy{background:rgba(10,25,78,.1);color:var(--navy)}.pill-gray{background:var(--off2);color:var(--muted)}.pill-purple{background:var(--purple-dim);color:var(--purple)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0}
+/* Budget card */
+.budget-card{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.budget-card:last-child{border-bottom:none}
+.budget-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.35rem}
+.budget-name{font-size:.85rem;font-weight:700;color:var(--navy)}
+.budget-amount{font-family:'Lora',serif;font-size:1rem;font-weight:700;color:var(--navy)}
+.budget-badge{font-size:.65rem;font-weight:700;padding:.2rem .5rem;background:var(--green-dim);color:var(--green)}
+.budget-meta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:.45rem}
+.budget-bar{height:5px;background:var(--off2);overflow:hidden;margin-bottom:.25rem}
+.budget-fill{height:100%;background:var(--navy)}
+/* Initiative */
+.init-item{padding:.9rem 1.25rem;border-bottom:1px solid var(--border)}
+.init-item:last-child{border-bottom:none}
+.init-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem}
+.init-name{font-size:.83rem;font-weight:700;color:var(--navy)}
+.init-tag{font-size:.58rem;font-weight:700;padding:.18rem .48rem}
+.it-high{background:var(--amber);color:var(--navy)}
+.it-medium{background:var(--blue-dim);color:var(--blue)}
+.init-desc{font-size:.7rem;color:var(--muted);margin-bottom:.45rem}
+.init-bar{height:5px;background:var(--off2);overflow:hidden;margin-bottom:.2rem}
+.init-fill{height:100%;background:var(--navy)}
+.init-pct{font-size:.68rem;color:var(--muted)}
+/* Exec action buttons */
+.ea-btn{width:100%;display:flex;align-items:center;gap:.75rem;padding:.72rem 1rem;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:.45rem;text-align:left;border:1.5px solid var(--border)}
+.ea-btn:last-child{margin-bottom:0}
+.ea-navy{background:var(--navy);color:#fff;border-color:var(--navy)}.ea-navy:hover{background:var(--navy-light)}
+.ea-default{background:#fff;color:var(--text)}.ea-default:hover{background:var(--off);border-color:var(--navy);color:var(--navy)}
+.ea-amber{background:var(--amber);color:var(--navy);border-color:var(--amber)}.ea-amber:hover{background:#e6ad00}
+/* Recent approval dot */
+.ra-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:.3rem}
+/* Event row */
+.event-row{display:flex;justify-content:space-between;align-items:center;padding:.62rem 1.25rem;border-bottom:1px solid var(--border);font-size:.8rem}
+.event-row:last-child{border-bottom:none}
+/* Dept performance bar (vertical bar chart) */
+.dept-bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 .5rem}
+.dbc-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:3px}
+.dbc-rect{border-radius:3px 3px 0 0;width:100%;cursor:pointer;transition:opacity .2s}
+.dbc-rect:hover{opacity:.8}
+.dbc-label{font-size:.62rem;color:var(--muted);text-align:center;line-height:1.2}
+.dbc-val{font-size:.6rem;font-weight:700;color:var(--text)}
+/* Radar hex */
+.radar-container{display:flex;justify-content:center;padding:.5rem 0}
+/* Progress wrap for analytics */
+.analytics-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem}
+.ar-label{width:130px;font-size:.78rem;color:var(--muted);text-align:right;flex-shrink:0}
+.ar-bar{flex:1;height:8px;background:var(--off2);overflow:hidden}
+.ar-fill{height:100%}
+.ar-val{font-size:.72rem;font-weight:700;color:var(--text);width:38px}
+svg.chart{overflow:visible;width:100%}
+.modal-overlay{position:fixed;inset:0;background:rgba(6,15,48,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.25rem;border-bottom:1px solid var(--border)}
+.modal-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted)}
+.modal-body{padding:1.25rem}
+.modal-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.form-control{width:100%;background:var(--off);border:1.5px solid var(--border);padding:.65rem .9rem;font-family:inherit;font-size:.82rem;color:var(--text);outline:none}
+.form-control:focus{border-color:var(--navy);background:#fff}
+select.form-control{appearance:none}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--navy);color:#fff;border-left:4px solid var(--amber);padding:.8rem 1.25rem;font-size:.8rem;font-weight:500;z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--off2);border-radius:10px}
+</style>
+</head>
+<body>
+ 
+<aside class="sidebar">
+  <a class="sidebar-logo" href="index.html">
+    <div class="logo-badge">
+      <img src="assets/R.U logo.png" alt="R.U logo" class="logo-img">
+    </div>
+    
+  </a>
+  <nav class="nav-section">
+    <span class="nav-section-title">Executive</span>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">📈</span> Faculty Analytics</a>
+    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📄</span> Reports</a>
+    <a class="nav-link" onclick="nav(this,'accreditation')"><span class="ni">🏅</span> Accreditation</a>
+    <a class="nav-link" onclick="nav(this,'budget')"><span class="ni">💰</span> Budget & Funding</a>
+    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">⚙️</span> Settings</a>
+  </nav>
+  <nav class="nav-section">
+    <span class="nav-section-title">Navigate</span>
+    <a class="nav-link" href="login.html"><span class="ni">🏠</span> Back to Portal</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-mini">
+      <div class="user-av">RH</div>
+      <div><div class="user-mini-name">Prof. Robert Harrison</div><div class="user-mini-role">Dean of Faculty</div></div>
+      <button class="logout-btn" onclick="window.location.href='login.html'">⍈Log out </button>
+    </div>
+  </div>
+</aside>
+ 
+<div class="main">
+  <header class="topbar">
+    <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">Dean's Executive Dashboard</div>
+    <div class="topbar-right">
+      <div class="tb-notif" onclick="showToast('3 executive alerts pending')">🔔<span class="tb-notif-dot"></span></div>
+      <div class="tb-pill"><div class="tb-av">RH</div><div><div class="tb-name">Prof. Robert Harrison</div><div class="tb-role">Dean</div></div></div>
+      <button class="btn btn-navy" onclick="showToast('Executive report generated and sent to board')">📊 Generate Executive Report</button>
+    </div>
+  </header>
+ 
+  <main class="content">
+ 
+    <!-- DASHBOARD -->
+    <section class="section-view active" id="view-dashboard">
+      <div class="page-hdr">
+        <div><h2>Dean's Executive Dashboard 🎓</h2><p>Faculty of Science & Engineering — Strategic Overview</p></div>
+        <div class="page-hdr-actions">
+          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[1],'analytics')">📈 Analytics</button>
+          <button class="btn btn-navy" onclick="showToast('Report generated')">📊 Generate Report</button>
+        </div>
+      </div>
+ 
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card s-green">
+          <div class="stat-head"><span class="stat-lbl">Total Students</span><div class="stat-ico ico-green">🎓</div></div>
+          <div class="stat-val">285</div>
+          <div class="stat-sub">Across 5 departments</div>
+        </div>
+        <div class="stat-card s-blue">
+          <div class="stat-head"><span class="stat-lbl">Faculty Members</span><div class="stat-ico ico-blue">👥</div></div>
+          <div class="stat-val">58</div>
+          <div class="stat-sub">45 Supervisors · 13 Chairs</div>
+        </div>
+        <div class="stat-card s-amber">
+          <div class="stat-head"><span class="stat-lbl">Avg. Completion Rate</span><div class="stat-ico ico-amber">📈</div></div>
+          <div class="stat-val">86%</div>
+          <div class="stat-sub"><span class="up">↑ 4%</span> from last year
+            <div style="margin-top:.35rem;height:4px;background:var(--off2);overflow:hidden"><div style="width:86%;height:100%;background:var(--navy)"></div></div>
+          </div>
+        </div>
+        <div class="stat-card s-purple">
+          <div class="stat-head"><span class="stat-lbl">Research Funding</span><div class="stat-ico ico-purple">💰</div></div>
+          <div class="stat-val">Ksh2.4M</div>
+          <div class="stat-sub">Active grants · 14 projects</div>
+        </div>
+      </div>
+ 
+      <!-- Charts row: Dept performance + Radar -->
+      <div class="grid-55-45" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Department Performance Overview</div><div class="card-sub">Students, completion rate and research output by department</div></div></div>
+          <div style="padding:1.1rem 1.25rem .5rem">
+            <!-- Combined bar + line SVG chart -->
+            <svg class="chart" viewBox="0 0 380 140" style="height:145px">
+              <defs>
+                <linearGradient id="db1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0A194E" stop-opacity=".9"/>
+                  <stop offset="100%" stop-color="#0A194E" stop-opacity=".7"/>
+                </linearGradient>
+              </defs>
+              <line x1="35" y1="10" x2="375" y2="10" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="37" x2="375" y2="37" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="64" x2="375" y2="64" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="91" x2="375" y2="91" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="35" y1="118" x2="375" y2="118" stroke="#DDE4F0" stroke-width="1"/>
+              <text x="28" y="13" font-size="8" fill="#94A3B8" text-anchor="end">100</text>
+              <text x="28" y="68" font-size="8" fill="#94A3B8" text-anchor="end">50</text>
+              <text x="28" y="122" font-size="8" fill="#94A3B8" text-anchor="end">0</text>
+              <!-- Bars: CS=60, Eng=75, Math=45, Phys=50, Chem=55 — scale /75*108 -->
+              <rect x="42" y="31" width="32" height="87" fill="url(#db1)" rx="2"/>
+              <rect x="110" y="10" width="32" height="108" fill="url(#db1)" rx="2"/>
+              <rect x="178" y="53" width="32" height="65" fill="url(#db1)" rx="2"/>
+              <rect x="246" y="46" width="32" height="72" fill="url(#db1)" rx="2"/>
+              <rect x="314" y="39" width="32" height="79" fill="url(#db1)" rx="2"/>
+              <!-- Completion % line (green) — 87,84,90,82,86 mapped to chart -->
+              <polyline points="58,35 126,41 194,24 262,45 330,36" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,2.5"/>
+              <circle cx="58" cy="35" r="3" fill="#16A34A"/>
+              <circle cx="126" cy="41" r="3" fill="#16A34A"/>
+              <circle cx="194" cy="24" r="3.5" fill="#16A34A"/>
+              <circle cx="262" cy="45" r="3" fill="#16A34A"/>
+              <circle cx="330" cy="36" r="3" fill="#16A34A"/>
+              <!-- Research score line (amber) -->
+              <polyline points="58,48 126,33 194,54 262,28 330,50" fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round" stroke-dasharray="3,2"/>
+              <circle cx="58" cy="48" r="3" fill="#FFC107"/>
+              <circle cx="126" cy="33" r="3" fill="#FFC107"/>
+              <circle cx="194" cy="54" r="3" fill="#FFC107"/>
+              <circle cx="262" cy="28" r="3.5" fill="#FFC107"/>
+              <circle cx="330" cy="50" r="3" fill="#FFC107"/>
+              <!-- X labels -->
+              <text x="58" y="133" font-size="8" fill="#94A3B8" text-anchor="middle">Comp. Sci</text>
+              <text x="126" y="133" font-size="8" fill="#94A3B8" text-anchor="middle">Engineering</text>
+              <text x="194" y="133" font-size="8" fill="#94A3B8" text-anchor="middle">Mathematics</text>
+              <text x="262" y="133" font-size="8" fill="#94A3B8" text-anchor="middle">Physics</text>
+              <text x="330" y="133" font-size="8" fill="#94A3B8" text-anchor="middle">Chemistry</text>
+            </svg>
+          </div>
+          <div style="display:flex;gap:1.25rem;padding:0 1.25rem .9rem;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:12px;height:12px;background:var(--navy);border-radius:2px"></div>Students</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:14px;height:2px;border-top:2px dashed var(--green)"></div>Completion %</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--muted)"><div style="width:14px;height:2px;border-top:2px dashed var(--amber)"></div>Research Score</div>
+          </div>
+        </div>
+ 
+        <!-- Hex radar chart -->
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Faculty Performance Metrics</div><div class="card-sub">Multi-dimensional performance evaluation</div></div></div>
+          <div class="radar-container">
+            <svg viewBox="-115 -115 230 230" style="width:220px;height:220px">
+              <!-- Background hexagons -->
+              <polygon points="0,-88 76,-44 76,44 0,88 -76,44 -76,-44" fill="none" stroke="#DDE4F0" stroke-width="1"/>
+              <polygon points="0,-66 57,-33 57,33 0,66 -57,33 -57,-33" fill="none" stroke="#DDE4F0" stroke-width="1"/>
+              <polygon points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="none" stroke="#DDE4F0" stroke-width="1"/>
+              <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" fill="none" stroke="#DDE4F0" stroke-width="1"/>
+              <!-- Spokes -->
+              <line x1="0" y1="0" x2="0" y2="-88" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="0" y1="0" x2="76" y2="-44" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="0" y1="0" x2="76" y2="44" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="0" y1="0" x2="0" y2="88" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="0" y1="0" x2="-76" y2="44" stroke="#DDE4F0" stroke-width="1"/>
+              <line x1="0" y1="0" x2="-76" y2="-44" stroke="#DDE4F0" stroke-width="1"/>
+              <!-- Data polygon (scaled values: 85%,78%,90%,88%,72%,82%) -->
+              <polygon
+                points="0,-75 60,-34 69,39 0,78 -55,32 -56,-36"
+                fill="rgba(10,25,78,0.15)"
+                stroke="#0A194E"
+                stroke-width="2"
+                stroke-linejoin="round"/>
+              <!-- Data points -->
+              <circle cx="0" cy="-75" r="4" fill="#0A194E"/>
+              <circle cx="60" cy="-34" r="4" fill="#0A194E"/>
+              <circle cx="69" cy="39" r="4" fill="#FFC107" stroke="#0A194E" stroke-width="1.5"/>
+              <circle cx="0" cy="78" r="4" fill="#0A194E"/>
+              <circle cx="-55" cy="32" r="4" fill="#0A194E"/>
+              <circle cx="-56" cy="-36" r="4" fill="#0A194E"/>
+              <!-- Labels -->
+              <text x="0" y="-96" font-size="8.5" fill="#5B6F8A" text-anchor="middle">Student Satisfaction</text>
+              <text x="88" y="-48" font-size="8.5" fill="#5B6F8A" text-anchor="start">Research Output</text>
+              <text x="84" y="54" font-size="8.5" fill="#5B6F8A" text-anchor="start">Completion Rate</text>
+              <text x="0" y="105" font-size="8.5" fill="#5B6F8A" text-anchor="middle">Faculty Quality</text>
+              <text x="-90" y="54" font-size="8.5" fill="#5B6F8A" text-anchor="end">Industry Relations</text>
+              <text x="-88" y="-48" font-size="8.5" fill="#5B6F8A" text-anchor="end">Innovation</text>
+            </svg>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.35rem;padding:0 1.25rem .9rem;font-size:.72rem;color:var(--muted)">
+            <div>Student Satisfaction: <strong>85%</strong></div>
+            <div>Research Output: <strong>78%</strong></div>
+            <div>Completion Rate: <strong>90%</strong></div>
+            <div>Faculty Quality: <strong>88%</strong></div>
+            <div>Industry Relations: <strong>72%</strong></div>
+            <div>Innovation: <strong>82%</strong></div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Department Summary + Key Initiatives -->
+      <div class="grid-65-35" style="margin-bottom:1rem">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Department Summary</div><div class="card-sub">Detailed breakdown by department — Chair, students, completion</div></div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Department</th><th>Chair</th><th>Students</th><th>Completion Rate</th><th>Performance</th></tr></thead>
+              <tbody>
+                <tr><td class="td-bold">Computer Science</td><td class="td-muted">Prof. Rodriguez</td><td>60</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:87%;background:var(--navy)"></div></div><span class="prog-val">87%</span></div></td><td><span class="pill pill-amber">Excellent</span></td></tr>
+                <tr><td class="td-bold">Engineering</td><td class="td-muted">Prof. Thomson</td><td>75</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:84%;background:var(--navy)"></div></div><span class="prog-val">84%</span></div></td><td><span class="pill pill-green">Good</span></td></tr>
+                <tr><td class="td-bold">Mathematics</td><td class="td-muted">Prof. Anderson</td><td>45</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:90%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">90%</span></div></td><td><span class="pill pill-amber">Excellent</span></td></tr>
+                <tr><td class="td-bold">Physics</td><td class="td-muted">Prof. Martinez</td><td>50</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--navy)"></div></div><span class="prog-val">82%</span></div></td><td><span class="pill pill-green">Good</span></td></tr>
+                <tr><td class="td-bold">Chemistry</td><td class="td-muted">Prof. Lee</td><td>55</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:86%;background:var(--navy)"></div></div><span class="prog-val">86%</span></div></td><td><span class="pill pill-amber">Excellent</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+ 
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <!-- Key initiatives -->
+          <div class="card">
+            <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Key Initiatives</div><div class="card-sub">Strategic priorities and highlights</div></div></div>
+            <div class="init-item">
+              <div class="init-top"><span class="init-name">Accreditation Review</span><span class="init-tag it-high">High</span></div>
+              <div class="init-desc">In Progress</div>
+              <div class="init-bar"><div class="init-fill" style="width:75%;background:var(--navy)"></div></div>
+              <div class="init-pct">75%</div>
+            </div>
+            <div class="init-item">
+              <div class="init-top"><span class="init-name">Research Excellence Program</span><span class="init-tag it-high">High</span></div>
+              <div class="init-desc">Active</div>
+              <div class="init-bar"><div class="init-fill" style="width:85%;background:var(--navy)"></div></div>
+              <div class="init-pct">85%</div>
+            </div>
+            <div class="init-item">
+              <div class="init-top"><span class="init-name">Student Support Initiative</span><span class="init-tag it-medium">Medium</span></div>
+              <div class="init-desc">Planning phase</div>
+              <div class="init-bar"><div class="init-fill" style="width:40%;background:var(--blue)"></div></div>
+              <div class="init-pct">40%</div>
+            </div>
+            <div class="init-item">
+              <div class="init-top"><span class="init-name">Faculty Development Plan</span><span class="init-tag it-medium">Medium</span></div>
+              <div class="init-desc">Active</div>
+              <div class="init-bar"><div class="init-fill" style="width:65%;background:var(--blue)"></div></div>
+              <div class="init-pct">65%</div>
+            </div>
+          </div>
+ 
+          <!-- Upcoming events -->
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Upcoming Events</div></div>
+            <div class="event-row"><span style="font-weight:600">Board Meeting</span><span class="pill pill-navy">Mar 25</span></div>
+            <div class="event-row"><span style="font-weight:600">Faculty Review</span><span class="pill pill-navy">Apr 02</span></div>
+            <div class="event-row"><span style="font-weight:600">Student Graduation Ceremony</span><span class="pill pill-navy">May 15</span></div>
+            <div class="event-row"><span style="font-weight:600">Accreditation Panel Visit</span><span class="pill pill-amber">Apr 28</span></div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Budget + Executive Actions -->
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Budget & Funding Overview</div><div class="card-sub">Financial summary — utilisation and active grants by department</div></div><button class="btn btn-outline btn-sm" onclick="nav(document.querySelectorAll('.nav-link')[4],'budget')">View Full →</button></div>
+          <div class="budget-card">
+            <div class="budget-top"><span class="budget-name">Computer Science</span><span class="budget-amount">Ksh580K</span></div>
+            <div class="budget-meta"><span>Utilisation: <strong>85%</strong></span><span>Grants: <strong>Ksh450K</strong></span></div>
+            <div class="budget-bar"><div class="budget-fill" style="width:85%"></div></div>
+          </div>
+          <div class="budget-card">
+            <div class="budget-top"><span class="budget-name">Engineering</span><span class="budget-amount">Ksh720K</span></div>
+            <div class="budget-meta"><span>Utilisation: <strong style="color:var(--orange)">92%</strong></span><span>Grants: <strong>Ksh680K</strong></span></div>
+            <div class="budget-bar"><div class="budget-fill" style="width:92%;background:var(--orange)"></div></div>
+          </div>
+          <div class="budget-card">
+            <div class="budget-top"><span class="budget-name">Mathematics</span><span class="budget-amount">Ksh420K</span></div>
+            <div class="budget-meta"><span>Utilisation: <strong>78%</strong></span><span>Grants: <strong>Ksh320K</strong></span></div>
+            <div class="budget-bar"><div class="budget-fill" style="width:78%"></div></div>
+          </div>
+          <div class="budget-card">
+            <div class="budget-top"><span class="budget-name">Physics</span><span class="budget-amount">Ksh550K</span></div>
+            <div class="budget-meta"><span>Utilisation: <strong>88%</strong></span><span>Grants: <strong>Ksh510K</strong></span></div>
+            <div class="budget-bar"><div class="budget-fill" style="width:88%"></div></div>
+          </div>
+          <div class="budget-card">
+            <div class="budget-top"><span class="budget-name">Chemistry</span><span class="budget-amount">Ksh480K</span></div>
+            <div class="budget-meta"><span>Utilisation: <strong>82%</strong></span><span>Grants: <strong>Ksh440K</strong></span></div>
+            <div class="budget-bar"><div class="budget-fill" style="width:82%"></div></div>
+          </div>
+        </div>
+ 
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <!-- Executive actions -->
+          <div class="card">
+            <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Executive Actions</div><div class="card-sub">Common dean-level tasks</div></div></div>
+            <div style="padding:.85rem">
+              <button class="ea-btn ea-navy" onclick="showToast('Executive report generated — sent to board members')">📊 Generate Executive Report</button>
+              <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[1],'analytics')">📈 View Detailed Analytics</button>
+              <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[3],'accreditation')">🏅 Review Accreditation Status</button>
+              <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[4],'budget')">💰 Budget Allocation & Review</button>
+              <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[1],'analytics')">👥 Faculty Performance Review</button>
+              <button class="ea-btn ea-amber" onclick="nav(document.querySelectorAll('.nav-link')[1],'analytics')">📊 Strategic Planning Dashboard</button>
+            </div>
+          </div>
+ 
+          <!-- Recent approvals -->
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Recent Approvals</div></div>
+            <div style="padding:.85rem 1.25rem">
+              <div style="display:flex;gap:.6rem;align-items:flex-start;padding:.55rem 0;border-bottom:1px solid var(--border)"><div class="ra-dot"></div><div><div style="font-size:.82rem;font-weight:600">New faculty hiring approved</div><div style="font-size:.68rem;color:var(--muted)">Computer Science · 2 days ago</div></div></div>
+              <div style="display:flex;gap:.6rem;align-items:flex-start;padding:.55rem 0;border-bottom:1px solid var(--border)"><div class="ra-dot"></div><div><div style="font-size:.82rem;font-weight:600">Research grant allocated — Ksh220K</div><div style="font-size:.68rem;color:var(--muted)">Engineering · 3 days ago</div></div></div>
+              <div style="display:flex;gap:.6rem;align-items:flex-start;padding:.55rem 0"><div class="ra-dot" style="background:var(--amber)"></div><div><div style="font-size:.82rem;font-weight:600">Equipment budget approved</div><div style="font-size:.68rem;color:var(--muted)">Physics · 5 days ago</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- FACULTY ANALYTICS -->
+    <section class="section-view" id="view-analytics">
+      <div class="page-hdr"><div><h2>Faculty Analytics</h2><p>Detailed performance data across all departments</p></div><button class="btn btn-navy" onclick="showToast('Analytics report exported')">⬇ Export</button></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Students</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">124</div><div class="stat-sub">43.5% of total</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Students</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">161</div><div class="stat-sub">56.5% of total</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg PhD Duration</span><div class="stat-ico ico-amber">⏱️</div></div><div class="stat-val">3.8y</div><div class="stat-sub">Target: 4.0 years</div></div>
+        <div class="stat-card s-purple"><div class="stat-head"><span class="stat-lbl">Publications 2026</span><div class="stat-ico ico-purple">📰</div></div><div class="stat-val">142</div><div class="stat-sub"><span class="up">↑ 18% YoY</span></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Completion Rate by Department</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.6rem">
+            <div class="analytics-row"><span class="ar-label">Computer Science</span><div class="ar-bar"><div class="ar-fill" style="width:87%;background:var(--navy)"></div></div><span class="ar-val">87%</span></div>
+            <div class="analytics-row"><span class="ar-label">Engineering</span><div class="ar-bar"><div class="ar-fill" style="width:84%;background:var(--navy)"></div></div><span class="ar-val">84%</span></div>
+            <div class="analytics-row"><span class="ar-label">Mathematics</span><div class="ar-bar"><div class="ar-fill" style="width:90%;background:var(--green)"></div></div><span class="ar-val" style="color:var(--green)">90%</span></div>
+            <div class="analytics-row"><span class="ar-label">Physics</span><div class="ar-bar"><div class="ar-fill" style="width:82%;background:var(--navy)"></div></div><span class="ar-val">82%</span></div>
+            <div class="analytics-row"><span class="ar-label">Chemistry</span><div class="ar-bar"><div class="ar-fill" style="width:86%;background:var(--navy)"></div></div><span class="ar-val">86%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Research Output by Department</div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Department</th><th>Papers 2026</th><th>Grants</th><th>h-Index Avg</th></tr></thead>
+              <tbody>
+                <tr><td class="td-bold">Computer Science</td><td style="color:var(--navy);font-weight:700">42</td><td class="td-muted">Ksh450K</td><td>18.4</td></tr>
+                <tr><td class="td-bold">Engineering</td><td style="color:var(--navy);font-weight:700">38</td><td class="td-muted">Ksh680K</td><td>21.2</td></tr>
+                <tr><td class="td-bold">Mathematics</td><td style="color:var(--navy);font-weight:700">28</td><td class="td-muted">Ksh320K</td><td>16.8</td></tr>
+                <tr><td class="td-bold">Physics</td><td style="color:var(--navy);font-weight:700">22</td><td class="td-muted">Ksh510K</td><td>24.1</td></tr>
+                <tr><td class="td-bold">Chemistry</td><td style="color:var(--navy);font-weight:700">12</td><td class="td-muted">Ksh440K</td><td>14.9</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- REPORTS -->
+    <section class="section-view" id="view-reports">
+      <div class="page-hdr"><div><h2>Executive Reports</h2><p>Faculty-level strategic summaries and analytics</p></div><button class="btn btn-navy" onclick="showToast('New report generated')">+ Generate Report</button></div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Report Name</th><th>Type</th><th>Scope</th><th>Generated</th><th>Pages</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Q1 2026 Faculty Performance Report</td><td class="td-muted">Quarterly</td><td>All departments</td><td class="td-muted">15 Mar 2026</td><td class="td-muted">28</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Research Output Summary 2025</td><td class="td-muted">Annual</td><td>All departments</td><td class="td-muted">10 Jan 2026</td><td class="td-muted">54</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Budget Utilisation Report — Q1 2026</td><td class="td-muted">Financial</td><td>All departments</td><td class="td-muted">01 Mar 2026</td><td class="td-muted">18</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Student Completion Analysis — 5yr Trend</td><td class="td-muted">Strategic</td><td>Faculty-wide</td><td class="td-muted">15 Feb 2026</td><td class="td-muted">36</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">Accreditation Pre-Visit Self-Assessment</td><td class="td-muted">Compliance</td><td>Faculty-wide</td><td class="td-muted">01 Feb 2026</td><td class="td-muted">72</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ACCREDITATION -->
+    <section class="section-view" id="view-accreditation">
+      <div class="page-hdr"><div><h2>Accreditation</h2><p>Faculty accreditation status and compliance tracking</p></div><button class="btn btn-navy" onclick="openModal('accred-modal')">📋 Prepare Review</button></div>
+      <div class="stat-grid">
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Overall Status</span><div class="stat-ico ico-green">🏅</div></div><div class="stat-val">Active</div><div class="stat-sub" style="color:var(--green)">Expires Dec 2028</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Review Progress</span><div class="stat-ico ico-amber">📋</div></div><div class="stat-val">75%</div><div class="stat-sub">In progress</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Criteria Met</span><div class="stat-ico ico-navy">✅</div></div><div class="stat-val">18/24</div><div class="stat-sub">6 outstanding</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Panel Visit</span><div class="stat-ico ico-red">📅</div></div><div class="stat-val">Apr 28</div><div class="stat-sub"><span class="dn">40 days away</span></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Criteria Progress</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.65rem">
+            <div class="analytics-row"><span class="ar-label">Academic Standards</span><div class="ar-bar"><div class="ar-fill" style="width:100%;background:var(--green)"></div></div><span class="ar-val" style="color:var(--green)">Met</span></div>
+            <div class="analytics-row"><span class="ar-label">Faculty Qualifications</span><div class="ar-bar"><div class="ar-fill" style="width:100%;background:var(--green)"></div></div><span class="ar-val" style="color:var(--green)">Met</span></div>
+            <div class="analytics-row"><span class="ar-label">Research Output</span><div class="ar-bar"><div class="ar-fill" style="width:88%;background:var(--navy)"></div></div><span class="ar-val">88%</span></div>
+            <div class="analytics-row"><span class="ar-label">Student Support</span><div class="ar-bar"><div class="ar-fill" style="width:74%;background:var(--orange)"></div></div><span class="ar-val">74%</span></div>
+            <div class="analytics-row"><span class="ar-label">Facilities</span><div class="ar-bar"><div class="ar-fill" style="width:92%;background:var(--navy)"></div></div><span class="ar-val">92%</span></div>
+            <div class="analytics-row"><span class="ar-label">Industry Links</span><div class="ar-bar"><div class="ar-fill" style="width:68%;background:var(--orange)"></div></div><span class="ar-val">68%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Action Items Before Panel Visit</div></div>
+          <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.5rem">
+            <div style="border:1px solid var(--border);padding:.75rem;display:flex;gap:.6rem;align-items:flex-start">
+              <span style="color:var(--orange);flex-shrink:0">⚠</span>
+              <div><div style="font-size:.82rem;font-weight:600">Student Support — evidence required</div><div style="font-size:.7rem;color:var(--muted);margin-top:.15rem">Due: Apr 15, 2026 · Assigned: Dept Chairs</div></div>
+            </div>
+            <div style="border:1px solid var(--border);padding:.75rem;display:flex;gap:.6rem;align-items:flex-start">
+              <span style="color:var(--orange);flex-shrink:0">⚠</span>
+              <div><div style="font-size:.82rem;font-weight:600">Industry partnership documentation</div><div style="font-size:.7rem;color:var(--muted);margin-top:.15rem">Due: Apr 20, 2026 · Assigned: Dean's office</div></div>
+            </div>
+            <div style="border:1px solid var(--border);padding:.75rem;display:flex;gap:.6rem;align-items:flex-start">
+              <span style="color:var(--green);flex-shrink:0">✓</span>
+              <div><div style="font-size:.82rem;font-weight:600;text-decoration:line-through;color:var(--muted)">Self-Assessment Report submitted</div><div style="font-size:.7rem;color:var(--green);margin-top:.15rem">Completed: Feb 01, 2026</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- BUDGET -->
+    <section class="section-view" id="view-budget">
+      <div class="page-hdr"><div><h2>Budget & Funding</h2><p>Faculty-wide financial overview and grant tracking</p></div><button class="btn btn-navy" onclick="showToast('Budget allocation report generated')">📊 Budget Report</button></div>
+      <div class="stat-grid">
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Total Faculty Budget</span><div class="stat-ico ico-navy">💰</div></div><div class="stat-val">Ksh2.75M</div><div class="stat-sub">FY 2026 allocation</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Grants Secured</span><div class="stat-ico ico-green">🏆</div></div><div class="stat-val">Ksh2.4M</div><div class="stat-sub"><span class="up">↑ 15%</span> from last year</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Utilisation</span><div class="stat-ico ico-amber">📊</div></div><div class="stat-val">85.4%</div><div class="stat-sub">Across all departments</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Over-budget Depts</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">1</div><div class="stat-sub"><span class="dn">Engineering at 92%</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Budget Breakdown by Department</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Department</th><th>Allocation</th><th>Spent</th><th>Remaining</th><th>Grants</th><th>Utilisation</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="td-bold">Computer Science</td><td style="font-weight:700">Ksh580K</td><td class="td-muted">Ksh493K</td><td style="color:var(--green);font-weight:600">Ksh87K</td><td class="td-muted">Ksh450K</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--navy)"></div></div><span class="prog-val">85%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td class="td-bold">Engineering</td><td style="font-weight:700">Ksh720K</td><td class="td-muted">Ksh662K</td><td style="color:var(--orange);font-weight:600">Ksh58K</td><td class="td-muted">Ksh680K</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:92%;background:var(--orange)"></div></div><span class="prog-val" style="color:var(--orange)">92%</span></div></td><td><span class="pill pill-orange">Monitor</span></td></tr>
+              <tr><td class="td-bold">Mathematics</td><td style="font-weight:700">Ksh420K</td><td class="td-muted">Ksh328K</td><td style="color:var(--green);font-weight:600">Ksh92K</td><td class="td-muted">Ksh320K</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:78%;background:var(--navy)"></div></div><span class="prog-val">78%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td class="td-bold">Physics</td><td style="font-weight:700">Ksh 550K</td><td class="td-muted">Ksh484K</td><td style="color:var(--green);font-weight:600">Ksh66K</td><td class="td-muted">Ksh510K</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+              <tr><td class="td-bold">Chemistry</td><td style="font-weight:700">Ksh 480K</td><td class="td-muted">Ksh394K</td><td style="color:var(--green);font-weight:600">Ksh86K</td><td class="td-muted">Ksh440K</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--navy)"></div></div><span class="prog-val">82%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- SETTINGS -->
+    <section class="section-view" id="view-settings">
+      <div class="page-hdr"><div><h2>Settings</h2><p>Your executive account preferences</p></div></div>
+      <div class="grid-65-35">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Profile Information</div></div>
+          <div class="card-body">
+            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="Prof. Robert Harrison"/></div><div class="form-group"><label class="form-label">Title</label><input class="form-control" value="Dean of Faculty"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" value="r.harrison@uni.edu"/></div><div class="form-group"><label class="form-label">Faculty</label><input class="form-control" value="Science & Engineering" readonly style="background:var(--off2);color:var(--muted)"/></div></div>
+            <div class="form-group"><label class="form-label">Office</label><input class="form-control" value="Dean's Suite, Administration Block, Level 5"/></div>
+            <button class="btn btn-navy" onclick="showToast('Profile saved successfully')">Save Changes</button>
+          </div>
+        </div>
+        <div class="card" style="align-self:start">
+          <div class="card-hdr"><div class="card-title">Notification Preferences</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:.65rem">
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Board report reminders</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Accreditation alerts</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Budget threshold warnings</span><input type="checkbox" checked/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Faculty performance digest</span><input type="checkbox"/></label>
+            <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.82rem"><span>Strategic initiative updates</span><input type="checkbox" checked/></label>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<!-- Accreditation modal -->
+<div class="modal-overlay" id="accred-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">Prepare Accreditation Review</div><button class="modal-close" onclick="closeModal('accred-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Review Type</label><select class="form-control"><option>Full Faculty Review</option><option>Departmental Review</option><option>Interim Compliance Check</option></select></div>
+      <div class="form-group"><label class="form-label">Target Completion Date</label><input class="form-control" type="date"/></div>
+      <div class="form-group"><label class="form-label">Lead Contact</label><select class="form-control"><option>Prof. Robert Harrison (Dean)</option><option>Prof. Emily Rodriguez (CS Chair)</option><option>Prof. Thomson (Engineering Chair)</option></select></div>
+      <div class="form-group"><label class="form-label">Notes to Board</label><textarea class="form-control" placeholder="Provide context for the review…" rows="4"></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('accred-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('accred-modal');showToast('Accreditation review prepared — team notified')">Initiate Review</button></div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+ 
+<script>
+function nav(el,id){
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const v=document.getElementById('view-'+id);
+  if(v) v.classList.add('active');
+  const t={dashboard:"Dean's Executive Dashboard",analytics:'Faculty Analytics',reports:'Reports',accreditation:'Accreditation',budget:'Budget & Funding',settings:'Settings'};
+  document.getElementById('topbar-title').textContent=t[id]||'Dashboard';
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+document.querySelectorAll('.nav-link[onclick]').forEach(l=>l.addEventListener('click',function(){document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));this.classList.add('active')}));
+</script>
+</body>
+</html>

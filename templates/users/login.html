@@ -21,10 +21,10 @@
             </a>
             <div class="left-title">Your Academic<br/><em>Journey,</em><br/>Fully Tracked.</div>
             <p class="left-desc">From concept note submission to graduation clearance — every stage happens here. No office queues. No lost forms.</p>
-            <div class="role-chips">
+            <!-- <div class="role-chips">
                 <span class="chip active">🎓 Student</span>
                 <span class="chip">💼 Staff Member</span>
-            </div>
+            </div> -->
         </div>
         <div class="left-bottom">
             <div class="left-footnote">R.U — Postgraduate Assessment & Progress Management System</div>
@@ -36,14 +36,14 @@
         <div class="login-h2">Welcome back</div>
         <p class="login-sub">Sign in to access your dashboard</p>
 
-        <div class="role-selector" id="roleSelector">
+        <!-- <div class="role-selector" id="roleSelector">
             <button class="role-btn selected" onclick="selectRole(this, 'student.html')">
                 <span class="ico">🎓</span> Student
             </button>
             <button class="role-btn" onclick="selectRole(this, 'staff-dashboard.html')">
                 <span class="ico">💼</span> Staff
             </button>
-        </div>
+        </div> -->
 <form method="POST" action="{% url 'login' %}">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.GET.next }}">
