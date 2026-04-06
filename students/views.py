@@ -376,15 +376,19 @@ def book_presentation(request):
                 booking.full_clean()  # runs the clean() method
                 booking.save()
                 messages.success(request, "Presentation booked successfully!")
+                return redirect('book_presentation')
             except ValidationError as e:
                 messages.error(request, e.message_dict or e.messages)
         else:
             messages.error(request, "Form is invalid.")
-        return redirect("student_dashboard")
     else:
         form = PresentationBookingForm()
 
-    return render(request, 'students/book_presentation.html', {'form': form})
+    bookings = PresentationBooking.objects.filter(student=student).order_by('-date')
+    return render(request, 'students/book_presentation.html', {
+        'form': form,
+        'bookings': bookings,
+    })
 
 
 @login_required

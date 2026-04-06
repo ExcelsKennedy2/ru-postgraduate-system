@@ -109,6 +109,56 @@ body{
   align-items:center;
   margin-top:1rem;
 }
+.history-card{
+  margin-top:2rem;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:1rem;
+  padding:1.75rem;
+  box-shadow:0 12px 30px rgba(13,34,96,0.05);
+}
+.history-header{
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--navy);
+  margin-bottom:1rem;
+}
+.history-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.history-table th,
+.history-table td{
+  text-align:left;
+  padding:0.9rem 0.75rem;
+  border-bottom:1px solid var(--border);
+  font-size:0.95rem;
+}
+.history-table th{
+  color:var(--muted);
+  font-weight:600;
+}
+.history-table tbody tr:last-child td{
+  border-bottom:none;
+}
+.history-table tr.status-pending{
+  background:rgba(255,193,7,0.08);
+}
+.history-table tr.status-approved{
+  background:rgba(29,164,98,0.08);
+}
+.history-table tr.status-rejected{
+  background:rgba(229,57,53,0.08);
+}
+.history-table tr.status-pending td,
+.history-table tr.status-approved td,
+.history-table tr.status-rejected td{
+  transition:background 0.2s ease;
+}
+.history-empty{
+  color:var(--muted);
+  line-height:1.75;
+}
 .btn{
   background:var(--navy);
   color:var(--white);
@@ -181,6 +231,34 @@ body{
             <a href="{% url 'student_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
         </div>
     </form>
+
+    <div class="history-card">
+      <div class="history-header">Presentation History</div>
+      {% if bookings %}
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Type</th>
+            <th>Mode</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in bookings %}
+          <tr class="status-{{ booking.status }}">
+            <td>{{ booking.date|date:"M d, Y H:i" }}</td>
+            <td>{{ booking.title }}</td>
+            <td>{{ booking.get_meeting_type_display }}</td>
+            <td>{{ booking.get_status_display }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="history-empty">No presentation bookings yet. Submit a request above to begin.</p>
+      {% endif %}
+    </div>
 </div>
 </body>
 </html>
