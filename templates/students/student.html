@@ -39,6 +39,10 @@ body{
   overflow-x:hidden;
 }
 
+a {
+  text-decoration:none !important;
+}
+
 .layout{
   display:flex;
   min-height:100vh;
@@ -1321,7 +1325,7 @@ a.link-btn:hover{
     <div class="page active" id="page-dashboard">
       <div class="welcome-banner">
         <div><div class="wb-title">Welcome back, {{ student.user.username }}! 👋</div><div class="wb-sub">You're making great progress. {{ tasks_due_this_week|default:"0" }}  tasks due this week   keep going!</div></div>
-        <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><div class="wb-actions"><button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting',null)">Book Presentations</button></div>
+        <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><div class="wb-actions"><a class="btn btn-ghost btn-sm" href="{% url 'book_presentation' %}">Book Presentations</a></div>
 </div>
       </div>
 
@@ -2029,7 +2033,7 @@ a.link-btn:hover{
     <!-- FEEDBACK PAGE -->
     <div class="page" id="page-feedback">
       <div class="section-head">
-        <div><div class="section-title">Supervisor Feedback</div><div class="section-sub">All feedback from Dr. Michael Chen</div></div>
+        <div><div class="section-title">Supervisor Feedback</div><div class="section-sub">All feedback from {{ supervisor.name }}</div></div>
         <button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting')">📅 Request Meeting</button>
       </div>
       <div class="alert alert-warning"><div class="alert-text">You have <strong>{{ unread_feedback_count }} unread feedback items</strong> requiring your attention. Please review and take action on revision requests.</div></div>
@@ -2222,10 +2226,10 @@ a.link-btn:hover{
       <table>
         <thead>
           <tr>
-            <th>Report</th>
-            <th>Period</th>
-            <th>Generated</th>
-            <th>GPA</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Submitted</th>
+            <th>Score</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -2234,22 +2238,21 @@ a.link-btn:hover{
           {% for sub in submissions %}
           <tr>
             <td class="td-title">{{ sub.title }}</td>
-            <td class="td-muted">{{ sub.period }}</td>
-            <td class="td-muted">{{ sub.created_at|date:"Y-m-d" }}</td>
+            <td class="td-muted">{{ sub.get_type_display|default:sub.type }}</td>
+            <td class="td-muted">{{ sub.submitted_at|date:"Y-m-d" }}</td>
             <td>
-              <span class="{% if sub.gpa >= 3.7 %}score-good{% else %}score-ok{% endif %}">{{ sub.gpa }}</span>
+              <span class="{% if sub.feedback_set.first.score >= 80 %}score-good{% elif sub.feedback_set.first.score >= 70 %}score-ok{% else %}score-low{% endif %}">{{ sub.feedback_set.first.score|default:'-' }}</span>
             </td>
             <td>
-              <span class="pill {% if sub.status == 'Complete' %}pill-approved{% else %}pill-pending{% endif %}">{{ sub.status }}</span>
+              <span class="pill {% if sub.status == 'approved' %}pill-approved{% elif sub.status == 'pending' %}pill-pending{% else %}pill-revision{% endif %}">{{ sub.get_status_display }}</span>
             </td>
             <td>
-              <!-- Download PDF link -->
               <a class="link-btn" href="{% url 'download_submission' sub.id %}">Download</a>
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="6" class="td-muted">No reports found.</td>
+            <td colspan="6" class="td-muted">No submissions found.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -2319,17 +2322,17 @@ a.link-btn:hover{
             <div class="card-header"><div class="card-title">Profile Information</div></div>
             <div class="card-body">
               <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)">
-                <div style="width:60px;height:60px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--amber);flex-shrink:0">SJ</div>
-                <div><div style="font-weight:700;color:var(--navy)">Sarah Johnson</div><div style="font-size:0.75rem;color:var(--muted)">PhD Computer Science · PG/2024/001</div><button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="alert('Photo upload')">Change Photo</button></div>
+                <div style="width:60px;height:60px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:var(--amber);flex-shrink:0">{{ student.user.username|slice:":2"|upper }}</div>
+                <div><div style="font-weight:700;color:var(--navy)">{{ student.user.get_full_name|default:student.user.username }}</div><div style="font-size:0.75rem;color:var(--muted)">{{ student.programme }} · {{ student.student_number }}</div><button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="alert('Photo upload')">Change Photo</button></div>
               </div>
               <div class="form-row">
-                <div class="form-group"><label class="form-label">First Name</label><input class="form-input" value="Sarah"/></div>
-                <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" value="Johnson"/></div>
+                <div class="form-group"><label class="form-label">First Name</label><input class="form-input" value="{{ student.user.first_name }}"/></div>
+                <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" value="{{ student.user.last_name }}"/></div>
               </div>
-              <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" value="s.johnson@university.edu"/></div>
-              <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" value="+254 700 123 456"/></div>
-              <div class="form-group"><label class="form-label">Student ID</label><input class="form-input" value="PG/2024/001" readonly style="background:var(--off2);color:var(--muted)"/></div>
-              <div class="form-group"><label class="form-label">Programme</label><input class="form-input" value="PhD Computer Science" readonly style="background:var(--off2);color:var(--muted)"/></div>
+              <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" value="{{ student.user.email }}"/></div>
+              <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" value="{{ student.user.phone|default:'' }}"/></div>
+              <div class="form-group"><label class="form-label">Student ID</label><input class="form-input" value="{{ student.student_number }}" readonly style="background:var(--off2);color:var(--muted)"/></div>
+              <div class="form-group"><label class="form-label">Programme</label><input class="form-input" value="{{ student.programme }}" readonly style="background:var(--off2);color:var(--muted)"/></div>
               <button class="btn btn-primary" onclick="alert('Profile updated successfully!')">Save Changes</button>
             </div>
           </div>
@@ -2368,11 +2371,11 @@ a.link-btn:hover{
     <div style="font-size:0.95rem;font-weight:700;color:var(--navy)">Notifications</div>
     <button class="modal-close" onclick="toggleNotif()">✕</button>
   </div>
-  <div class="notif-item unread"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>Feedback received</strong> — Dr. Chen reviewed Chapter 3 Methodology</div><div class="notif-time">2 hours ago</div></div></div>
-  <div class="notif-item unread"><div class="ni-dot ni-red"></div><div><div class="notif-text"><strong>Revision required</strong> — Data Analysis Chapter needs resubmission</div><div class="notif-time">5 days ago</div></div></div>
-  <div class="notif-item"><div class="ni-dot ni-green"></div><div><div class="notif-text"><strong>Milestone completed</strong> — Data Collection Phase marked complete</div><div class="notif-time">1 day ago</div></div></div>
-  <div class="notif-item"><div class="ni-dot ni-amber"></div><div><div class="notif-text"><strong>Deadline reminder</strong> — Chapter 4 due in 3 days</div><div class="notif-time">2 days ago</div></div></div>
-  <div class="notif-item"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>Meeting confirmed</strong> — Dr. Chen, Friday 10:00am</div><div class="notif-time">4 days ago</div></div></div>
+  {% for notif in notifications %}
+  <div class="notif-item {% if not notif.is_read %}unread{% endif %}"><div class="ni-dot ni-blue"></div><div><div class="notif-text"><strong>{{ notif.title|default:'Notification' }}</strong> — {{ notif.message }}</div><div class="notif-time">{{ notif.created_at|timesince }} ago</div></div></div>
+  {% empty %}
+  <div class="notif-item"><div class="ni-dot ni-blue"></div><div><div class="notif-text">No notifications</div><div class="notif-time">All caught up!</div></div></div>
+  {% endfor %}
 </div>
  
 <!-- MODAL: Submit Work -->
@@ -2401,14 +2404,14 @@ a.link-btn:hover{
 <!-- MODAL: Meeting Request -->
 <div class="modal-overlay" id="modal-meeting" onclick="bgClose(event,'modal-meeting')">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">📅 Book Presentation</div><button class="modal-close" onclick="closeM('modal-meeting')">✕</button></div>
+    <div class="modal-header"><div class="modal-title">📅 Request Meeting</div><button class="modal-close" onclick="closeM('modal-meeting')">✕</button></div>
     <form method="POST" action="{% url 'book_presentation' %}">
       {% csrf_token %}
       <div class="modal-body">
-        <div class="form-group"><label class="form-label">Meeting Purpose</label><input class="form-input" name="title" placeholder="e.g. Chapter 4 revision discussion" required/></div>
-        <div class="form-group"><label class="form-label">Date & Time</label><input class="form-input" type="datetime-local" name="date" required/></div>
-        <div class="form-group"><label class="form-label">Meeting Type</label><select class="form-select"><option>In-Person</option><option>Video Call</option><option>Phone Call</option></select></div>
-        <div class="form-group"><label class="form-label">Additional Notes</label><textarea class="form-textarea" placeholder="Any specific topics or documents to review…"></textarea></div>
+        <div class="form-group"><label class="form-label">{{ presentation_booking_form.title.label }}</label>{{ presentation_booking_form.title }}</div>
+        <div class="form-group"><label class="form-label">{{ presentation_booking_form.date.label }}</label>{{ presentation_booking_form.date }}</div>
+        <div class="form-group"><label class="form-label">{{ presentation_booking_form.meeting_type.label }}</label>{{ presentation_booking_form.meeting_type }}</div>
+        <div class="form-group"><label class="form-label">{{ presentation_booking_form.notes.label }}</label>{{ presentation_booking_form.notes }}</div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost btn-sm" onclick="closeM('modal-meeting')">Cancel</button>

@@ -21,12 +21,20 @@ class PresentationBooking(models.Model):
     date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    MEETING_TYPE_CHOICES = [
+        ("in_person", "In-Person"),
+        ("video_call", "Video Call"),
+        ("phone_call", "Phone Call"),
+    ]
+    meeting_type = models.CharField(max_length=20, choices=MEETING_TYPE_CHOICES, default="in_person")
+
     STATUS_CHOICES = [
         ("pending", "Pending Confirmation"),
         ("approved", "Approved"),
         ("rejected", "Rejected"),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    notes = models.TextField(blank=True, null=True)  # Additional notes about the meeting
 
     def clean(self):
         # Ensure booking is at least 7 days in advance

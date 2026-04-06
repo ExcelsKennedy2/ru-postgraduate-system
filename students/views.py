@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from students.models import Student
 from assessments.models import Submission, Feedback
 from assessments.forms import SubmissionForm
+from students.forms import PresentationBookingForm
 from pipeline.models import Milestone, StudentProgress
 from notifications.models import Notification
 from erp_integration.services import get_finance_clearance
@@ -109,7 +110,14 @@ def student_dashboard(request):
     tasks_due_this_week = milestones.filter(status='upcoming').count()
     total_milestones = milestones.count()
     completed_milestones = milestones.filter(status='done').count()
+    remaining_milestones = total_milestones - completed_milestones
     new_feedback = feedbacks.filter(is_read=False).count()
+
+    # Calculate GPA and score averages
+    current_gpa = round(sum([f.score for f in feedbacks if f.score]) / len([f for f in feedbacks if f.score]), 2) if feedbacks.exists() and any(f.score for f in feedbacks) else 0.0
+    avg_score = round(current_gpa * 20, 1) if current_gpa > 0 else 0  # Convert GPA to percentage
+    supervisor_rating = min(5.0, round(current_gpa / 20 * 5, 1)) if current_gpa > 0 else 0
+    review_count = feedbacks.count()
 
     # -----------------------------
     # 💰 ERP FINANCE
@@ -217,12 +225,19 @@ def student_dashboard(request):
         "pending_steps": pending_steps,
         "bookings": bookings,
         "submission_form": SubmissionForm(),
+        "presentation_booking_form": PresentationBookingForm(),
     }
     
 
     context["circle_offset"] = round(offset, 1)
     context["in_progress_percent"] = int((in_progress / total) * 100) if total else 0
     context["upcoming_percent"] = int((upcoming / total) * 100) if total else 0
+    context["remaining_milestones"] = remaining_milestones
+    context["in_progress_text"] = f"{in_progress} in progress"
+    context["current_gpa"] = current_gpa
+    context["avg_score"] = avg_score
+    context["supervisor_rating"] = supervisor_rating
+    context["review_count"] = review_count
     return render(request, "students/student.html", context)
 
 

@@ -4,9 +4,24 @@ from .models import PresentationBooking, QuarterlyReport
 class PresentationBookingForm(forms.ModelForm):
     class Meta:
         model = PresentationBooking
-        fields = ['title', 'date']
+        fields = ['title', 'date', 'meeting_type', 'notes']
         widgets = {
-            'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'e.g. Chapter 4 revision discussion'
+            }),
+            'date': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'form-input'
+            }),
+            'meeting_type': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'notes': forms.Textarea(attrs={
+                'class': 'form-textarea',
+                'rows': 3,
+                'placeholder': 'Any specific topics or documents to review…'
+            }),
         }
 
 class QuarterlyReportForm(forms.ModelForm):
