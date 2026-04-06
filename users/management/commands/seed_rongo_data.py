@@ -28,6 +28,7 @@ class Command(BaseCommand):
             {"username": "supervisor1", "role": "supervisor", "unique_id": "STAFF/001", "email": "sup1@rongo.ac.ke"},
             {"username": "admin1", "role": "admin", "unique_id": "STAFF/ADMIN", "email": "admin@rongo.ac.ke"},
             {"username": "dean1", "role": "dean", "unique_id": "STAFF/DEAN", "email": "dean@rongo.ac.ke"},
+            {"username": "chair1", "role": "chair", "unique_id": "STAFF/CHAIR", "email": "chair@rongo.ac.ke"},
         ]
 
         users = {}

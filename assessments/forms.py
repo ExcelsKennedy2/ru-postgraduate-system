@@ -16,8 +16,7 @@ class SubmissionForm(forms.ModelForm):
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
-        fields = ['submission', 'comment', 'score']
+        fields = ['submission', 'comment']
         widgets = {
             'comment': forms.Textarea(attrs={'placeholder': 'Provide your detailed feedback and comments here…'}),
-            'score': forms.NumberInput(attrs={'min': 0, 'max': 100, 'placeholder': 'e.g. 85'}),
         }

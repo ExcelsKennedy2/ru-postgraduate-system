@@ -1215,7 +1215,7 @@ select.form-control{appearance:none;cursor:pointer}
     <section class="section-view" id="view-reports">
       <div class="page-hdr">
         <div class="page-hdr-left"><h2>Reports & Analytics</h2><p>Performance summaries and cohort analysis</p></div>
-        <button class="btn btn-navy" onclick="showToast('Report generated and downloaded')">⬇ Export Report</button>
+        <button class="btn btn-navy" onclick="exportReportsPdf()">⬇ Export Report</button>
       </div>
  
       <div class="stat-grid" style="margin-bottom:1rem">
@@ -1493,6 +1493,161 @@ function handleMeetingAction(button){
 function submitMeetingAction(){
   const form=document.getElementById('meeting-form');
   if(form) form.submit();
+}
+function exportReportsPdf(){
+  const reportView=document.getElementById('view-reports');
+  if(!reportView){
+    showToast('Reports section not found');
+    return;
+  }
+  const printableRoot=reportView.cloneNode(true);
+  printableRoot.querySelectorAll('button').forEach(button=>button.remove());
+
+  const printWindow=window.open('', '_blank', 'width=1200,height=900');
+  if(!printWindow){
+    showToast('Please allow popups to export the report');
+    return;
+  }
+
+  const printableHtml=`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Supervisor Report Export</title>
+      <style>
+        body{
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          color:#1A2340;
+          background:#ffffff;
+          margin:0;
+          padding:32px;
+        }
+        h1,h2{
+          margin:0;
+          color:#0A194E;
+        }
+        p{
+          color:#5A6A8A;
+        }
+        .page-hdr,.card-hdr{
+          display:flex;
+          justify-content:space-between;
+          align-items:flex-start;
+          gap:16px;
+          margin-bottom:16px;
+        }
+        .stat-grid{
+          display:grid;
+          grid-template-columns:repeat(2, minmax(0, 1fr));
+          gap:16px;
+          margin:24px 0;
+        }
+        .stat-card,.card{
+          border:1px solid #DDE3F0;
+          border-radius:12px;
+          background:#ffffff;
+          padding:18px;
+          margin-bottom:18px;
+          break-inside:avoid;
+        }
+        .stat-head{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:10px;
+        }
+        .stat-lbl,.card-sub{
+          color:#5A6A8A;
+          font-size:12px;
+          text-transform:uppercase;
+          letter-spacing:.06em;
+        }
+        .stat-val{
+          font-size:28px;
+          font-weight:800;
+          color:#0A194E;
+        }
+        .stat-sub{
+          color:#5A6A8A;
+          font-size:13px;
+        }
+        table{
+          width:100%;
+          border-collapse:collapse;
+          font-size:13px;
+        }
+        th,td{
+          text-align:left;
+          padding:10px 12px;
+          border-bottom:1px solid #DDE3F0;
+          vertical-align:top;
+        }
+        th{
+          font-size:12px;
+          color:#5A6A8A;
+          text-transform:uppercase;
+          letter-spacing:.05em;
+        }
+        .pill{
+          display:inline-block;
+          padding:4px 10px;
+          border-radius:999px;
+          font-size:12px;
+          font-weight:700;
+          border:1px solid #DDE3F0;
+        }
+        .pill-green{background:#E9F8EF;color:#1DA462;border-color:#BDE7CC;}
+        .pill-amber{background:#FFF7E0;color:#B77900;border-color:#F2D58A;}
+        .pill-red{background:#FDECEC;color:#E53935;border-color:#F4B8B6;}
+        .pill-gray{background:#F3F5FA;color:#5A6A8A;border-color:#DDE3F0;}
+        .td-bold{font-weight:700;}
+        .td-muted{color:#5A6A8A;}
+        .prog-wrap{
+          display:flex;
+          align-items:center;
+          gap:8px;
+        }
+        .prog-bar{
+          width:110px;
+          height:8px;
+          background:#EEF1F8;
+          border-radius:999px;
+          overflow:hidden;
+        }
+        .prog-fill{
+          height:100%;
+          border-radius:999px;
+        }
+        .prog-val{
+          font-size:12px;
+          font-weight:700;
+          color:#1A2340;
+        }
+        @media print{
+          body{padding:0}
+          .card,.stat-card{box-shadow:none}
+        }
+      </style>
+    </head>
+    <body>
+      <div style="margin-bottom:24px">
+        <h1>Supervisor Report Export</h1>
+        <p>Generated on ${new Date().toLocaleString()}</p>
+      </div>
+      ${printableRoot.innerHTML}
+    </body>
+    </html>
+  `;
+
+  printWindow.document.open();
+  printWindow.document.write(printableHtml);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.onload=()=>{
+    printWindow.print();
+  };
 }
 // TOAST
 function showToast(msg){
