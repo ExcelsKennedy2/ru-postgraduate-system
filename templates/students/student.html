@@ -1321,7 +1321,8 @@ a.link-btn:hover{
     <div class="page active" id="page-dashboard">
       <div class="welcome-banner">
         <div><div class="wb-title">Welcome back, {{ student.user.username }}! 👋</div><div class="wb-sub">You're making great progress. {{ tasks_due_this_week|default:"0" }}  tasks due this week   keep going!</div></div>
-        <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting',null)">Book Presentations</button></div>
+        <div class="wb-actions"><button class="btn btn-amber btn-sm" onclick="openM('modal-submit')">⬆ Submit Work</button><div class="wb-actions"><button class="btn btn-ghost btn-sm" onclick="openM('modal-meeting',null)">Book Presentations</button></div>
+</div>
       </div>
 
       <div class="card" style="margin-bottom:1.5rem">
@@ -2381,13 +2382,13 @@ a.link-btn:hover{
     <form method="POST" action="{% url 'submit_work' %}" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="modal-body">
-        <div class="form-group"><label class="form-label">Submission Title</label><input class="form-input" name="title" placeholder="e.g. Chapter 4: Data Analysis — Revised" required/></div>
+        <div class="form-group"><label class="form-label">{{ submission_form.title.label }}</label>{{ submission_form.title }}</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Type</label><select class="form-select" name="type"><option value="draft">Draft</option><option value="final">Final</option><option value="proposal">Proposal</option><option value="revision">Revision</option></select></div>
-          <div class="form-group"><label class="form-label">Chapter</label><select class="form-select" name="chapter"><option value="1">Chapter 1</option><option value="2">Chapter 2</option><option value="3">Chapter 3</option><option value="4" selected>Chapter 4</option><option value="5">Chapter 5</option></select></div>
+          <div class="form-group"><label class="form-label">{{ submission_form.type.label }}</label>{{ submission_form.type }}</div>
+          <div class="form-group"><label class="form-label">{{ submission_form.chapter.label }}</label>{{ submission_form.chapter }}</div>
         </div>
-        <div class="form-group"><label class="form-label">Notes for Supervisor</label><textarea class="form-textarea" name="notes" placeholder="Describe changes made, key points, or anything the supervisor should note…"></textarea></div>
-        <div class="form-group"><label class="form-label">Upload File</label><input class="form-input" type="file" name="file" style="padding:0.55rem 0.9rem" required/></div>
+        <div class="form-group"><label class="form-label">{{ submission_form.notes.label }}</label>{{ submission_form.notes }}</div>
+        <div class="form-group"><label class="form-label">{{ submission_form.file.label }}</label>{{ submission_form.file }}</div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost btn-sm" onclick="closeM('modal-submit')">Cancel</button>

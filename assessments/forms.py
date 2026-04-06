@@ -6,20 +6,11 @@ class SubmissionForm(forms.ModelForm):
         model = Submission
         fields = ['title', 'type', 'chapter', 'file', 'notes']
         widgets = {
-            'type': forms.Select(choices=[
-                ('draft', 'Draft'),
-                ('final', 'Final'),
-                ('proposal', 'Proposal'),
-                ('revision', 'Revision'),
-            ]),
-            'chapter': forms.Select(choices=[
-                ('1', 'Chapter 1'),
-                ('2', 'Chapter 2'),
-                ('3', 'Chapter 3'),
-                ('4', 'Chapter 4'),
-                ('5', 'Chapter 5'),
-            ]),
-            'notes': forms.Textarea(attrs={'placeholder': 'Describe changes made, key points, or anything the supervisor should note…'}),
+            'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. Chapter 4: Data Analysis — Revised'}),
+            'type': forms.Select(attrs={'class': 'form-select'}),
+            'chapter': forms.Select(attrs={'class': 'form-select'}),
+            'file': forms.FileInput(attrs={'class': 'form-input', 'style': 'padding:0.55rem 0.9rem'}),
+            'notes': forms.Textarea(attrs={'class': 'form-textarea', 'placeholder': 'Describe changes made, key points, or anything the supervisor should note…'}),
         }
 
 class FeedbackForm(forms.ModelForm):

@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from students.models import Student
 from assessments.models import Submission, Feedback
+from assessments.forms import SubmissionForm
 from pipeline.models import Milestone, StudentProgress
 from notifications.models import Notification
 from erp_integration.services import get_finance_clearance
@@ -215,6 +216,7 @@ def student_dashboard(request):
         "current_steps": current_steps,
         "pending_steps": pending_steps,
         "bookings": bookings,
+        "submission_form": SubmissionForm(),
     }
     
 
