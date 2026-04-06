@@ -39,7 +39,11 @@ def login_view(request):
                 return redirect('/students/dashboard/')
             elif user.role == 'supervisor':
                 return redirect('/supervisor/dashboard/')
-            elif user.role in ['admin', 'dean']:  # admin and dean go to admin site
+            elif user.role == 'dean':
+                return redirect('/dean/')
+            elif user.role == 'chair':
+                return redirect('/chair/')
+            elif user.role == 'admin':
                 return redirect('/admin/')
             else:
                 return redirect('/')
