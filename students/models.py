@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
     
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
 
     student_number = models.CharField(max_length=50)
     programme = models.CharField(max_length=100)

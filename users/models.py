@@ -2,26 +2,6 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 import uuid
 
-# class User(AbstractUser):
-#     ROLE_CHOICES = (
-#         ("student", "Student"),
-#         ("supervisor", "Supervisor"),
-#         ("admin", "Admin"),
-#         ("dean", "Dean"),
-#     )
-#     role = models.CharField(max_length=20, choices=ROLE_CHOICES)  # add this back
-
-#     groups = models.ManyToManyField(
-#         Group,
-#         related_name='custom_user_set',
-#         blank=True
-#     )
-#     user_permissions = models.ManyToManyField(
-#         Permission,
-#         related_name='custom_user_permissions_set',
-#         blank=True
-#     )
-
 class User(AbstractUser):
     ROLE_CHOICES = (
         ("student", "Student"),
@@ -38,9 +18,3 @@ class User(AbstractUser):
         if not self.unique_id:
             self.unique_id = f"USR-{uuid.uuid4().hex[:8].upper()}"
         super().save(*args, **kwargs)
-
-    # Optional: remove email requirement
-    email = models.EmailField(blank=True, null=True)
-
-
-    
