@@ -253,7 +253,7 @@ from assessments.models import Submission
 
 @login_required
 def submissions_api(request):
-    student = request.user.student
+    student = request.user.student_profile
     subs = Submission.objects.filter(student=student).order_by('-submitted_at')
     
     data = []
@@ -365,7 +365,7 @@ from .forms import QuarterlyReportForm
 
 @login_required
 def book_presentation(request):
-    student = request.user.student
+    student = request.user.student_profile
 
     if request.method == "POST":
         form = PresentationBookingForm(request.POST)

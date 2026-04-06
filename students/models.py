@@ -73,17 +73,18 @@ class QuarterlyReport(models.Model):
         unique_together = ('student', 'quarter', 'year')
 
     def save(self, *args, **kwargs):
-        # Calculate if late
-        from datetime import datetime
-        quarter_end_dates = {
-            'Q1': (self.year, 3, 31),
-            'Q2': (self.year, 6, 30),
-            'Q3': (self.year, 9, 30),
-            'Q4': (self.year, 12, 31),
-        }
-        end_year, end_month, end_day = quarter_end_dates[self.quarter]
-        quarter_end = datetime(end_year, end_month, end_day)
-        self.is_late = self.submitted_at.date() > quarter_end.date()
+        # Calculate if late only when submitted
+        if self.status == 'submitted' and self.submitted_at:
+            from datetime import datetime
+            quarter_end_dates = {
+                'Q1': (self.year, 3, 31),
+                'Q2': (self.year, 6, 30),
+                'Q3': (self.year, 9, 30),
+                'Q4': (self.year, 12, 31),
+            }
+            end_year, end_month, end_day = quarter_end_dates[self.quarter]
+            quarter_end = datetime(end_year, end_month, end_day)
+            self.is_late = self.submitted_at.date() > quarter_end.date()
         super().save(*args, **kwargs)
 
     def __str__(self):
