@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -257,9 +258,9 @@ select.form-control{appearance:none}
 <body>
  
 <aside class="sidebar">
-  <a class="sidebar-logo" href="index.html">
+  <a class="sidebar-logo" href="{% url 'home' %}">
     <div class="logo-badge">
-      <img src="assets/R.U logo.png" alt="R.U logo" class="logo-img">
+      <img src="{% static 'assets/R.U logo.png' %}" alt="R.U logo" class="logo-img">
     </div>
     
   </a>
@@ -274,13 +275,13 @@ select.form-control{appearance:none}
   </nav>
   <nav class="nav-section">
     <span class="nav-section-title">Navigate</span>
-    <a class="nav-link" href="login.html"><span class="ni">🏠</span> Back to Portal</a>
+    <a class="nav-link" href="{% url 'login' %}"><span class="ni">🏠</span> Back to Portal</a>
   </nav>
   <div class="sidebar-footer">
     <div class="user-mini">
       <div class="user-av">RH</div>
       <div><div class="user-mini-name">Prof. Robert Harrison</div><div class="user-mini-role">Dean of Faculty</div></div>
-      <button class="logout-btn" onclick="window.location.href='login.html'">⍈Log out </button>
+      <a href="{% url 'logout' %}" class="logout-btn">⍈ Logout</a
     </div>
   </div>
 </aside>
