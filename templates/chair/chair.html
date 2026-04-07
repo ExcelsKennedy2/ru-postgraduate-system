@@ -4,8 +4,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Department Chair â€” R.U</title>
+<title>Department Chair — R.U</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--navy:#0A194E;--navy-light:#1a3580;--amber:#FFC107;--amber-dim:rgba(255,193,7,.13);--amber-dark:#c9960a;--white:#fff;--off:#F5F7FC;--off2:#EBEEf8;--text:#111827;--muted:#5B6F8A;--soft:#94A3B8;--border:#DDE4F0;--green:#16A34A;--green-dim:rgba(22,163,74,.1);--red:#DC2626;--red-dim:rgba(220,38,38,.1);--blue:#2563EB;--blue-dim:rgba(37,99,235,.1);--orange:#EA580C;--orange-dim:rgba(234,88,12,.1);--sidebar:228px;--topbar:60px}
@@ -307,7 +308,7 @@ min-height:100vh}
   color:var(--soft);
   text-align:right;
   margin-top:.35rem}
-/* â”€â”€ AI PROCESSING STATE â”€â”€ */
+/* AI PROCESSING STATE */
 .ai-processing{
   background:var(--navy);
   padding:1.5rem;
@@ -365,7 +366,7 @@ min-height:100vh}
   width:0%;
   animation:progress 2.8s ease-in-out forwards}
 
-  /* â”€â”€ CORRECTIONS LIST â”€â”€ */
+  /* CORRECTIONS LIST */
 .corrections-header{
   display:flex;
   align-items:center;
@@ -624,23 +625,23 @@ svg.chart{overflow:visible;width:100%}
   </a>
   <nav class="nav-section">
     <span class="nav-section-title">Main</span>
-    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">â—ˆ</span> Dashboard</a>
-    <a class="nav-link" onclick="nav(this,'corrections')"><span class="ni">ðŸ“‹</span> Post-Seminar Actions</a>
-    <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni">ðŸ‘¥</span> Faculty & Students</a>
-    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">ðŸ“Š</span> Reports</a>
-    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">ðŸ“ˆ</span> Analytics</a>
-    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">âœ…</span> Approvals <span class="nav-badge">{{ stats.pending_approvals }}</span></a>
-    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">âš™ï¸</span> Settings</a>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni"><i class="fa-solid fa-gauge-high"></i></span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'corrections')"><span class="ni"><i class="fa-solid fa-clipboard-list"></i></span> Post-Seminar Actions</a>
+    <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni"><i class="fa-solid fa-users"></i></span> Faculty & Students</a>
+    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni"><i class="fa-solid fa-chart-column"></i></span> Reports</a>
+    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni"><i class="fa-solid fa-chart-line"></i></span> Analytics</a>
+    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni"><i class="fa-solid fa-circle-check"></i></span> Approvals <span class="nav-badge">{{ stats.pending_approvals }}</span></a>
+    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni"><i class="fa-solid fa-gear"></i></span> Settings</a>
   </nav>
   <nav class="nav-section">
     <span class="nav-section-title">Navigate</span>
-    <a class="nav-link" href="{% url 'login' %}"><span class="ni">ðŸ </span> Back to Portal</a>
+    <a class="nav-link" href="{% url 'login' %}"><span class="ni"><i class="fa-solid fa-house"></i></span> Back to Portal</a>
   </nav>
   <div class="sidebar-footer">
     <div class="user-mini">
       <div class="user-av">{{ chair_initials }}</div>
       <div><div class="user-mini-name">{{ chair_name }}</div><div class="user-mini-role">{{ chair_role_title }}</div></div>
-      <a href="{% url 'logout' %}" class="logout-btn">âˆ Logout</a
+      <a href="{% url 'logout' %}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
   </div>
 </aside>
@@ -649,9 +650,9 @@ svg.chart{overflow:visible;width:100%}
   <header class="topbar">
     <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">Department Chair Dashboard</div>
     <div class="topbar-right">
-      <div class="tb-notif" onclick="showToast('{{ notifications|length }} new alerts')">ðŸ””{% if notifications %}<span class="tb-notif-dot"></span>{% endif %}</div>
+      <div class="tb-notif" onclick="showToast('{{ notifications|length }} new alerts')"><i class="fa-solid fa-bell"></i>{% if notifications %}<span class="tb-notif-dot"></span>{% endif %}</div>
       <div class="tb-pill"><div class="tb-av">{{ chair_initials }}</div><div><div class="tb-name">{{ chair_name }}</div><div class="tb-role">Chair</div></div></div>
-      <button class="btn btn-amber" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')">ðŸ“„ Generate Report</button>
+      <button class="btn btn-amber" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')"><i class="fa-solid fa-file-pdf"></i> Generate Report</button>
     </div>
   </header>
  
@@ -659,22 +660,22 @@ svg.chart{overflow:visible;width:100%}
  
     <!-- DASHBOARD -->
     <section class="section-view active" id="view-dashboard">
-      <div>
+      <div id="chair-dashboard-report">
       <div class="page-hdr">
-        <div><h2>Department Chair Dashboard ðŸ“Š</h2><p>{{ department_name }} â€” live departmental overview</p></div>
+        <div><h2>Department Chair Dashboard <i class="fa-solid fa-chart-column"></i></h2><p>{{ department_name }} - live departmental overview</p></div>
         <div class="page-hdr-actions">
-          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')">ðŸ“Š Reports</button>
-          <button type="button" class="btn btn-amber" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')">ðŸ“„ Generate Report</button>
+          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')"><i class="fa-solid fa-chart-column"></i> Reports</button>
+          <button type="button" class="btn btn-amber" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')"><i class="fa-solid fa-file-pdf"></i> Generate Report</button>
         </div>
       </div>
 
-      <div id="chair-dashboard-report">
+      <div>
  
       <div class="stat-grid">
-        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red">ðŸ“‹</div></div><div class="stat-val">{{ stats.pending_approvals }}</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
-        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber">ðŸš¨</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub"><span class="dn">Students below expected progress</span></div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">ðŸ‘¥</div></div><div class="stat-val">{{ stats.active_supervisors }}</div><div class="stat-sub">{{ supervisor_rows|length }} supervisors in directory</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">âš ï¸</div></div><div class="stat-val">{{ stats.issues }}</div><div class="stat-sub"><span class="dn">Escalation candidates and overload alerts</span></div></div>
+        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red"><i class="fa-solid fa-clipboard-check"></i></div></div><div class="stat-val">{{ stats.pending_approvals }}</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
+        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber"><i class="fa-solid fa-triangle-exclamation"></i></div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub"><span class="dn">Students below expected progress</span></div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green"><i class="fa-solid fa-users"></i></div></div><div class="stat-val">{{ stats.active_supervisors }}</div><div class="stat-sub">{{ supervisor_rows|length }} supervisors in directory</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red"><i class="fa-solid fa-circle-exclamation"></i></div></div><div class="stat-val">{{ stats.issues }}</div><div class="stat-sub"><span class="dn">Escalation candidates and overload alerts</span></div></div>
 
           
         </div>
@@ -692,7 +693,7 @@ svg.chart{overflow:visible;width:100%}
               <thead><tr><th>Supervisor</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Submissions Reviewed</th><th>Status</th></tr></thead>
               <tbody>
                 {% for row in supervisor_rows %}
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><span class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</span></div></td><td>{{ row.student_count }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val"{% if row.avg_progress < 60 %} style="color:var(--orange)"{% endif %}>{{ row.avg_progress }}%</span></div></td><td><div><div class="stars">â˜…â˜…â˜…â˜…â˜…</div><div style="font-size:.65rem;color:var(--muted)">{{ row.rating }}/5.0</div></div></td><td class="td-muted">{{ row.reviewed_count }}</td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><span class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</span></div></td><td>{{ row.student_count }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val"{% if row.avg_progress < 60 %} style="color:var(--orange)"{% endif %}>{{ row.avg_progress }}%</span></div></td><td><div><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div style="font-size:.65rem;color:var(--muted)">{{ row.rating }}/5.0</div></div></td><td class="td-muted">{{ row.reviewed_count }}</td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td></tr>
                 {% empty %}
                 <tr><td colspan="6" class="td-muted">No supervisor data available.</td></tr>
                 {% endfor %}
@@ -712,25 +713,25 @@ svg.chart{overflow:visible;width:100%}
           </div>
  
           <div class="card" style="margin-bottom:1rem">
-            <div class="card-hdr"><div class="card-title">ðŸ“… Upcoming Meetings</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Next 7 days</div></div>
+            <div class="card-hdr"><div class="card-title"><i class="fa-solid fa-calendar-days"></i> Upcoming Meetings</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Next 7 days</div></div>
             <div style="padding:.85rem 1.25rem;display:flex;flex-direction:column;gap:.6rem">
               {% for booking in upcoming_meetings %}
               <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:{% if forloop.first %}var(--amber-dim){% else %}var(--off){% endif %};border:1px solid {% if forloop.first %}rgba(255,193,7,.25){% else %}var(--border){% endif %}">
-                <div style="font-size:1rem;flex-shrink:0">ðŸŽ“</div>
-                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">{{ booking.student.user.get_full_name|default:booking.student.user.username }} â€” {{ booking.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ booking.date|date:"d M Y" }} Â· {{ booking.date|date:"H:i" }} Â· {{ booking.get_meeting_type_display }}</div></div>
+                <div style="font-size:1rem;flex-shrink:0"><i class="fa-solid fa-user-graduate"></i></div>
+                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">{{ booking.student.user.get_full_name|default:booking.student.user.username }} - {{ booking.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ booking.date|date:"d M Y" }} · {{ booking.date|date:"H:i" }} · {{ booking.get_meeting_type_display }}</div></div>
               </div>
               {% empty %}
-              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)"><div style="font-size:1rem;flex-shrink:0">ðŸ“…</div><div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">No upcoming meetings</div><div style="font-size:.7rem;color:var(--muted)">Nothing scheduled in the next seven days.</div></div></div>
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)"><div style="font-size:1rem;flex-shrink:0"><i class="fa-solid fa-calendar"></i></div><div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">No upcoming meetings</div><div style="font-size:.7rem;color:var(--muted)">Nothing scheduled in the next seven days.</div></div></div>
               {% endfor %}
             </div>
           </div>
           <div class="card">
             <div class="card-hdr"><div class="card-title">Quick Actions</div></div>
             <div style="padding:.75rem;display:flex;flex-direction:column;gap:.5rem">
-              <button class="btn btn-amber" style="justify-content:center" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')">ðŸ“„ Generate Department Report</button>
-              <button class="btn btn-navy" style="justify-content:center" onclick="openAssignModal()">ðŸ‘¥ Manage Faculty Assignments</button>
-              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[3],'analytics')">ðŸ“ˆ View Analytics Dashboard</button>
-              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">âœ… Approve Pending Requests</button>
+              <button class="btn btn-amber" style="justify-content:center" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')"><i class="fa-solid fa-file-pdf"></i> Generate Department Report</button>
+              <button class="btn btn-navy" style="justify-content:center" onclick="openAssignModal()"><i class="fa-solid fa-users-gear"></i> Manage Faculty Assignments</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[3],'analytics')"><i class="fa-solid fa-chart-line"></i> View Analytics Dashboard</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><i class="fa-solid fa-circle-check"></i> Approve Pending Requests</button>
             </div>
           </div>
         </div>
@@ -738,11 +739,11 @@ svg.chart{overflow:visible;width:100%}
  
       <!-- Program stats -->
       <div class="card">
-        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type â€” {{ department_name }}</div></div></div>
+        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type - {{ department_name }}</div></div></div>
         {% for programme in programme_stats %}
         <div class="prog-stat">
-          <div class="ps-icon" style="background:{% if forloop.first %}rgba(10,25,78,.08){% elif forloop.counter == 2 %}var(--green-dim){% else %}var(--amber-dim){% endif %}">{% if forloop.first %}ðŸŽ“{% elif forloop.counter == 2 %}ðŸ“š{% else %}ðŸ’»{% endif %}</div>
-          <div style="flex:1"><div class="ps-name">{{ programme.name }}</div><div class="ps-meta">{{ programme.duration_text }} Â· {{ programme.student_count }} students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:{{ programme.avg_progress }}%;background:{{ programme.progress_color }}"></div></div><span class="prog-val"{% if programme.progress_color == 'var(--green)' %} style="color:var(--green)"{% endif %}>{{ programme.avg_progress }}%</span></div></div></div>
+          <div class="ps-icon" style="background:{% if forloop.first %}rgba(10,25,78,.08){% elif forloop.counter == 2 %}var(--green-dim){% else %}var(--amber-dim){% endif %}">{% if forloop.first %}<i class="fa-solid fa-user-graduate"></i>{% elif forloop.counter == 2 %}<i class="fa-solid fa-book-open"></i>{% else %}<i class="fa-solid fa-laptop"></i>{% endif %}</div>
+          <div style="flex:1"><div class="ps-name">{{ programme.name }}</div><div class="ps-meta">{{ programme.duration_text }} · {{ programme.student_count }} students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:{{ programme.avg_progress }}%;background:{{ programme.progress_color }}"></div></div><span class="prog-val"{% if programme.progress_color == 'var(--green)' %} style="color:var(--green)"{% endif %}>{{ programme.avg_progress }}%</span></div></div></div>
           <span class="pill pill-navy">{{ programme.student_count }} Students</span>
         </div>
         {% empty %}
