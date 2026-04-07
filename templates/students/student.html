@@ -2185,10 +2185,12 @@ a.link-btn:hover{
     </div>
     <div style="display:flex;gap:0.5rem;">
       <a class="btn btn-primary btn-sm" href="{% url 'list_quarterly_reports' %}">📋 Quarterly Reports</a>
-      <a class="btn btn-primary btn-sm" href="{% url 'download_all_submissions' %}">📄 Download PDF</a>
+      <a class="btn btn-primary btn-sm" href="{% url 'download_all_submissions' %}">📄 Full feedback report</a>
+      <button type="button" class="btn btn-primary btn-sm" onclick="generatePDF('report-content', 'academic-reports.pdf')">📄 Download PDF</button>
     </div>
   </div>
 
+  <div id="report-content">
   <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
     <div class="stat-card sc-green">
       <div class="stat-head">
@@ -2258,6 +2260,7 @@ a.link-btn:hover{
         </tbody>
       </table>
     </div>
+  </div>
   </div>
 </div>
  
@@ -2640,6 +2643,10 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script>
+const _submissionDownloadBase = "{% url 'download_submission' 999999 %}";
+function submissionDownloadUrl(id) {
+  return _submissionDownloadBase.replace('999999', String(id));
+}
 async function loadReports() {
     try {
         const response = await fetch("{% url 'submissions_api' %}");
@@ -2652,11 +2659,11 @@ async function loadReports() {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="td-title">${sub.title}</td>
+                <td class="td-muted">${sub.type || '—'}</td>
                 <td class="td-muted">${sub.submitted}</td>
-                <td class="td-muted">${sub.chapter}</td>
                 <td><span class="score-good">${sub.score}</span></td>
                 <td><span class="pill pill-approved">${sub.status}</span></td>
-                <td><a class="link-btn" href="/submissions/${sub.id}/download/">Download</a></td>
+                <td><a class="link-btn" href="${submissionDownloadUrl(sub.id)}">Download</a></td>
             `;
             tbody.appendChild(tr);
         });
@@ -3098,5 +3105,6 @@ function openSubmission(id){
 // Load submissions when page shows
 document.addEventListener('DOMContentLoaded', loadSubmissions);
 </script>
+{% include 'includes/pdf_scripts.html' %}
 </body>
 </html>

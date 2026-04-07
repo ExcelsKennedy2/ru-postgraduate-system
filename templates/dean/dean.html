@@ -292,7 +292,7 @@ select.form-control{appearance:none}
     <div class="topbar-right">
       <div class="tb-notif" onclick="showToast('{{ notifications|length }} executive alerts pending')">🔔{% if notifications %}<span class="tb-notif-dot"></span>{% endif %}</div>
       <div class="tb-pill"><div class="tb-av">{{ dean_initials }}</div><div><div class="tb-name">{{ dean_name }}</div><div class="tb-role">Dean</div></div></div>
-      <button class="btn btn-navy" onclick="showToast('Executive report generated and sent to board')">📊 Generate Executive Report</button>
+      <button type="button" class="btn btn-navy" onclick="exportSectionToPdf('report-content-dean', 'dean-executive-dashboard.pdf')">📊 Generate Executive Report</button>
     </div>
   </header>
  
@@ -300,11 +300,13 @@ select.form-control{appearance:none}
  
     <!-- DASHBOARD -->
     <section class="section-view active" id="view-dashboard">
+      <div id="dean-dashboard-export">
+      <div id="report-content-dean">
       <div class="page-hdr">
         <div><h2>Dean's Executive Dashboard 🎓</h2><p>{{ dean_faculty }} — strategic overview</p></div>
         <div class="page-hdr-actions">
           <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[1],'analytics')">📈 Analytics</button>
-          <button class="btn btn-navy" onclick="showToast('Report generated')">📊 Generate Report</button>
+          <button type="button" class="btn btn-navy" onclick="exportSectionToPdf('report-content-dean', 'dean-dashboard-report.pdf')">📊 Generate Report</button>
         </div>
       </div>
  
@@ -520,7 +522,7 @@ select.form-control{appearance:none}
           <div class="card">
             <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Executive Actions</div><div class="card-sub">Common dean-level tasks</div></div></div>
             <div style="padding:.85rem">
-              <button class="ea-btn ea-navy" onclick="showToast('Executive report generated — sent to board members')">📊 Generate Executive Report</button>
+              <button type="button" class="ea-btn ea-navy" onclick="exportSectionToPdf('report-content-dean', 'dean-executive-dashboard.pdf')">📊 Generate Executive Report</button>
               <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[1],'analytics')">📈 View Detailed Analytics</button>
               <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[3],'accreditation')">🏅 Review Accreditation Status</button>
               <button class="ea-btn ea-default" onclick="nav(document.querySelectorAll('.nav-link')[4],'budget')">💰 Budget Allocation & Review</button>
@@ -541,12 +543,16 @@ select.form-control{appearance:none}
             </div>
           </div>
         </div>
+        </div>
+      </div>
       </div>
     </section>
  
     <!-- FACULTY ANALYTICS -->
     <section class="section-view" id="view-analytics">
-      <div class="page-hdr"><div><h2>Faculty Analytics</h2><p>Detailed performance data across all departments</p></div><button class="btn btn-navy" onclick="showToast('Analytics report exported')">⬇ Export</button></div>
+      <div id="faculty-analytics-export">
+      <div id="report-content-faculty">
+      <div class="page-hdr"><div><h2>Faculty Analytics</h2><p>Detailed performance data across all departments</p></div><button type="button" class="btn btn-navy" onclick="exportSectionToPdf('report-content-faculty', 'faculty-analytics-report.pdf')">⬇ Export</button></div>
       <div class="stat-grid">
         <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Students</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">{{ analytics.phd_students }}</div><div class="stat-sub">Doctoral enrolment</div></div>
         <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Students</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">{{ analytics.masters_students }}</div><div class="stat-sub">Masters enrolment</div></div>
@@ -578,24 +584,43 @@ select.form-control{appearance:none}
           </div>
         </div>
       </div>
+      </div>
+      </div>
     </section>
  
     <!-- REPORTS -->
     <section class="section-view" id="view-reports">
-      <div class="page-hdr"><div><h2>Executive Reports</h2><p>Faculty-level strategic summaries and analytics</p></div><button class="btn btn-navy" onclick="showToast('New report generated')">+ Generate Report</button></div>
-      <div class="card">
+      <div id="reports-export">
+      <div class="page-hdr"><div><h2>Executive Reports</h2><p>Faculty-level strategic summaries and analytics</p></div><button class="btn btn-navy" onclick="exportReportsPagePdf()">+ Generate Report</button></div>
+      <div class="card" id="executive-reports-card">
         <div class="tbl-wrap">
-          <table>
+          <table id="executive-reports-table">
             <thead><tr><th>Report Name</th><th>Type</th><th>Scope</th><th>Generated</th><th>Pages</th><th>Actions</th></tr></thead>
             <tbody>
               {% for report in report_archive %}
-              <tr><td class="td-bold">{{ report.title }}</td><td class="td-muted">{{ report.type }}</td><td>{{ report.scope }}</td><td class="td-muted">{{ report.generated|date:"d M Y" }}</td><td class="td-muted">{{ report.pages }}</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">{{ report.title }}</td><td class="td-muted">{{ report.type }}</td><td>{{ report.scope }}</td><td class="td-muted">{{ report.generated|date:"d M Y" }}</td><td class="td-muted">{{ report.pages }}</td><td><button class="btn btn-navy btn-xs" onclick="exportSingleTableRowPdf(this, 'Executive Report')">⬇ Download</button></td></tr>
               {% empty %}
               <tr><td colspan="6" class="td-muted">No reports available.</td></tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="card" id="quarterly-reports-card" style="margin-top:1rem">
+        <div class="card-hdr"><div class="card-title">Quarterly Reports</div></div>
+        <div class="tbl-wrap">
+          <table id="quarterly-reports-table">
+            <thead><tr><th>Report Name</th><th>Supervisor Assigned</th><th>Date Sent</th><th>Status</th></tr></thead>
+            <tbody>
+              {% for report in quarterly_reports %}
+              <tr><td class="td-bold">{{ report.title }}</td><td>{{ report.supervisor_name }}</td><td class="td-muted">{{ report.date_sent|date:"d M Y" }}</td><td><span class="pill {{ report.status_badge }}">{{ report.status }}</span></td></tr>
+              {% empty %}
+              <tr><td colspan="4" class="td-muted">No quarterly reports available.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
       </div>
     </section>
  
@@ -710,7 +735,137 @@ select.form-control{appearance:none}
 </div>
  
 <div class="toast" id="toast"></div>
- 
+
+{% include 'includes/pdf_scripts.html' %}
+<script>
+const { jsPDF } = window.jspdf;
+
+async function waitForCharts(){
+  if(!window.Chart) return;
+  await new Promise(resolve=>setTimeout(resolve,500));
+}
+
+function showExportToast(msg){
+  if(typeof showToast === 'function') showToast(msg);
+}
+
+async function exportSectionToPdf(targetId, filename){
+  const target=document.getElementById(targetId);
+  if(!target){
+    showExportToast('Export section not found');
+    return;
+  }
+  showExportToast('Preparing PDF...');
+  await waitForCharts();
+  try {
+    await generatePDF(targetId, filename);
+    showExportToast('PDF downloaded');
+  } catch (e) {
+    showExportToast('PDF export failed');
+  }
+}
+
+function extractHeaders(table){
+  return Array.from(table.querySelectorAll('thead th')).map(th=>th.innerText.trim());
+}
+
+function extractRowCells(row){
+  return Array.from(row.querySelectorAll('td')).map(td=>td.innerText.trim());
+}
+
+function exportSingleTableRowPdf(button, reportTitle){
+  const row=button.closest('tr');
+  const table=button.closest('table');
+
+  if(!row || !table){
+    showExportToast('Could not export row');
+    return;
+  }
+
+  const headers=extractHeaders(table);
+  const values=extractRowCells(row);
+  const pdf=new jsPDF('p','mm','a4');
+
+  pdf.setFontSize(16);
+  pdf.text(reportTitle,14,18);
+  pdf.setFontSize(11);
+
+  let y=32;
+  headers.forEach((header,index)=>{
+    const value=values[index] || '-';
+    pdf.text(`${header}: ${value}`,14,y);
+    y+=9;
+  });
+
+  pdf.save(`${reportTitle.toLowerCase().replace(/\s+/g,'-')}.pdf`);
+  showExportToast('Row PDF downloaded');
+}
+
+async function exportReportsPagePdf(){
+  const wrapper=document.createElement('div');
+  wrapper.style.background='#F5F7FC';
+  wrapper.style.padding='24px';
+  wrapper.style.width='1200px';
+
+  const title=document.createElement('div');
+  title.style.fontSize='24px';
+  title.style.fontWeight='700';
+  title.style.color='#0A194E';
+  title.style.marginBottom='18px';
+  title.innerText='Dean Reports Export';
+  wrapper.appendChild(title);
+
+  const executive=document.getElementById('executive-reports-card');
+  const quarterly=document.getElementById('quarterly-reports-card');
+
+  if(!executive && !quarterly){
+    showExportToast('No reports available to export');
+    return;
+  }
+
+  if(executive) wrapper.appendChild(executive.cloneNode(true));
+  if(quarterly){
+    const spacer=document.createElement('div');
+    spacer.style.height='18px';
+    wrapper.appendChild(spacer);
+    wrapper.appendChild(quarterly.cloneNode(true));
+  }
+
+  document.body.appendChild(wrapper);
+
+  const canvas=await html2canvas(wrapper,{
+    scale:2,
+    useCORS:true,
+    backgroundColor:'#F5F7FC'
+  });
+
+  const imgData=canvas.toDataURL('image/png');
+  const pdf=new jsPDF('p','mm','a4');
+  const pageWidth=pdf.internal.pageSize.getWidth();
+  const pageHeight=pdf.internal.pageSize.getHeight();
+  const margin=10;
+  const usableWidth=pageWidth-margin*2;
+  const imgHeight=(canvas.height*usableWidth)/canvas.width;
+
+  let heightLeft=imgHeight;
+  let position=margin;
+
+  pdf.addImage(imgData,'PNG',margin,position,usableWidth,imgHeight);
+  heightLeft-=(pageHeight-margin*2);
+
+  while(heightLeft>0){
+    position=heightLeft-imgHeight+margin;
+    pdf.addPage();
+    pdf.addImage(imgData,'PNG',margin,position,usableWidth,imgHeight);
+    heightLeft-=(pageHeight-margin*2);
+  }
+
+  pdf.save('dean-reports-export.pdf');
+  document.body.removeChild(wrapper);
+  showExportToast('PDF downloaded');
+}
+</script>
+
 <script>
 function nav(el,id){
   document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
@@ -729,3 +884,8 @@ document.querySelectorAll('.nav-link[onclick]').forEach(l=>l.addEventListener('c
 </script>
 </body>
 </html>
+
+
+
+
+

@@ -202,6 +202,28 @@ def dean_dashboard(request):
         },
     ]
 
+    quarterly_reports = []
+    for report in reports:
+        supervisor = report.student.supervisor
+        supervisor_name = (
+            supervisor.get_full_name() if supervisor and supervisor.get_full_name() else "Unassigned"
+        )
+        if report.status == "reviewed":
+            status_badge = "pill-green"
+        elif report.status == "submitted":
+            status_badge = "pill-amber"
+        else:
+            status_badge = "pill-gray"
+        quarterly_reports.append(
+            {
+                "title": f"{report.student.user.get_full_name() or report.student.user.username} - {report.quarter} {report.year}",
+                "supervisor_name": supervisor_name,
+                "date_sent": report.submitted_at,
+                "status": report.get_status_display(),
+                "status_badge": status_badge,
+            }
+        )
+
     total_budget = sum(item["allocation"] for item in budget_rows)
     total_grants = sum(item["grants"] for item in budget_rows)
     avg_utilisation = int(round(sum(item["utilisation"] for item in budget_rows) / len(budget_rows))) if budget_rows else 0
@@ -222,6 +244,7 @@ def dean_dashboard(request):
         "research_rows": research_rows,
         "recent_approvals": recent_approvals,
         "report_archive": report_archive,
+        "quarterly_reports": quarterly_reports,
         "analytics": {
             "phd_students": total_phd,
             "masters_students": total_masters,

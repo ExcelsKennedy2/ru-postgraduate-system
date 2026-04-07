@@ -1,10 +1,10 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Department Chair — R.U</title>
+<title>Department Chair â€” R.U</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -307,7 +307,7 @@ min-height:100vh}
   color:var(--soft);
   text-align:right;
   margin-top:.35rem}
-/* ── AI PROCESSING STATE ── */
+/* â”€â”€ AI PROCESSING STATE â”€â”€ */
 .ai-processing{
   background:var(--navy);
   padding:1.5rem;
@@ -365,7 +365,7 @@ min-height:100vh}
   width:0%;
   animation:progress 2.8s ease-in-out forwards}
 
-  /* ── CORRECTIONS LIST ── */
+  /* â”€â”€ CORRECTIONS LIST â”€â”€ */
 .corrections-header{
   display:flex;
   align-items:center;
@@ -624,23 +624,23 @@ svg.chart{overflow:visible;width:100%}
   </a>
   <nav class="nav-section">
     <span class="nav-section-title">Main</span>
-    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">◈</span> Dashboard</a>
-    <a class="nav-link" onclick="nav(this,'corrections')"><span class="ni">📋</span> Post-Seminar Actions</a>
-    <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni">👥</span> Faculty & Students</a>
-    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📊</span> Reports</a>
-    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">📈</span> Analytics</a>
-    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">✅</span> Approvals <span class="nav-badge">{{ stats.pending_approvals }}</span></a>
-    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">⚙️</span> Settings</a>
+    <a class="nav-link active" onclick="nav(this,'dashboard')"><span class="ni">â—ˆ</span> Dashboard</a>
+    <a class="nav-link" onclick="nav(this,'corrections')"><span class="ni">ðŸ“‹</span> Post-Seminar Actions</a>
+    <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni">ðŸ‘¥</span> Faculty & Students</a>
+    <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">ðŸ“Š</span> Reports</a>
+    <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">ðŸ“ˆ</span> Analytics</a>
+    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">âœ…</span> Approvals <span class="nav-badge">{{ stats.pending_approvals }}</span></a>
+    <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">âš™ï¸</span> Settings</a>
   </nav>
   <nav class="nav-section">
     <span class="nav-section-title">Navigate</span>
-    <a class="nav-link" href="{% url 'login' %}"><span class="ni">🏠</span> Back to Portal</a>
+    <a class="nav-link" href="{% url 'login' %}"><span class="ni">ðŸ </span> Back to Portal</a>
   </nav>
   <div class="sidebar-footer">
     <div class="user-mini">
       <div class="user-av">{{ chair_initials }}</div>
       <div><div class="user-mini-name">{{ chair_name }}</div><div class="user-mini-role">{{ chair_role_title }}</div></div>
-      <a href="{% url 'logout' %}" class="logout-btn">⍈ Logout</a
+      <a href="{% url 'logout' %}" class="logout-btn">âˆ Logout</a
     </div>
   </div>
 </aside>
@@ -649,9 +649,9 @@ svg.chart{overflow:visible;width:100%}
   <header class="topbar">
     <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">Department Chair Dashboard</div>
     <div class="topbar-right">
-      <div class="tb-notif" onclick="showToast('{{ notifications|length }} new alerts')">🔔{% if notifications %}<span class="tb-notif-dot"></span>{% endif %}</div>
+      <div class="tb-notif" onclick="showToast('{{ notifications|length }} new alerts')">ðŸ””{% if notifications %}<span class="tb-notif-dot"></span>{% endif %}</div>
       <div class="tb-pill"><div class="tb-av">{{ chair_initials }}</div><div><div class="tb-name">{{ chair_name }}</div><div class="tb-role">Chair</div></div></div>
-      <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
+      <button class="btn btn-amber" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')">ðŸ“„ Generate Report</button>
     </div>
   </header>
  
@@ -659,19 +659,22 @@ svg.chart{overflow:visible;width:100%}
  
     <!-- DASHBOARD -->
     <section class="section-view active" id="view-dashboard">
+      <div>
       <div class="page-hdr">
-        <div><h2>Department Chair Dashboard 📊</h2><p>{{ department_name }} — live departmental overview</p></div>
+        <div><h2>Department Chair Dashboard ðŸ“Š</h2><p>{{ department_name }} â€” live departmental overview</p></div>
         <div class="page-hdr-actions">
-          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')">📊 Reports</button>
-          <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
+          <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')">ðŸ“Š Reports</button>
+          <button type="button" class="btn btn-amber" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')">ðŸ“„ Generate Report</button>
         </div>
       </div>
+
+      <div id="chair-dashboard-report">
  
       <div class="stat-grid">
-        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red">📋</div></div><div class="stat-val">{{ stats.pending_approvals }}</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
-        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber">🚨</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub"><span class="dn">Students below expected progress</span></div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">👥</div></div><div class="stat-val">{{ stats.active_supervisors }}</div><div class="stat-sub">{{ supervisor_rows|length }} supervisors in directory</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">{{ stats.issues }}</div><div class="stat-sub"><span class="dn">Escalation candidates and overload alerts</span></div></div>
+        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red">ðŸ“‹</div></div><div class="stat-val">{{ stats.pending_approvals }}</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
+        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber">ðŸš¨</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub"><span class="dn">Students below expected progress</span></div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">ðŸ‘¥</div></div><div class="stat-val">{{ stats.active_supervisors }}</div><div class="stat-sub">{{ supervisor_rows|length }} supervisors in directory</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">âš ï¸</div></div><div class="stat-val">{{ stats.issues }}</div><div class="stat-sub"><span class="dn">Escalation candidates and overload alerts</span></div></div>
 
           
         </div>
@@ -689,7 +692,7 @@ svg.chart{overflow:visible;width:100%}
               <thead><tr><th>Supervisor</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Submissions Reviewed</th><th>Status</th></tr></thead>
               <tbody>
                 {% for row in supervisor_rows %}
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><span class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</span></div></td><td>{{ row.student_count }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val"{% if row.avg_progress < 60 %} style="color:var(--orange)"{% endif %}>{{ row.avg_progress }}%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">{{ row.rating }}/5.0</div></div></td><td class="td-muted">{{ row.reviewed_count }}</td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td></tr>
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><span class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</span></div></td><td>{{ row.student_count }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val"{% if row.avg_progress < 60 %} style="color:var(--orange)"{% endif %}>{{ row.avg_progress }}%</span></div></td><td><div><div class="stars">â˜…â˜…â˜…â˜…â˜…</div><div style="font-size:.65rem;color:var(--muted)">{{ row.rating }}/5.0</div></div></td><td class="td-muted">{{ row.reviewed_count }}</td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td></tr>
                 {% empty %}
                 <tr><td colspan="6" class="td-muted">No supervisor data available.</td></tr>
                 {% endfor %}
@@ -709,25 +712,25 @@ svg.chart{overflow:visible;width:100%}
           </div>
  
           <div class="card" style="margin-bottom:1rem">
-            <div class="card-hdr"><div class="card-title">📅 Upcoming Meetings</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Next 7 days</div></div>
+            <div class="card-hdr"><div class="card-title">ðŸ“… Upcoming Meetings</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Next 7 days</div></div>
             <div style="padding:.85rem 1.25rem;display:flex;flex-direction:column;gap:.6rem">
               {% for booking in upcoming_meetings %}
               <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:{% if forloop.first %}var(--amber-dim){% else %}var(--off){% endif %};border:1px solid {% if forloop.first %}rgba(255,193,7,.25){% else %}var(--border){% endif %}">
-                <div style="font-size:1rem;flex-shrink:0">🎓</div>
-                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">{{ booking.student.user.get_full_name|default:booking.student.user.username }} — {{ booking.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ booking.date|date:"d M Y" }} · {{ booking.date|date:"H:i" }} · {{ booking.get_meeting_type_display }}</div></div>
+                <div style="font-size:1rem;flex-shrink:0">ðŸŽ“</div>
+                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">{{ booking.student.user.get_full_name|default:booking.student.user.username }} â€” {{ booking.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ booking.date|date:"d M Y" }} Â· {{ booking.date|date:"H:i" }} Â· {{ booking.get_meeting_type_display }}</div></div>
               </div>
               {% empty %}
-              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)"><div style="font-size:1rem;flex-shrink:0">📅</div><div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">No upcoming meetings</div><div style="font-size:.7rem;color:var(--muted)">Nothing scheduled in the next seven days.</div></div></div>
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)"><div style="font-size:1rem;flex-shrink:0">ðŸ“…</div><div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">No upcoming meetings</div><div style="font-size:.7rem;color:var(--muted)">Nothing scheduled in the next seven days.</div></div></div>
               {% endfor %}
             </div>
           </div>
           <div class="card">
             <div class="card-hdr"><div class="card-title">Quick Actions</div></div>
             <div style="padding:.75rem;display:flex;flex-direction:column;gap:.5rem">
-              <button class="btn btn-amber" style="justify-content:center" onclick="showToast('Report generated')">📄 Generate Department Report</button>
-              <button class="btn btn-navy" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[1],'faculty')">👥 Manage Faculty Assignments</button>
-              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[3],'analytics')">📈 View Analytics Dashboard</button>
-              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">✅ Approve Pending Requests</button>
+              <button class="btn btn-amber" style="justify-content:center" onclick="generatePDF('chair-dashboard-report', 'chair-dashboard-report.pdf')">ðŸ“„ Generate Department Report</button>
+              <button class="btn btn-navy" style="justify-content:center" onclick="openAssignModal()">ðŸ‘¥ Manage Faculty Assignments</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[3],'analytics')">ðŸ“ˆ View Analytics Dashboard</button>
+              <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">âœ… Approve Pending Requests</button>
             </div>
           </div>
         </div>
@@ -735,36 +738,39 @@ svg.chart{overflow:visible;width:100%}
  
       <!-- Program stats -->
       <div class="card">
-        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type — {{ department_name }}</div></div></div>
+        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type â€” {{ department_name }}</div></div></div>
         {% for programme in programme_stats %}
         <div class="prog-stat">
-          <div class="ps-icon" style="background:{% if forloop.first %}rgba(10,25,78,.08){% elif forloop.counter == 2 %}var(--green-dim){% else %}var(--amber-dim){% endif %}">{% if forloop.first %}🎓{% elif forloop.counter == 2 %}📚{% else %}💻{% endif %}</div>
-          <div style="flex:1"><div class="ps-name">{{ programme.name }}</div><div class="ps-meta">{{ programme.duration_text }} · {{ programme.student_count }} students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:{{ programme.avg_progress }}%;background:{{ programme.progress_color }}"></div></div><span class="prog-val"{% if programme.progress_color == 'var(--green)' %} style="color:var(--green)"{% endif %}>{{ programme.avg_progress }}%</span></div></div></div>
+          <div class="ps-icon" style="background:{% if forloop.first %}rgba(10,25,78,.08){% elif forloop.counter == 2 %}var(--green-dim){% else %}var(--amber-dim){% endif %}">{% if forloop.first %}ðŸŽ“{% elif forloop.counter == 2 %}ðŸ“š{% else %}ðŸ’»{% endif %}</div>
+          <div style="flex:1"><div class="ps-name">{{ programme.name }}</div><div class="ps-meta">{{ programme.duration_text }} Â· {{ programme.student_count }} students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:{{ programme.avg_progress }}%;background:{{ programme.progress_color }}"></div></div><span class="prog-val"{% if programme.progress_color == 'var(--green)' %} style="color:var(--green)"{% endif %}>{{ programme.avg_progress }}%</span></div></div></div>
           <span class="pill pill-navy">{{ programme.student_count }} Students</span>
         </div>
         {% empty %}
         <div class="prog-stat"><div style="flex:1" class="td-muted">No programme data available.</div></div>
         {% endfor %}
       </div>
+      </div>
+      </div>
     </section>
 
 
 
  <section class="section-view" id="view-corrections">
+  <div id="corrections-report-content">
   <div class="page-hdr">
     <h2>AI-Powered Transcript to Corrections</h2>
-    <p>Upload or paste seminar minutes · AI extracts structured corrections · You validate before sending to student</p>
+    <p>Upload or paste seminar minutes Â· AI extracts structured corrections Â· You validate before sending to student</p>
   </div>
 
       <!-- PRESENTATION CONTEXT -->
 <div class="context-card">
-  <div class="context-badge">Stage 3 · School Seminar</div>
+  <div class="context-badge">Stage 3 Â· School Seminar</div>
   <div class="context-info">
-    <div class="context-title">Sarah Johnson — PhD Computer Science: Proposal Presentation</div>
+    <div class="context-title">Sarah Johnson â€” PhD Computer Science: Proposal Presentation</div>
     <div class="context-meta">
-      <span>📅 21 March 2026, 10:00 AM</span>
-      <span>🏛 Room B204, Science Block</span>
-      <span>👥 Panel: Dr. M. Chen, Dr. L. Johnson, Dr. R. Davis</span>
+      <span>ðŸ“… 21 March 2026, 10:00 AM</span>
+      <span>ðŸ› Room B204, Science Block</span>
+      <span>ðŸ‘¥ Panel: Dr. M. Chen, Dr. L. Johnson, Dr. R. Davis</span>
     </div>
   </div>
   <span class="pill pill-amber">Assessment Score: 78%</span>
@@ -772,7 +778,7 @@ svg.chart{overflow:visible;width:100%}
   <!-- STEP INDICATOR -->
   <div class="steps">
     <div class="step step-done" id="step1">
-      <div class="step-circle">✓</div>
+      <div class="step-circle">âœ“</div>
       <div class="step-label">Assessment<br>Recorded</div>
     </div>
     <div class="step-connector done"></div>
@@ -800,42 +806,42 @@ svg.chart{overflow:visible;width:100%}
  <div class="card" id="panel-transcript">
   <div class="card-hdr">
     <div>
-      <div class="card-title">📄 Upload or Paste Seminar Minutes</div>
+      <div class="card-title">ðŸ“„ Upload or Paste Seminar Minutes</div>
       <div class="card-sub">The AI will extract structured, categorised corrections from the raw transcript</div>
     </div>
   </div>
   <div class="card-body">
  <!-- File upload zone -->
  <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone">
-  <div class="upload-icon">📁</div>
+  <div class="upload-icon">ðŸ“</div>
   <div class="upload-label">Click to upload transcript file</div>
-  <div class="upload-sub">Supports .txt, .docx, .pdf · Max 10MB</div>
+  <div class="upload-sub">Supports .txt, .docx, .pdf Â· Max 10MB</div>
   <input type="file" id="file-input" accept=".txt,.docx,.pdf" style="display:none" onchange="handleFileUpload(this)"/>
 </div>
 <div id="file-loaded" class="hidden" style="background:var(--green-dim);border:1px solid rgba(22,163,74,.25);padding:.65rem 1rem;display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem">
-          <span style="font-size:1rem">✅</span>
+          <span style="font-size:1rem">âœ…</span>
           <span id="file-name" style="font-size:.8rem;font-weight:600;color:var(--green)">file.txt</span>
-          <button onclick="clearFile()" style="margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem">✕ Remove</button>
+          <button onclick="clearFile()" style="margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem">âœ• Remove</button>
         </div>
         <div class="or-divider">or paste below</div>
 
         <div class="transcript-zone">
-          <textarea class="transcript-textarea" id="transcript-input" placeholder="Paste the raw seminar minutes here…
+          <textarea class="transcript-textarea" id="transcript-input" placeholder="Paste the raw seminar minutes hereâ€¦
 
 Example:
-Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-driven healthcare diagnostics. Panel members reviewed methodology. Dr. Chen noted that the literature review lacks coverage of post-2022 publications — this must be addressed before advancing. Dr. Johnson raised a critical concern regarding the sample size justification, which needs a formal power analysis. The statistical framework in Section 3.2 needs minor corrections to notation. Panel agreed presentation quality was good but the theoretical framework requires stronger grounding. Action: student to revise Chapters 2 and 3 and resubmit within 30 days.">
+Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-driven healthcare diagnostics. Panel members reviewed methodology. Dr. Chen noted that the literature review lacks coverage of post-2022 publications â€” this must be addressed before advancing. Dr. Johnson raised a critical concern regarding the sample size justification, which needs a formal power analysis. The statistical framework in Section 3.2 needs minor corrections to notation. Panel agreed presentation quality was good but the theoretical framework requires stronger grounding. Action: student to revise Chapters 2 and 3 and resubmit within 30 days.">
           </textarea>
           <div class="char-count"><span id="char-count">0</span> characters</div>
         </div>
 
 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:.65rem">
   <div style="font-size:.75rem;color:var(--muted)">
-    💡 Tip: Include panel member names, section references, and specific concerns for best results
+    ðŸ’¡ Tip: Include panel member names, section references, and specific concerns for best results
   </div>
  <div style="display:flex;gap:.5rem">
-  <button class="btn btn-outline btn-sm" onclick="loadSampleTranscript()">📋 Load Sample</button>
+  <button class="btn btn-outline btn-sm" onclick="loadSampleTranscript()">ðŸ“‹ Load Sample</button>
   <button class="btn btn-amber" id="process-btn" onclick="processTranscript()" disabled>
-    ✨ Extract Corrections with AI
+    âœ¨ Extract Corrections with AI
   </button>
 </div>
      </div>
@@ -848,12 +854,12 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
         <div class="ai-spinner-wrap">
           <div class="ai-ring"></div>
           <div class="ai-ring-2"></div>
-          <div class="ai-icon-center">✨</div>
+          <div class="ai-icon-center">âœ¨</div>
         </div>
-        <div class="ai-processing-title">AI is analysing the transcript…</div>
-        <div class="ai-processing-sub">Extracting corrections · Categorising by urgency · Identifying responsible sections</div>
+        <div class="ai-processing-title">AI is analysing the transcriptâ€¦</div>
+        <div class="ai-processing-sub">Extracting corrections Â· Categorising by urgency Â· Identifying responsible sections</div>
         <div class="ai-progress-bar"><div class="ai-progress-fill"></div></div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:.25rem" id="processing-stage-text">Reading transcript…</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:.25rem" id="processing-stage-text">Reading transcriptâ€¦</div>
      
   </div>
 </div><!-- close panel-processing card -->
@@ -862,8 +868,8 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
 <div class="card hidden" id="panel-corrections">
       <div class="card-hdr">
         <div>
-          <div class="card-title">✨ AI-Generated Corrections — Awaiting Your Validation</div>
-          <div class="card-sub">Review each item · Approve, edit, or delete · Add manual items · Then send to student</div>
+          <div class="card-title">âœ¨ AI-Generated Corrections â€” Awaiting Your Validation</div>
+          <div class="card-sub">Review each item Â· Approve, edit, or delete Â· Add manual items Â· Then send to student</div>
         </div>
         <div class="corrections-filters">
           <button class="filter-btn active" onclick="filterCorrections('all',this)">All</button>
@@ -881,10 +887,10 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
 
           <!-- AI note -->
         <div style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;gap:.65rem;align-items:flex-start">
-          <span style="font-size:1rem;flex-shrink:0">🤖</span>
+          <span style="font-size:1rem;flex-shrink:0">ðŸ¤–</span>
           <div style="font-size:.78rem;color:var(--text);line-height:1.6">
             <strong style="color:var(--blue)">AI extracted <span id="total-count">0</span> corrections</strong> from the seminar transcript. 
-            Please review each item carefully — approve those that are accurate, edit for clarity, or delete any that are incorrect. 
+            Please review each item carefully â€” approve those that are accurate, edit for clarity, or delete any that are incorrect. 
             You can also add manual items below. Only validated items will be sent to the student.
           </div>
         </div>
@@ -896,12 +902,12 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
 
         <!-- Add manual item -->
         <div class="add-item-row" id="add-item-row">
-          <span style="font-size:.8rem;color:var(--soft);flex-shrink:0">＋</span>
-          <input type="text" id="new-item-text" placeholder="Add a manual correction item…" onkeydown="if(event.key==='Enter')addManualItem()"/>
+          <span style="font-size:.8rem;color:var(--soft);flex-shrink:0">ï¼‹</span>
+          <input type="text" id="new-item-text" placeholder="Add a manual correction itemâ€¦" onkeydown="if(event.key==='Enter')addManualItem()"/>
           <select class="urgency-select" id="new-item-urgency">
-            <option value="critical">🔴 Critical</option>
-            <option value="major" selected>🟠 Major</option>
-            <option value="minor">🔵 Minor</option>
+            <option value="critical">ðŸ”´ Critical</option>
+            <option value="major" selected>ðŸŸ  Major</option>
+            <option value="minor">ðŸ”µ Minor</option>
           </select>
           <button class="btn btn-navy btn-sm" onclick="addManualItem()">Add</button>
         </div>
@@ -924,9 +930,9 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
           <div class="vs-label">Deleted</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-outline btn-sm" onclick="approveAll()">✓ Approve All</button>
+          <button class="btn btn-outline btn-sm" onclick="approveAll()">âœ“ Approve All</button>
           <button class="btn btn-green" id="submit-btn" onclick="validateAndSend()" disabled>
-            📨 Validate & Send to Student
+            ðŸ“¨ Validate & Send to Student
           </button>
         </div>
       </div>
@@ -934,17 +940,18 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
 
     <!-- STEP 5: SENT CONFIRMATION -->
     <div class="sent-state" id="panel-sent">
-      <div class="sent-icon">🎉</div>
+      <div class="sent-icon">ðŸŽ‰</div>
       <div class="sent-title">Corrections Sent to Student</div>
       <div class="sent-sub">
         Sarah Johnson has been notified of <strong id="sent-count">0</strong> validated corrections.<br>
         She will see these as a checklist on her student dashboard and must mark each item complete before requesting supervisor sign-off.
       </div>
       <div style="margin-top:1.25rem;display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-navy" onclick="location.reload()">↩ Back to Dashboard</button>
-        <button class="btn btn-amber" onclick="showToast('PDF downloaded')">📄 Download Corrections PDF</button>
+        <button class="btn btn-navy" onclick="location.reload()">â†© Back to Dashboard</button>
+        <button type="button" class="btn btn-amber" onclick="generatePDF('corrections-report-content', 'corrections.pdf')">ðŸ“„ Download Corrections PDF</button>
       </div>
      </div><!-- close panel-sent -->
+    </div><!-- close corrections-report-content -->
     </section><!-- close view-corrections -->
 
     <!-- FACULTY & STUDENTS -->
@@ -961,7 +968,7 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
             <thead><tr><th>Supervisor</th><th>Role</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Status</th><th></th></tr></thead>
             <tbody>
               {% for row in supervisor_rows %}
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><div><div class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</div><div class="td-muted" style="font-size:.67rem">{{ row.user.email }}</div></div></div></td><td>{% if row.is_overloaded %}Senior Supervisor{% else %}Supervisor{% endif %}</td><td{% if row.is_overloaded %} style="color:var(--red);font-weight:700"{% endif %}>{{ row.student_count }}{% if row.is_overloaded %} ⚠{% endif %}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val">{{ row.avg_progress }}%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><div><div class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</div><div class="td-muted" style="font-size:.67rem">{{ row.user.email }}</div></div></div></td><td>{% if row.is_overloaded %}Senior Supervisor{% else %}Supervisor{% endif %}</td><td{% if row.is_overloaded %} style="color:var(--red);font-weight:700"{% endif %}>{{ row.student_count }}{% if row.is_overloaded %} âš {% endif %}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val">{{ row.avg_progress }}%</span></div></td><td><div class="stars" style="font-size:.7rem">â˜…â˜…â˜…â˜…â˜…</div></td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td><td><button class="btn btn-outline btn-xs" onclick="openAssignModal('{{ row.user.id }}')">Assign</button></td></tr>
               {% empty %}
               <tr><td colspan="7" class="td-muted">No supervisors available.</td></tr>
               {% endfor %}
@@ -997,21 +1004,23 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
  
     <!-- REPORTS -->
     <section class="section-view" id="view-reports">
-      <div class="page-hdr"><div><h2>Reports</h2><p>Department performance reports and summaries</p></div><button class="btn btn-amber" onclick="showToast('New report generated')">+ Generate Report</button></div>
+      <div id="chair-reports-export">
+      <div>
+      <div class="page-hdr"><div><h2>Reports</h2><p>Department performance reports and summaries</p></div><button type="button" class="btn btn-amber" onclick="generatePDF('chair-reports-export', 'chair-reports-report.pdf')">+ Generate Report</button></div>
       <div class="stat-grid">
-        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Reports Generated</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">{{ stats.reports_generated }}</div><div class="stat-sub">Generated from live departmental data</div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">{{ stats.completion_rate }}%</div><div class="stat-sub">Current average milestone completion</div></div>
-        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Submission Score</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">{{ analytics.approval_rate }}%</div><div class="stat-sub">Approved submission rate</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Risk</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub">Students currently needing support</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Reports Generated</span><div class="stat-ico ico-navy">ðŸ“Š</div></div><div class="stat-val">{{ stats.reports_generated }}</div><div class="stat-sub">Generated from live departmental data</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-green">âœ…</div></div><div class="stat-val">{{ stats.completion_rate }}%</div><div class="stat-sub">Current average milestone completion</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Submission Score</span><div class="stat-ico ico-amber">ðŸŽ¯</div></div><div class="stat-val">{{ analytics.approval_rate }}%</div><div class="stat-sub">Approved submission rate</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Risk</span><div class="stat-ico ico-red">ðŸ“‰</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub">Students currently needing support</div></div>
       </div>
-      <div class="card">
+      <div class="card" id="chair-report-archive-card">
         <div class="card-hdr"><div class="card-title">Report Archive</div></div>
         <div class="tbl-wrap">
-          <table>
+          <table id="chair-report-archive-table">
             <thead><tr><th>Report Title</th><th>Type</th><th>Generated</th><th>Scope</th><th>Actions</th></tr></thead>
             <tbody>
               {% for report in report_archive %}
-              <tr><td class="td-bold">{{ report.title }}</td><td class="td-muted">{{ report.type }}</td><td class="td-muted">{% if report.generated %}{{ report.generated|date:"d M Y" }}{% else %}-{% endif %}</td><td>{{ report.scope }}</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              <tr><td class="td-bold">{{ report.title }}</td><td class="td-muted">{{ report.type }}</td><td class="td-muted">{% if report.generated %}{{ report.generated|date:"d M Y" }}{% else %}-{% endif %}</td><td>{{ report.scope }}</td><td><button class="btn btn-navy btn-xs" onclick="exportTableRowPdf(this, 'Chair Report')">â¬‡ Download</button></td></tr>
               {% empty %}
               <tr><td colspan="5" class="td-muted">No reports generated yet.</td></tr>
               {% endfor %}
@@ -1019,16 +1028,18 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
           </table>
         </div>
       </div>
+      </div>
+      </div>
     </section>
  
     <!-- ANALYTICS -->
     <section class="section-view" id="view-analytics">
-      <div class="page-hdr"><div><h2>Analytics</h2><p>Detailed performance analytics — {{ department_name }}</p></div></div>
+      <div class="page-hdr"><div><h2>Analytics</h2><p>Detailed performance analytics â€” {{ department_name }}</p></div></div>
       <div class="stat-grid">
-        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Completion Rate</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">{{ analytics.phd_completion }}%</div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Completion</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">{{ analytics.masters_completion }}%</div></div>
-        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Time to Complete</span><div class="stat-ico ico-amber">⏱️</div></div><div class="stat-val">2.8y</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span></div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Completion Rate</span><div class="stat-ico ico-navy">ðŸŽ“</div></div><div class="stat-val">{{ analytics.phd_completion }}%</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Completion</span><div class="stat-ico ico-green">ðŸ“š</div></div><div class="stat-val">{{ analytics.masters_completion }}%</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Time to Complete</span><div class="stat-ico ico-amber">â±ï¸</div></div><div class="stat-val">2.8y</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">ðŸ“‰</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">â†“ from 6.2%</span></div></div>
       </div>
       <div class="grid-2">
         <div class="card">
@@ -1059,7 +1070,7 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
             <thead><tr><th>Student</th><th>Request Type</th><th>Details</th><th>Submitted</th><th>Priority</th><th>Actions</th></tr></thead>
             <tbody>
               {% for item in pending_approvals %}
-              <tr><td class="td-bold">{{ item.student_name }}</td><td>{{ item.request_type }}</td><td class="td-muted">{{ item.details }}</td><td class="td-muted">{{ item.submitted_label }}</td><td><span class="pill {{ item.priority_badge }}">{{ item.priority_label }}</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+              <tr><td class="td-bold">{{ item.student_name }}</td><td>{{ item.request_type }}</td><td class="td-muted">{{ item.details }}</td><td class="td-muted">{{ item.submitted_label }}</td><td><span class="pill {{ item.priority_badge }}">{{ item.priority_label }}</span></td><td><form method="POST" action="{% url 'chair_approve_request' item.id %}" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="approve"/><button class="btn btn-green btn-xs" type="submit">âœ“ Approve</button></form> <form method="POST" action="{% url 'chair_approve_request' item.id %}" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="defer"/><button class="btn btn-outline btn-xs" type="submit">Defer</button></form></td></tr>
               {% empty %}
               <tr><td colspan="6" class="td-muted">No pending approvals.</td></tr>
               {% endfor %}
@@ -1100,37 +1111,132 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
 <!-- MODALS -->
 <div class="modal-overlay" id="assign-modal">
   <div class="modal">
-    <div class="modal-hdr"><div class="modal-title">Reassign Students</div><button class="modal-close" onclick="closeModal('assign-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">From Supervisor</label><select class="form-control"><option>Dr. Michael Chen (15 students)</option></select></div>
-      <div class="form-group"><label class="form-label">To Supervisor</label><select class="form-control"><option>Dr. Lisa Johnson (8 students — capacity available)</option><option>Dr. John Williams (10 students)</option></select></div>
-      <div class="form-group"><label class="form-label">Students to Reassign</label>
-        <div style="border:1px solid var(--border);padding:.5rem">
-          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox" checked/> Emily Brown — PhD CS</label>
-          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox"/> James Wilson — MSc CS</label>
-          <label style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox"/> Maria Garcia — MSc CS</label>
+    <form method="POST" action="{% url 'chair_reassign_students' %}">
+      {% csrf_token %}
+      <div class="modal-hdr"><div class="modal-title">Reassign Students</div><button class="modal-close" type="button" onclick="closeModal('assign-modal')">X</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">From Supervisor</label><select class="form-control" id="from-supervisor" onchange="filterAssignableStudents()">{% for row in supervisor_rows %}<option value="{{ row.user.id }}">{{ row.user.get_full_name|default:row.user.username }} ({{ row.student_count }} students)</option>{% endfor %}</select></div>
+        <div class="form-group"><label class="form-label">To Supervisor</label><select class="form-control" name="new_supervisor_id" id="to-supervisor">{% for row in supervisor_rows %}<option value="{{ row.user.id }}">{{ row.user.get_full_name|default:row.user.username }} ({{ row.student_count }} students)</option>{% endfor %}</select></div>
+        <div class="form-group"><label class="form-label">Students to Reassign</label>
+          <div id="assign-student-list" style="border:1px solid var(--border);padding:.5rem;max-height:220px;overflow:auto">
+            {% for row in student_rows %}
+            <label class="assign-student-item" data-supervisor="{{ row.student.supervisor_id|default:'' }}" style="display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.8rem"><input type="checkbox" name="student_ids" value="{{ row.student.id }}"/> {{ row.name }} — {{ row.programme }}</label>
+            {% empty %}
+            <div class="td-muted" style="padding:.35rem .5rem">No students available for reassignment.</div>
+            {% endfor %}
+          </div>
         </div>
+        <div class="form-group"><label class="form-label">Reason for Reassignment</label><textarea class="form-control" name="reason" rows="4" placeholder="e.g., Workload balancing…"></textarea></div>
       </div>
-      <div class="form-group"><label class="form-label">Reason for Reassignment</label><textarea class="form-control" placeholder="e.g., Workload balancing…"></textarea></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('assign-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('assign-modal');showToast('Students reassigned successfully')">Confirm Reassignment</button></div>
+      <div class="modal-footer"><button class="btn btn-outline" type="button" onclick="closeModal('assign-modal')">Cancel</button><button class="btn btn-navy" type="submit">Confirm Reassignment</button></div>
+    </form>
   </div>
 </div>
  
 <div class="modal-overlay" id="intervention-modal">
   <div class="modal">
-    <div class="modal-hdr"><div class="modal-title">Student Intervention — Emily Brown</div><button class="modal-close" onclick="closeModal('intervention-modal')">✕</button></div>
+    <div class="modal-hdr"><div class="modal-title">Student Intervention â€” Emily Brown</div><button class="modal-close" onclick="closeModal('intervention-modal')">âœ•</button></div>
     <div class="modal-body">
-      <div style="background:var(--red-dim);border:1px solid rgba(220,38,38,.2);padding:1rem;margin-bottom:1rem"><div style="font-weight:700;color:var(--red);margin-bottom:.3rem">⚠ At-Risk Alert</div><div style="font-size:.8rem;color:var(--text)">Emily Brown is 3 months behind schedule with 45% progress. Immediate intervention recommended.</div></div>
+      <div style="background:var(--red-dim);border:1px solid rgba(220,38,38,.2);padding:1rem;margin-bottom:1rem"><div style="font-weight:700;color:var(--red);margin-bottom:.3rem">âš  At-Risk Alert</div><div style="font-size:.8rem;color:var(--text)">Emily Brown is 3 months behind schedule with 45% progress. Immediate intervention recommended.</div></div>
       <div class="form-group"><label class="form-label">Intervention Type</label><select class="form-control"><option>Academic Support Plan</option><option>Supervisor Meeting Required</option><option>Extension Granted</option><option>Academic Probation Notice</option></select></div>
-      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" placeholder="Document the intervention plan…"></textarea></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" placeholder="Document the intervention planâ€¦"></textarea></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('intervention-modal')">Cancel</button><button class="btn btn-navy" onclick="closeModal('intervention-modal');showToast('Intervention recorded')">Record Intervention</button></div>
   </div>
 </div>
  
 <div class="toast" id="toast"></div>
- 
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+const { jsPDF } = window.jspdf;
+
+async function generatePDF(elementId, filename){
+  const target=document.getElementById(elementId);
+  if(!target){
+    showToast('Export section not found');
+    return;
+  }
+  if(window.Chart){
+    await new Promise(resolve=>setTimeout(resolve,500));
+  }
+  const canvas=await html2canvas(target,{
+    scale:2,
+    useCORS:true,
+    backgroundColor:'#F5F7FC',
+    scrollY:-window.scrollY,
+    windowWidth:document.documentElement.scrollWidth
+  });
+  const imgData=canvas.toDataURL('image/png');
+  const pdf=new jsPDF('p','mm','a4');
+  const pageWidth=pdf.internal.pageSize.getWidth();
+  const pageHeight=pdf.internal.pageSize.getHeight();
+  const margin=10;
+  const usableWidth=pageWidth-margin*2;
+  const imgHeight=(canvas.height*usableWidth)/canvas.width;
+  let heightLeft=imgHeight;
+  let position=margin;
+  pdf.addImage(imgData,'PNG',margin,position,usableWidth,imgHeight);
+  heightLeft-=(pageHeight-margin*2);
+  while(heightLeft>0){
+    position=heightLeft-imgHeight+margin;
+    pdf.addPage();
+    pdf.addImage(imgData,'PNG',margin,position,usableWidth,imgHeight);
+    heightLeft-=(pageHeight-margin*2);
+  }
+  pdf.save(filename);
+  showToast('PDF downloaded');
+}
+
+function exportTableRowPdf(button, title){
+  const row=button.closest('tr');
+  const table=button.closest('table');
+  if(!row || !table){
+    showToast('Could not export row');
+    return;
+  }
+  const headers=Array.from(table.querySelectorAll('thead th')).map(th=>th.innerText.trim());
+  const values=Array.from(row.querySelectorAll('td')).map(td=>td.innerText.trim());
+  const pdf=new jsPDF('p','mm','a4');
+  pdf.setFontSize(16);
+  pdf.text(title,14,18);
+  pdf.setFontSize(11);
+  let y=32;
+  headers.forEach((header,index)=>{
+    pdf.text(`${header}: ${values[index] || '-'}`,14,y);
+    y+=9;
+  });
+  pdf.save(`${title.toLowerCase().replace(/\s+/g,'-')}.pdf`);
+  showToast('PDF downloaded');
+}
+
+function openAssignModal(supervisorId=''){
+  openModal('assign-modal');
+  const fromSupervisor=document.getElementById('from-supervisor');
+  if(fromSupervisor && supervisorId){
+    fromSupervisor.value=supervisorId;
+  }
+  filterAssignableStudents();
+}
+
+function filterAssignableStudents(){
+  const fromSupervisor=document.getElementById('from-supervisor');
+  const toSupervisor=document.getElementById('to-supervisor');
+  const selected=fromSupervisor ? fromSupervisor.value : '';
+  document.querySelectorAll('.assign-student-item').forEach(item=>{
+    const matches=item.dataset.supervisor === selected;
+    item.style.display=matches ? 'flex' : 'none';
+    const checkbox=item.querySelector('input[type=\"checkbox\"]');
+    if(checkbox && !matches) checkbox.checked=false;
+  });
+  if(toSupervisor && selected && toSupervisor.value === selected){
+    const alternative=Array.from(toSupervisor.options).find(option=>option.value !== selected);
+    if(alternative) toSupervisor.value=alternative.value;
+  }
+}
+</script>
+
 <script>
 function nav(el,id){
   document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
@@ -1162,10 +1268,18 @@ document.querySelectorAll('.nav-link[onclick]').forEach(link=>{
     this.classList.add('active');
   });
 });
+filterAssignableStudents();
+{% if messages %}
+window.addEventListener('load', ()=>{
+  {% for message in messages %}
+  showToast({{ message|escapejs }});
+  {% endfor %}
+});
+{% endif %}
 let corrections = [];
 let nextId = 1;
 
-const SAMPLE_TRANSCRIPT = `Seminar Minutes — School Seminar, 21 March 2026
+const SAMPLE_TRANSCRIPT = `Seminar Minutes â€” School Seminar, 21 March 2026
 Student: Sarah Johnson | Programme: PhD Computer Science | Stage: Proposal Presentation
 
 Chair Prof. A. Patel opened the session at 10:00 AM. Panel members present: Dr. Michael Chen, Dr. Lisa Johnson, Dr. Robert Davis.
@@ -1176,30 +1290,30 @@ PANEL FEEDBACK:
 
 Dr. Chen: The literature review (Chapter 2) critically lacks coverage of post-2022 publications in the wearable health monitoring domain. The student must expand the review to include recent work by Kumar et al. (2023) and Zhang et al. (2024). This is a critical gap that undermines the novelty claim of the research.
 
-Dr. Johnson: The proposed sample size of 80 participants is not justified statistically. A formal power analysis must be conducted and documented in Section 3.2 before the proposal can advance. This is a critical issue — without proper justification the methodology cannot be approved.
+Dr. Johnson: The proposed sample size of 80 participants is not justified statistically. A formal power analysis must be conducted and documented in Section 3.2 before the proposal can advance. This is a critical issue â€” without proper justification the methodology cannot be approved.
 
-Dr. Davis: The theoretical framework in Section 2.4 needs strengthening. The connection between the Technology Acceptance Model and the proposed IoT sensor architecture is underdeveloped. This is a major concern. Additionally, all figures and tables must include descriptive captions — currently only Figure 1 has a proper caption.
+Dr. Davis: The theoretical framework in Section 2.4 needs strengthening. The connection between the Technology Acceptance Model and the proposed IoT sensor architecture is underdeveloped. This is a major concern. Additionally, all figures and tables must include descriptive captions â€” currently only Figure 1 has a proper caption.
 
-Chair (general): The notation in the statistical analysis section (Section 3.3) uses inconsistent variable naming throughout. Minor issue — please standardise before resubmission. Presentation delivery was clear and confident. The introduction and conclusion chapters were well-structured.
+Chair (general): The notation in the statistical analysis section (Section 3.3) uses inconsistent variable naming throughout. Minor issue â€” please standardise before resubmission. Presentation delivery was clear and confident. The introduction and conclusion chapters were well-structured.
 
 Panel agreed: student to revise Chapters 2 and 3 and resubmit within 30 days for re-evaluation.`;
 
 const AI_CORRECTIONS = [
-  { urgency:'critical', text:'Literature Review (Chapter 2) must be expanded to include post-2022 publications in wearable health monitoring, specifically Kumar et al. (2023) and Zhang et al. (2024).', category:'Literature Review · Section 2' },
-  { urgency:'critical', text:'A formal statistical power analysis must be conducted and documented in Section 3.2 to justify the proposed sample size of 80 participants.', category:'Methodology · Section 3.2' },
-  { urgency:'major', text:'The theoretical framework in Section 2.4 must be strengthened — the connection between the Technology Acceptance Model and the IoT sensor architecture needs fuller development.', category:'Theoretical Framework · Section 2.4' },
-  { urgency:'major', text:'All figures and tables must include descriptive captions. Currently only Figure 1 has a proper caption; all other figures are non-compliant.', category:'Presentation Quality · All Chapters' },
-  { urgency:'minor', text:'Variable naming notation in the statistical analysis section (Section 3.3) is inconsistent throughout. Standardise all variable names before resubmission.', category:'Statistical Analysis · Section 3.3' },
+  { urgency:'critical', text:'Literature Review (Chapter 2) must be expanded to include post-2022 publications in wearable health monitoring, specifically Kumar et al. (2023) and Zhang et al. (2024).', category:'Literature Review Â· Section 2' },
+  { urgency:'critical', text:'A formal statistical power analysis must be conducted and documented in Section 3.2 to justify the proposed sample size of 80 participants.', category:'Methodology Â· Section 3.2' },
+  { urgency:'major', text:'The theoretical framework in Section 2.4 must be strengthened â€” the connection between the Technology Acceptance Model and the IoT sensor architecture needs fuller development.', category:'Theoretical Framework Â· Section 2.4' },
+  { urgency:'major', text:'All figures and tables must include descriptive captions. Currently only Figure 1 has a proper caption; all other figures are non-compliant.', category:'Presentation Quality Â· All Chapters' },
+  { urgency:'minor', text:'Variable naming notation in the statistical analysis section (Section 3.3) is inconsistent throughout. Standardise all variable names before resubmission.', category:'Statistical Analysis Â· Section 3.3' },
 ];
 
-// ── CHAR COUNT ──
+// â”€â”€ CHAR COUNT â”€â”€
 document.getElementById('transcript-input').addEventListener('input', function(){
   const len = this.value.trim().length;
   document.getElementById('char-count').textContent = this.value.length.toLocaleString();
   document.getElementById('process-btn').disabled = len < 50;
 });
 
-// ── FILE UPLOAD ──
+// â”€â”€ FILE UPLOAD â”€â”€
 function handleFileUpload(input){
   if(input.files && input.files[0]){
     document.getElementById('file-name').textContent = input.files[0].name;
@@ -1229,7 +1343,7 @@ function loadSampleTranscript(){
   showToast('Sample transcript loaded');
 }
 
-// ── PROCESS ──
+// â”€â”€ PROCESS â”€â”€
 function processTranscript(){
   // Advance steps
   setStep(2,'done'); setStep(3,'active');
@@ -1237,7 +1351,7 @@ function processTranscript(){
   document.getElementById('panel-transcript').classList.add('hidden');
   document.getElementById('panel-processing').classList.remove('hidden');
 
-  const stages = ['Reading transcript…','Identifying panel feedback…','Categorising corrections…','Ranking by urgency…','Finalising structured output…'];
+  const stages = ['Reading transcriptâ€¦','Identifying panel feedbackâ€¦','Categorising correctionsâ€¦','Ranking by urgencyâ€¦','Finalising structured outputâ€¦'];
   let si = 0;
   const stageEl = document.getElementById('processing-stage-text');
   const stageTimer = setInterval(()=>{
@@ -1258,10 +1372,10 @@ function setStep(n, state){
   const el = document.getElementById('step'+n);
   el.className = 'step step-'+state;
   const circle = el.querySelector('.step-circle');
-  if(state==='done') circle.textContent = '✓';
+  if(state==='done') circle.textContent = 'âœ“';
 }
 
-// ── BUILD CORRECTIONS ──
+// â”€â”€ BUILD CORRECTIONS â”€â”€
 function buildCorrections(){
   corrections = AI_CORRECTIONS.map((c,i)=>({
     id: ++nextId, urgency: c.urgency, text: c.text,
@@ -1294,7 +1408,7 @@ function buildItem(c){
   div.id = 'c-'+c.id;
 
   const tagClass = {critical:'tag-critical',major:'tag-major',minor:'tag-minor'}[c.urgency];
-  const tagLabel = {critical:'🔴 Critical',major:'🟠 Major',minor:'🔵 Minor'}[c.urgency];
+  const tagLabel = {critical:'ðŸ”´ Critical',major:'ðŸŸ  Major',minor:'ðŸ”µ Minor'}[c.urgency];
 
   div.innerHTML = `
     <div class="correction-item-hdr">
@@ -1302,12 +1416,12 @@ function buildItem(c){
       <div style="flex:1">
         <div class="correction-text" id="ct-${c.id}">${c.text}</div>
         <textarea class="correction-edit-input hidden" id="ce-${c.id}">${c.text}</textarea>
-        <div class="correction-category">${c.category} ${c.isAI?'· <em style="color:var(--blue);font-style:normal">AI</em>':'· <em style="color:var(--green);font-style:normal">Manual</em>'}</div>
+        <div class="correction-category">${c.category} ${c.isAI?'Â· <em style="color:var(--blue);font-style:normal">AI</em>':'Â· <em style="color:var(--green);font-style:normal">Manual</em>'}</div>
       </div>
       <div class="correction-actions" id="ca-${c.id}">
         ${c.state==='approved'
-          ? `<span class="approved-check" title="Approved">✅</span><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${c.id})">✏</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${c.id})">🗑</button>`
-          : `<button class="ca-btn ca-approve" title="Approve" onclick="approveItem(${c.id})">✓</button><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${c.id})">✏</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${c.id})">🗑</button>`
+          ? `<span class="approved-check" title="Approved">âœ…</span><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${c.id})">âœ</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${c.id})">ðŸ—‘</button>`
+          : `<button class="ca-btn ca-approve" title="Approve" onclick="approveItem(${c.id})">âœ“</button><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${c.id})">âœ</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${c.id})">ðŸ—‘</button>`
         }
       </div>
     </div>`;
@@ -1321,7 +1435,7 @@ function approveItem(id){
   const el = document.getElementById('c-'+id);
   el.classList.add('approved');
   const ca = document.getElementById('ca-'+id);
-  ca.innerHTML = `<span class="approved-check" title="Approved">✅</span><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${id})">🗑</button>`;
+  ca.innerHTML = `<span class="approved-check" title="Approved">âœ…</span><button class="ca-btn ca-edit" title="Edit" onclick="editItem(${id})">âœ</button><button class="ca-btn ca-delete" title="Delete" onclick="deleteItem(${id})">ðŸ—‘</button>`;
   updateSummary();
 }
 
@@ -1350,7 +1464,7 @@ function saveEdit(id){
   const el = document.getElementById('c-'+id);
   el.classList.add('approved');
   const ca = document.getElementById('ca-'+id);
-  ca.innerHTML = `<span class="approved-check">✅</span><button class="ca-btn ca-edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">🗑</button>`;
+  ca.innerHTML = `<span class="approved-check">âœ…</span><button class="ca-btn ca-edit" onclick="editItem(${id})">âœ</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">ðŸ—‘</button>`;
   updateSummary();
   showToast('Correction saved & approved');
 }
@@ -1364,8 +1478,8 @@ function cancelEdit(id){
   editEl.classList.add('hidden');
   const ca = document.getElementById('ca-'+id);
   ca.innerHTML = c.state==='approved'
-    ? `<span class="approved-check">✅</span><button class="ca-btn ca-edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">🗑</button>`
-    : `<button class="ca-btn ca-approve" onclick="approveItem(${id})">✓</button><button class="ca-btn ca-edit" onclick="editItem(${id})">✏</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">🗑</button>`;
+    ? `<span class="approved-check">âœ…</span><button class="ca-btn ca-edit" onclick="editItem(${id})">âœ</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">ðŸ—‘</button>`
+    : `<button class="ca-btn ca-approve" onclick="approveItem(${id})">âœ“</button><button class="ca-btn ca-edit" onclick="editItem(${id})">âœ</button><button class="ca-btn ca-delete" onclick="deleteItem(${id})">ðŸ—‘</button>`;
 }
 
 function deleteItem(id){
@@ -1389,7 +1503,7 @@ function addManualItem(){
   const text = document.getElementById('new-item-text').value.trim();
   if(!text){ showToast('Please enter correction text'); return; }
   const urgency = document.getElementById('new-item-urgency').value;
-  const cats = {critical:'Chair Note — Critical',major:'Chair Note — Major',minor:'Chair Note — Minor'};
+  const cats = {critical:'Chair Note â€” Critical',major:'Chair Note â€” Major',minor:'Chair Note â€” Minor'};
   const c = { id:++nextId, urgency, text, category:cats[urgency], state:'pending', isAI:false };
   corrections.push(c);
   document.getElementById('new-item-text').value = '';
@@ -1433,7 +1547,7 @@ function updateSummary(){
   updateSummaryStrip();
 }
 
-// ── SUBMIT ──
+// â”€â”€ SUBMIT â”€â”€
 function validateAndSend(){
   const approved = corrections.filter(c=>c.state==='approved');
   setStep(4,'done'); setStep(5,'active');
@@ -1444,15 +1558,54 @@ function validateAndSend(){
   // Store for student page demo (localStorage for demo only)
   const payload = approved.map(c=>({ id:c.id, urgency:c.urgency, text:c.text, category:c.category, done:false }));
   try{ localStorage.setItem('papms_corrections', JSON.stringify(payload)); }catch(e){}
-  showToast('✅ Corrections sent to Sarah Johnson');
+  showToast('âœ… Corrections sent to Sarah Johnson');
 }
 
-// ── TOAST ──
+// â”€â”€ TOAST â”€â”€
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
 </script>
+{% include 'includes/pdf_scripts.html' %}
+<script>
+function exportTableRowPdf(button, reportTitle) {
+  if (!window.jspdf) {
+    showToast('PDF library not loaded');
+    return;
+  }
+  const row = button.closest('tr');
+  const table = button.closest('table');
+  if (!row || !table) {
+    showToast('Could not export row');
+    return;
+  }
+  const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.trim());
+  const values = Array.from(row.querySelectorAll('td')).map(td => td.innerText.trim());
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  pdf.setFontSize(16);
+  pdf.text(reportTitle, 14, 18);
+  pdf.setFontSize(11);
+  let y = 32;
+  headers.forEach((header, index) => {
+    const value = values[index] || '-';
+    pdf.text(header + ': ' + value, 14, y);
+    y += 9;
+  });
+  pdf.save(reportTitle.toLowerCase().replace(/\s+/g, '-') + '.pdf');
+  showToast('PDF downloaded');
+}
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+

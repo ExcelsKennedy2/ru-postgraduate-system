@@ -2,14 +2,16 @@ import json
 from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Avg
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 
-from students.models import Student
+from students.models import Student, PresentationBooking, QuarterlyReport
 from assessments.models import Submission, Feedback
 from assessments.forms import SubmissionForm
-from students.forms import PresentationBookingForm, StudentProfileForm
+from students.forms import PresentationBookingForm, StudentProfileForm, QuarterlyReportForm
 from pipeline.models import Milestone, StudentProgress
 from notifications.models import Notification
 from erp_integration.services import get_finance_clearance
@@ -257,10 +259,6 @@ def student_dashboard(request):
     return render(request, "students/student.html", context)
 
 
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from assessments.models import Submission
-
 @login_required
 def submissions_api(request):
     student = request.user.student_profile
@@ -299,79 +297,29 @@ def submissions_api(request):
     # return JsonResponse({"submissions": data})
 
 
-
-import io
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from xhtml2pdf import pisa
-
-from students.models import Student
-from assessments.models import Submission, Feedback
-from pipeline.models import Milestone, StudentProgress
-
 @login_required
 def download_submission(request, submission_id):
-    # Get the student and submission
     student = get_object_or_404(Student, user=request.user)
     submission = get_object_or_404(Submission, id=submission_id, student=student)
     feedbacks = Feedback.objects.filter(submission=submission)
-
-    # Render HTML template
-    html_string = render_to_string("students/submission_pdf.html", {
+    return render(request, "students/submission_report.html", {
         "student": student,
         "submission": submission,
         "feedbacks": feedbacks,
     })
 
-    # Create a PDF file in memory
-    pdf_file = io.BytesIO()
-    pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
-
-    if pisa_status.err:
-        return HttpResponse("We had some errors generating the PDF.", content_type="text/plain")
-
-    pdf_file.seek(0)
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{submission.title}.pdf"'
-    return response
 
 @login_required
 def download_all_submissions(request):
     student = get_object_or_404(Student, user=request.user)
     submissions = Submission.objects.filter(student=student).order_by('-submitted_at')
-    
     all_feedbacks = Feedback.objects.filter(submission__in=submissions).select_related('submission')
-
-    # Render all submissions in a single template
-    html_string = render_to_string("students/all_submissions_pdf.html", {
+    return render(request, "students/all_submissions_report.html", {
         "student": student,
         "submissions": submissions,
         "feedbacks": all_feedbacks,
     })
 
-    pdf_file = io.BytesIO()
-    pisa_status = pisa.CreatePDF(src=html_string, dest=pdf_file)
-
-    if pisa_status.err:
-        return HttpResponse("Error generating PDF.", content_type="text/plain")
-
-    pdf_file.seek(0)
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    # response['Content-Disposition'] = f'attachment; filename="{student.full_name}_all_reports.pdf"'
-    response['Content-Disposition'] = f'attachment; filename="{student.user.get_full_name() or student.user.username}_all_reports.pdf"'
-    return response
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from django.contrib import messages
-from django.core.exceptions import ValidationError
-from .models import PresentationBooking
-from .forms import PresentationBookingForm
-from .models import QuarterlyReport
-from .forms import QuarterlyReportForm
 
 @login_required
 def book_presentation(request):
@@ -461,46 +409,3 @@ def submit_quarterly_report(request, pk):
     else:
         messages.error(request, 'Report is not in draft status.')
     return redirect('detail_quarterly_report', pk=pk)
-
-
-# import io
-# from django.http import HttpResponse
-# from reportlab.pdfgen import canvas
-# from django.contrib.auth.decorators import login_required
-# from django.shortcuts import get_object_or_404
-
-# from students.models import Student
-# from assessments.models import Submission, Feedback
-
-# @login_required
-# def download_submission(request, submission_id):
-#     student = get_object_or_404(Student, user=request.user)
-#     submission = get_object_or_404(Submission, id=submission_id, student=student)
-#     feedbacks = Feedback.objects.filter(submission=submission)
-
-#     buffer = io.BytesIO()
-#     p = canvas.Canvas(buffer)
-
-#     # Title
-#     p.setFont("Helvetica-Bold", 14)
-#     p.drawString(100, 800, f"Submission Report")
-
-#     # Student info
-#     p.setFont("Helvetica", 10)
-#     p.drawString(100, 780, f"Student: {student.user.get_full_name()}")
-#     p.drawString(100, 760, f"Title: {submission.title}")
-#     p.drawString(100, 740, f"Type: {submission.type}")
-
-#     y = 700
-#     p.drawString(100, y, "Feedback:")
-#     y -= 20
-
-#     for fb in feedbacks:
-#         p.drawString(100, y, f"- {fb.comment}")
-#         y -= 20
-
-#     p.showPage()
-#     p.save()
-
-#     buffer.seek(0)
-#     return HttpResponse(buffer, content_type='application/pdf')

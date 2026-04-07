@@ -1,11 +1,14 @@
 from collections import defaultdict
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Prefetch
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
 from assessments.models import Submission
+from chair.models import SupervisorReassignment
 from notifications.models import Notification
 from pipeline.models import Milestone
 from students.models import PresentationBooking, QuarterlyReport, Student
@@ -49,6 +52,11 @@ def _student_progress(student, today):
     }
 
 
+def _chair_redirect(section=""):
+    url = reverse("chair_dashboard")
+    return f"{url}#{section}" if section else url
+
+
 @login_required
 @user_passes_test(lambda u: u.role in ["chair", "admin", "dean"])
 def chair_dashboard(request):
@@ -76,7 +84,9 @@ def chair_dashboard(request):
         )
         .order_by("first_name", "last_name", "username")
     )
-    submissions = list(Submission.objects.select_related("student__user", "student__supervisor").order_by("-submitted_at"))
+    submissions = list(
+        Submission.objects.select_related("student__user", "student__supervisor", "reviewed_by").order_by("-submitted_at")
+    )
     reports = list(QuarterlyReport.objects.select_related("student__user").order_by("-submitted_at"))
     bookings = list(
         PresentationBooking.objects.select_related("student__user")
@@ -173,9 +183,10 @@ def chair_dashboard(request):
 
     pending_approvals = []
     for submission in submissions:
-        if submission.status in {"submitted", "pending", "revision"}:
+        if submission.status in {"submitted", "pending", "revision"} and submission.chair_status == "pending":
             pending_approvals.append(
                 {
+                    "id": submission.id,
                     "student_name": submission.student.user.get_full_name() or submission.student.user.username,
                     "request_type": "Submission Review",
                     "details": f"{submission.student.programme} - {submission.title}",
@@ -265,6 +276,7 @@ def chair_dashboard(request):
             "completion_rate": completion_rate,
         },
         "supervisor_rows": supervisor_rows,
+        "supervisors": supervisors,
         "alerts": alerts,
         "upcoming_meetings": bookings,
         "programme_stats": programme_stats,
@@ -284,3 +296,66 @@ def chair_dashboard(request):
         },
     }
     return render(request, 'chair/chair.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: u.role in ["chair", "admin", "dean"])
+def chair_approve_request(request, submission_id):
+    if request.method != "POST":
+        return redirect(_chair_redirect("view-approvals"))
+
+    submission = get_object_or_404(Submission.objects.select_related("student__user"), pk=submission_id)
+    action = request.POST.get("action")
+
+    if action not in {"approve", "defer"}:
+        messages.error(request, "Invalid approval action.")
+        return redirect(_chair_redirect("view-approvals"))
+
+    submission.reviewed_by = request.user
+    submission.reviewed_at = timezone.now()
+    if action == "approve":
+        submission.chair_status = "approved"
+        submission.status = "approved"
+        messages.success(request, "Request approved.")
+    else:
+        submission.chair_status = "deferred"
+        submission.status = "pending"
+        messages.success(request, "Request deferred.")
+    submission.save(update_fields=["chair_status", "status", "reviewed_by", "reviewed_at"])
+    return redirect(_chair_redirect("view-approvals"))
+
+
+@login_required
+@user_passes_test(lambda u: u.role in ["chair", "admin", "dean"])
+def chair_reassign_students(request):
+    if request.method != "POST":
+        return redirect(_chair_redirect("view-faculty"))
+
+    new_supervisor_id = request.POST.get("new_supervisor_id")
+    student_ids = request.POST.getlist("student_ids")
+    reason = request.POST.get("reason", "").strip()
+
+    if not new_supervisor_id or not student_ids or not reason:
+        messages.error(request, "Supervisor, students, and reassignment reason are required.")
+        return redirect(_chair_redirect("view-faculty"))
+
+    new_supervisor = get_object_or_404(User, pk=new_supervisor_id, role="supervisor")
+    students = list(Student.objects.select_related("supervisor", "user").filter(pk__in=student_ids))
+
+    if not students:
+        messages.error(request, "No students selected for reassignment.")
+        return redirect(_chair_redirect("view-faculty"))
+
+    for student in students:
+        SupervisorReassignment.objects.create(
+            student=student,
+            previous_supervisor=student.supervisor,
+            new_supervisor=new_supervisor,
+            reason=reason,
+            reassigned_by=request.user,
+        )
+        student.supervisor = new_supervisor
+        student.save(update_fields=["supervisor"])
+
+    messages.success(request, f"{len(students)} student(s) reassigned successfully.")
+    return redirect(_chair_redirect("view-faculty"))
