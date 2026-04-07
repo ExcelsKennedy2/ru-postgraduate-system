@@ -458,7 +458,6 @@ def supervisor_dashboard(request):
     feedback_form = FeedbackForm()
     feedback_form.fields["submission"].queryset = submissions_qs
     feedback_form.fields["submission"].widget.attrs.update({"class": "form-control"})
-    feedback_form.fields["score"].widget.attrs.update({"class": "form-control"})
     feedback_form.fields["comment"].widget.attrs.update({"class": "form-control", "rows": 5})
 
     context = {

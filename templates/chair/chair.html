@@ -629,7 +629,7 @@ svg.chart{overflow:visible;width:100%}
     <a class="nav-link" onclick="nav(this,'faculty')"><span class="ni">👥</span> Faculty & Students</a>
     <a class="nav-link" onclick="nav(this,'reports')"><span class="ni">📊</span> Reports</a>
     <a class="nav-link" onclick="nav(this,'analytics')"><span class="ni">📈</span> Analytics</a>
-    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">✅</span> Approvals <span class="nav-badge">8</span></a>
+    <a class="nav-link" onclick="nav(this,'approvals')"><span class="ni">✅</span> Approvals <span class="nav-badge">{{ stats.pending_approvals }}</span></a>
     <a class="nav-link" onclick="nav(this,'settings')"><span class="ni">⚙️</span> Settings</a>
   </nav>
   <nav class="nav-section">
@@ -638,8 +638,8 @@ svg.chart{overflow:visible;width:100%}
   </nav>
   <div class="sidebar-footer">
     <div class="user-mini">
-      <div class="user-av">ER</div>
-      <div><div class="user-mini-name">Prof. Emily Rodriguez</div><div class="user-mini-role">Department Chair</div></div>
+      <div class="user-av">{{ chair_initials }}</div>
+      <div><div class="user-mini-name">{{ chair_name }}</div><div class="user-mini-role">{{ chair_role_title }}</div></div>
       <a href="{% url 'logout' %}" class="logout-btn">⍈ Logout</a
     </div>
   </div>
@@ -649,8 +649,8 @@ svg.chart{overflow:visible;width:100%}
   <header class="topbar">
     <div style="font-size:1rem;font-weight:700;color:var(--navy)" id="topbar-title">Department Chair Dashboard</div>
     <div class="topbar-right">
-      <div class="tb-notif" onclick="showToast('5 new alerts')">🔔<span class="tb-notif-dot"></span></div>
-      <div class="tb-pill"><div class="tb-av">ER</div><div><div class="tb-name">Prof. Emily Rodriguez</div><div class="tb-role">Chair</div></div></div>
+      <div class="tb-notif" onclick="showToast('{{ notifications|length }} new alerts')">🔔{% if notifications %}<span class="tb-notif-dot"></span>{% endif %}</div>
+      <div class="tb-pill"><div class="tb-av">{{ chair_initials }}</div><div><div class="tb-name">{{ chair_name }}</div><div class="tb-role">Chair</div></div></div>
       <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
     </div>
   </header>
@@ -660,7 +660,7 @@ svg.chart{overflow:visible;width:100%}
     <!-- DASHBOARD -->
     <section class="section-view active" id="view-dashboard">
       <div class="page-hdr">
-        <div><h2>Department Chair Dashboard 📊</h2><p>Computer Science Department — Q1 2026 Overview</p></div>
+        <div><h2>Department Chair Dashboard 📊</h2><p>{{ department_name }} — live departmental overview</p></div>
         <div class="page-hdr-actions">
           <button class="btn btn-outline" onclick="nav(document.querySelectorAll('.nav-link')[2],'reports')">📊 Reports</button>
           <button class="btn btn-amber" onclick="showToast('Department report generated')">📄 Generate Report</button>
@@ -668,10 +668,10 @@ svg.chart{overflow:visible;width:100%}
       </div>
  
       <div class="stat-grid">
-        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red">📋</div></div><div class="stat-val">4</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
-        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber">🚨</div></div><div class="stat-val">5</div><div class="stat-sub"><span class="dn">2 urgent — action needed</span></div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">👥</div></div><div class="stat-val">12</div><div class="stat-sub">8 Full-time · 4 Part-time</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">5</div><div class="stat-sub"><span class="dn">2 urgent cases</span></div></div>
+        <div class="stat-card s-red" style="cursor:pointer" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"><div class="stat-head"><span class="stat-lbl">Pending Correction Approvals</span><div class="stat-ico ico-red">📋</div></div><div class="stat-val">{{ stats.pending_approvals }}</div><div class="stat-sub"><span class="dn">Awaiting your sign-off</span></div></div>
+        <div class="stat-card s-amber" style="cursor:pointer"><div class="stat-head"><span class="stat-lbl">At-Risk Students</span><div class="stat-ico ico-amber">🚨</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub"><span class="dn">Students below expected progress</span></div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Active Supervisors</span><div class="stat-ico ico-green">👥</div></div><div class="stat-val">{{ stats.active_supervisors }}</div><div class="stat-sub">{{ supervisor_rows|length }} supervisors in directory</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Issues Requiring Attention</span><div class="stat-ico ico-red">⚠️</div></div><div class="stat-val">{{ stats.issues }}</div><div class="stat-sub"><span class="dn">Escalation candidates and overload alerts</span></div></div>
 
           
         </div>
@@ -688,11 +688,11 @@ svg.chart{overflow:visible;width:100%}
             <table>
               <thead><tr><th>Supervisor</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Submissions Reviewed</th><th>Status</th></tr></thead>
               <tbody>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">MC</div><span class="td-bold">Dr. Michael Chen</span></div></td><td>15</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.8/5.0</div></div></td><td class="td-muted">25</td><td><span class="pill pill-amber">Excellent</span></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">SS</div><span class="td-bold">Dr. Sarah Smith</span></div></td><td>12</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.5/5.0</div></div></td><td class="td-muted">18</td><td><span class="pill pill-green">Good</span></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><span class="td-bold">Dr. John Williams</span></div></td><td>10</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--green)"></div></div><span class="prog-val">75%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">4.7/5.0</div></div></td><td class="td-muted">22</td><td><span class="pill pill-amber">Excellent</span></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">LJ</div><span class="td-bold">Dr. Lisa Johnson</span></div></td><td>8</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--navy)"></div></div><span class="prog-val">65%</span></div></td><td><div><div class="stars">★★★★☆</div><div style="font-size:.65rem;color:var(--muted)">4.3/5.0</div></div></td><td class="td-muted">14</td><td><span class="pill pill-green">Good</span></td></tr>
-                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#EA580C;color:#fff">RD</div><span class="td-bold">Dr. Robert Davis</span></div></td><td>9</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:58%;background:var(--orange)"></div></div><span class="prog-val" style="color:var(--orange)">58%</span></div></td><td><div><div class="stars">★★★★☆</div><div style="font-size:.65rem;color:var(--muted)">4.0/5.0</div></div></td><td class="td-muted">12</td><td><span class="pill pill-orange">Fair</span></td></tr>
+                {% for row in supervisor_rows %}
+                <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><span class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</span></div></td><td>{{ row.student_count }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val"{% if row.avg_progress < 60 %} style="color:var(--orange)"{% endif %}>{{ row.avg_progress }}%</span></div></td><td><div><div class="stars">★★★★★</div><div style="font-size:.65rem;color:var(--muted)">{{ row.rating }}/5.0</div></div></td><td class="td-muted">{{ row.reviewed_count }}</td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td></tr>
+                {% empty %}
+                <tr><td colspan="6" class="td-muted">No supervisor data available.</td></tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -702,28 +702,23 @@ svg.chart{overflow:visible;width:100%}
           <div class="card" style="margin-bottom:1rem">
             <div class="card-hdr"><div class="card-title">Priority Alerts</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Issues needing immediate attention</div></div>
             <div style="padding:.85rem 1.25rem">
-              <div class="alert-card"><div class="alert-ico" style="background:var(--red-dim)">⚠️</div><div><div class="alert-title">Student Progress Review</div><div class="alert-desc">3 students below 50% progress threshold in PhD CS</div><div class="alert-action alert-action-red">Review Now →</div></div></div>
-              <div class="alert-card"><div class="alert-ico" style="background:var(--amber-dim)">👥</div><div><div class="alert-title">Supervisor Overload</div><div class="alert-desc">Dr. Chen has 15 students — max is 12</div><div class="alert-action alert-action-amber">Rebalance Load →</div></div></div>
-              <div class="alert-card"><div class="alert-ico" style="background:var(--blue-dim)">⏰</div><div><div class="alert-title">8 Pending Approvals</div><div class="alert-desc">Thesis proposals awaiting chair sign-off</div><div class="alert-action alert-action-blue" onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')">View All →</div></div></div>
-              <div class="alert-card"><div class="alert-ico" style="background:var(--green-dim)">🎉</div><div><div class="alert-title">Recent Completions</div><div class="alert-desc">5 students completed their programme this month</div><div class="alert-action alert-action-green">View Details →</div></div></div>
+              {% for alert in alerts %}
+              <div class="alert-card"><div class="alert-ico" style="{{ alert.icon_style }}">{{ alert.symbol }}</div><div><div class="alert-title">{{ alert.icon }}</div><div class="alert-desc">{{ alert.description }}</div><div class="alert-action {{ alert.action_class }}"{% if alert.icon == 'Pending Approvals' %} onclick="nav(document.querySelectorAll('.nav-link')[4],'approvals')"{% endif %}>{{ alert.action_text }}</div></div></div>
+              {% endfor %}
             </div>
           </div>
  
           <div class="card" style="margin-bottom:1rem">
             <div class="card-hdr"><div class="card-title">📅 Upcoming Meetings</div><div class="card-sub" style="font-size:.7rem;color:var(--muted)">Next 7 days</div></div>
             <div style="padding:.85rem 1.25rem;display:flex;flex-direction:column;gap:.6rem">
-              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--amber-dim);border:1px solid rgba(255,193,7,.25)">
+              {% for booking in upcoming_meetings %}
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:{% if forloop.first %}var(--amber-dim){% else %}var(--off){% endif %};border:1px solid {% if forloop.first %}rgba(255,193,7,.25){% else %}var(--border){% endif %}">
                 <div style="font-size:1rem;flex-shrink:0">🎓</div>
-                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">Sarah Johnson — School Seminar</div><div style="font-size:.7rem;color:var(--muted)">24 Mar 2026 · 10:00 AM · Room B204</div></div>
+                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">{{ booking.student.user.get_full_name|default:booking.student.user.username }} — {{ booking.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ booking.date|date:"d M Y" }} · {{ booking.date|date:"H:i" }} · {{ booking.get_meeting_type_display }}</div></div>
               </div>
-              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)">
-                <div style="font-size:1rem;flex-shrink:0">👥</div>
-                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">Faculty Supervisors Meeting</div><div style="font-size:.7rem;color:var(--muted)">26 Mar 2026 · 2:00 PM · Boardroom</div></div>
-              </div>
-              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)">
-                <div style="font-size:1rem;flex-shrink:0">📋</div>
-                <div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">Alex Turner — Progress Review</div><div style="font-size:.7rem;color:var(--muted)">28 Mar 2026 · 11:00 AM · Office 310</div></div>
-              </div>
+              {% empty %}
+              <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.6rem .75rem;background:var(--off);border:1px solid var(--border)"><div style="font-size:1rem;flex-shrink:0">📅</div><div><div style="font-size:.8rem;font-weight:700;color:var(--navy)">No upcoming meetings</div><div style="font-size:.7rem;color:var(--muted)">Nothing scheduled in the next seven days.</div></div></div>
+              {% endfor %}
             </div>
           </div>
           <div class="card">
@@ -740,22 +735,16 @@ svg.chart{overflow:visible;width:100%}
  
       <!-- Program stats -->
       <div class="card">
-        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type — CS Department</div></div></div>
+        <div class="card-hdr"><div class="card-hdr-left"><div class="card-title">Programme Statistics</div><div class="card-sub">Breakdown by programme type — {{ department_name }}</div></div></div>
+        {% for programme in programme_stats %}
         <div class="prog-stat">
-          <div class="ps-icon" style="background:rgba(10,25,78,.08)">🎓</div>
-          <div style="flex:1"><div class="ps-name">PhD Computer Science</div><div class="ps-meta">Avg. Duration: 4.2 years · 20 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">85%</span></div></div></div>
-          <span class="pill pill-navy">20 Students</span>
+          <div class="ps-icon" style="background:{% if forloop.first %}rgba(10,25,78,.08){% elif forloop.counter == 2 %}var(--green-dim){% else %}var(--amber-dim){% endif %}">{% if forloop.first %}🎓{% elif forloop.counter == 2 %}📚{% else %}💻{% endif %}</div>
+          <div style="flex:1"><div class="ps-name">{{ programme.name }}</div><div class="ps-meta">{{ programme.duration_text }} · {{ programme.student_count }} students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:{{ programme.avg_progress }}%;background:{{ programme.progress_color }}"></div></div><span class="prog-val"{% if programme.progress_color == 'var(--green)' %} style="color:var(--green)"{% endif %}>{{ programme.avg_progress }}%</span></div></div></div>
+          <span class="pill pill-navy">{{ programme.student_count }} Students</span>
         </div>
-        <div class="prog-stat">
-          <div class="ps-icon" style="background:var(--green-dim)">📚</div>
-          <div style="flex:1"><div class="ps-name">Masters Computer Science</div><div class="ps-meta">Avg. Duration: 2.1 years · 30 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">92%</span></div></div></div>
-          <span class="pill pill-navy">30 Students</span>
-        </div>
-        <div class="prog-stat">
-          <div class="ps-icon" style="background:var(--amber-dim)">💻</div>
-          <div style="flex:1"><div class="ps-name">Masters Data Science</div><div class="ps-meta">Avg. Duration: 2.0 years · 10 students enrolled</div><div style="margin-top:.4rem"><div class="prog-wrap"><div class="prog-bar" style="max-width:300px"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div></div></div>
-          <span class="pill pill-navy">10 Students</span>
-        </div>
+        {% empty %}
+        <div class="prog-stat"><div style="flex:1" class="td-muted">No programme data available.</div></div>
+        {% endfor %}
       </div>
     </section>
 
@@ -960,21 +949,22 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
 
     <!-- FACULTY & STUDENTS -->
     <section class="section-view" id="view-faculty">
-      <div class="page-hdr"><div><h2>Faculty & Students</h2><p>Complete directory for Computer Science Department</p></div></div>
+      <div class="page-hdr"><div><h2>Faculty & Students</h2><p>Complete directory for {{ department_name }}</p></div></div>
       <div class="card" style="margin-bottom:1rem">
         <div class="tabs" id="fac-tabs">
-          <button class="tab-btn active" onclick="switchTab('fac-tabs','ft-supervisors',this)">Supervisors (12)</button>
-          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-students',this)">All Students (60)</button>
-          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-at-risk',this)">At Risk (5)</button>
+          <button class="tab-btn active" onclick="switchTab('fac-tabs','ft-supervisors',this)">Supervisors ({{ supervisor_rows|length }})</button>
+          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-students',this)">All Students ({{ student_rows|length }})</button>
+          <button class="tab-btn" onclick="switchTab('fac-tabs','ft-at-risk',this)">At Risk ({{ at_risk_rows|length }})</button>
         </div>
         <div id="ft-supervisors" class="tab-panel active tbl-wrap">
           <table>
             <thead><tr><th>Supervisor</th><th>Role</th><th>Students</th><th>Avg Progress</th><th>Satisfaction</th><th>Status</th><th></th></tr></thead>
             <tbody>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">MC</div><div><div class="td-bold">Dr. Michael Chen</div><div class="td-muted" style="font-size:.67rem">m.chen@uni.edu</div></div></div></td><td>Senior Supervisor</td><td style="color:var(--red);font-weight:700">15 ⚠</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#16A34A;color:#fff">SS</div><div><div class="td-bold">Dr. Sarah Smith</div><div class="td-muted" style="font-size:.67rem">s.smith@uni.edu</div></div></div></td><td>Supervisor</td><td>12</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--navy)"></div></div><span class="prog-val">68%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-green">Good</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><div><div class="td-bold">Dr. John Williams</div><div class="td-muted" style="font-size:.67rem">j.williams@uni.edu</div></div></div></td><td>Supervisor</td><td>10</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--green)"></div></div><span class="prog-val">75%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill pill-amber">Excellent</span></td><td><button class="btn btn-outline btn-xs">Assign</button></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#7C3AED;color:#fff">LJ</div><div><div class="td-bold">Dr. Lisa Johnson</div><div class="td-muted" style="font-size:.67rem">l.johnson@uni.edu</div></div></div></td><td>Part-time Supervisor</td><td style="color:var(--green);font-weight:700">8</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--navy)"></div></div><span class="prog-val">65%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★☆</div></td><td><span class="pill pill-green">Good</span></td><td><button class="btn btn-outline btn-xs">Assign</button></td></tr>
+              {% for row in supervisor_rows %}
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><div><div class="td-bold">{{ row.user.get_full_name|default:row.user.username }}</div><div class="td-muted" style="font-size:.67rem">{{ row.user.email }}</div></div></div></td><td>{% if row.is_overloaded %}Senior Supervisor{% else %}Supervisor{% endif %}</td><td{% if row.is_overloaded %} style="color:var(--red);font-weight:700"{% endif %}>{{ row.student_count }}{% if row.is_overloaded %} ⚠{% endif %}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.avg_progress }}%;background:{% if row.avg_progress >= 75 %}var(--green){% elif row.avg_progress >= 60 %}var(--navy){% else %}var(--orange){% endif %}"></div></div><span class="prog-val">{{ row.avg_progress }}%</span></div></td><td><div class="stars" style="font-size:.7rem">★★★★★</div></td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td><td><button class="btn btn-outline btn-xs" onclick="openModal('assign-modal')">Assign</button></td></tr>
+              {% empty %}
+              <tr><td colspan="7" class="td-muted">No supervisors available.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -982,9 +972,11 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
           <table>
             <thead><tr><th>Student</th><th>Programme</th><th>Supervisor</th><th>Progress</th><th>Status</th></tr></thead>
             <tbody>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">SJ</div><span class="td-bold">Sarah Johnson</span></div></td><td>PhD CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><span class="prog-val">85%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#2563EB;color:#fff">JW</div><span class="td-bold">James Wilson</span></div></td><td>MSc CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--navy)"></div></div><span class="prog-val">72%</span></div></td><td><span class="pill pill-green">On Track</span></td></tr>
-              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#DC2626;color:#fff">EB</div><span class="td-bold">Emily Brown</span></div></td><td>PhD CS</td><td class="td-muted">Dr. Michael Chen</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Needs Attention</span></td></tr>
+              {% for row in student_rows %}
+              <tr><td><div style="display:flex;align-items:center;gap:.55rem"><div class="av" style="background:#0A194E;color:var(--amber)">{{ row.initials }}</div><span class="td-bold">{{ row.name }}</span></div></td><td>{{ row.programme }}</td><td class="td-muted">{{ row.supervisor_name }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.progress }}%;background:{% if row.progress >= 75 %}var(--green){% elif row.progress >= 50 %}var(--navy){% else %}var(--red){% endif %}"></div></div><span class="prog-val"{% if row.progress < 50 %} style="color:var(--red)"{% endif %}>{{ row.progress }}%</span></div></td><td><span class="pill {{ row.status_badge }}">{{ row.status_label }}</span></td></tr>
+              {% empty %}
+              <tr><td colspan="5" class="td-muted">No students available.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -992,8 +984,11 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
           <table>
             <thead><tr><th>Student</th><th>Programme</th><th>Progress</th><th>Risk Factor</th><th>Supervisor</th><th>Action</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Emily Brown</td><td>PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">45%</span></div></td><td><span class="pill pill-red">Delayed — 3 months behind</span></td><td class="td-muted">Dr. Chen</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
-              <tr><td class="td-bold">Alex Turner</td><td>PhD CS</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:38%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">38%</span></div></td><td><span class="pill pill-red">No submission in 6 weeks</span></td><td class="td-muted">Dr. Davis</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
+              {% for row in at_risk_rows %}
+              <tr><td class="td-bold">{{ row.name }}</td><td>{{ row.programme }}</td><td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:{{ row.progress }}%;background:var(--red)"></div></div><span class="prog-val" style="color:var(--red)">{{ row.progress }}%</span></div></td><td><span class="pill pill-red">{{ row.risk_factor }}</span></td><td class="td-muted">{{ row.supervisor_name }}</td><td><button class="btn btn-navy btn-xs" onclick="openModal('intervention-modal')">Intervene</button></td></tr>
+              {% empty %}
+              <tr><td colspan="6" class="td-muted">No at-risk students right now.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1004,10 +999,10 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
     <section class="section-view" id="view-reports">
       <div class="page-hdr"><div><h2>Reports</h2><p>Department performance reports and summaries</p></div><button class="btn btn-amber" onclick="showToast('New report generated')">+ Generate Report</button></div>
       <div class="stat-grid">
-        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Reports Generated</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">24</div><div class="stat-sub">This academic year</div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">87%</div><div class="stat-sub"><span class="up">↑ 1.5%</span> YoY</div></div>
-        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Submission Score</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">81%</div><div class="stat-sub">department average</div></div>
-        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span> last year</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">Reports Generated</span><div class="stat-ico ico-navy">📊</div></div><div class="stat-val">{{ stats.reports_generated }}</div><div class="stat-sub">Generated from live departmental data</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Completion Rate</span><div class="stat-ico ico-green">✅</div></div><div class="stat-val">{{ stats.completion_rate }}%</div><div class="stat-sub">Current average milestone completion</div></div>
+        <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Submission Score</span><div class="stat-ico ico-amber">🎯</div></div><div class="stat-val">{{ analytics.approval_rate }}%</div><div class="stat-sub">Approved submission rate</div></div>
+        <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Risk</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">{{ stats.at_risk_students }}</div><div class="stat-sub">Students currently needing support</div></div>
       </div>
       <div class="card">
         <div class="card-hdr"><div class="card-title">Report Archive</div></div>
@@ -1015,10 +1010,11 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
           <table>
             <thead><tr><th>Report Title</th><th>Type</th><th>Generated</th><th>Scope</th><th>Actions</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Q1 2026 Department Performance</td><td class="td-muted">Quarterly</td><td class="td-muted">15 Mar 2026</td><td>All programmes</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
-              <tr><td class="td-bold">Annual Completion Analysis 2025</td><td class="td-muted">Annual</td><td class="td-muted">10 Jan 2026</td><td>CS Dept</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
-              <tr><td class="td-bold">Supervisor Load Distribution — Mar</td><td class="td-muted">Monthly</td><td class="td-muted">01 Mar 2026</td><td>Supervisors</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
-              <tr><td class="td-bold">At-Risk Student Intervention Report</td><td class="td-muted">Ad hoc</td><td class="td-muted">20 Feb 2026</td><td>PhD students</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              {% for report in report_archive %}
+              <tr><td class="td-bold">{{ report.title }}</td><td class="td-muted">{{ report.type }}</td><td class="td-muted">{% if report.generated %}{{ report.generated|date:"d M Y" }}{% else %}-{% endif %}</td><td>{{ report.scope }}</td><td><button class="btn btn-navy btn-xs" onclick="showToast('Downloading…')">⬇ Download</button></td></tr>
+              {% empty %}
+              <tr><td colspan="5" class="td-muted">No reports generated yet.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1027,10 +1023,10 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
  
     <!-- ANALYTICS -->
     <section class="section-view" id="view-analytics">
-      <div class="page-hdr"><div><h2>Analytics</h2><p>Detailed performance analytics — Computer Science</p></div></div>
+      <div class="page-hdr"><div><h2>Analytics</h2><p>Detailed performance analytics — {{ department_name }}</p></div></div>
       <div class="stat-grid">
-        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Completion Rate</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">85%</div></div>
-        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Completion</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">92%</div></div>
+        <div class="stat-card s-navy"><div class="stat-head"><span class="stat-lbl">PhD Completion Rate</span><div class="stat-ico ico-navy">🎓</div></div><div class="stat-val">{{ analytics.phd_completion }}%</div></div>
+        <div class="stat-card s-green"><div class="stat-head"><span class="stat-lbl">Masters Completion</span><div class="stat-ico ico-green">📚</div></div><div class="stat-val">{{ analytics.masters_completion }}%</div></div>
         <div class="stat-card s-amber"><div class="stat-head"><span class="stat-lbl">Avg Time to Complete</span><div class="stat-ico ico-amber">⏱️</div></div><div class="stat-val">2.8y</div></div>
         <div class="stat-card s-red"><div class="stat-head"><span class="stat-lbl">Dropout Rate</span><div class="stat-ico ico-red">📉</div></div><div class="stat-val">4.8%</div><div class="stat-sub"><span class="up">↓ from 6.2%</span></div></div>
       </div>
@@ -1038,17 +1034,17 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
         <div class="card">
           <div class="card-hdr"><div class="card-title">Progress by Programme</div></div>
           <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.7rem">
-            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">PhD CS</span><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--navy)"></div></div><span class="prog-val">85%</span></div>
-            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">MSc CS</span><div class="prog-bar"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div><span class="prog-val" style="color:var(--green)">92%</span></div>
-            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">MSc Data Science</span><div class="prog-bar"><div class="prog-fill" style="width:88%;background:var(--navy)"></div></div><span class="prog-val">88%</span></div>
+            {% for programme in analytics.progress_by_programme %}
+            <div class="prog-wrap"><span style="font-size:.8rem;font-weight:600;width:180px">{{ programme.name }}</span><div class="prog-bar"><div class="prog-fill" style="width:{{ programme.avg_progress }}%;background:{{ programme.progress_color }}"></div></div><span class="prog-val"{% if programme.progress_color == 'var(--green)' %} style="color:var(--green)"{% endif %}>{{ programme.avg_progress }}%</span></div>
+            {% endfor %}
           </div>
         </div>
         <div class="card">
           <div class="card-hdr"><div class="card-title">Supervisor Performance Avg</div></div>
           <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.7rem">
-            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Student Satisfaction</span><div class="prog-bar"><div class="prog-fill" style="width:91%;background:var(--amber)"></div></div><span class="prog-val">4.5</span></div>
-            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Review Timeliness</span><div class="prog-bar"><div class="prog-fill" style="width:78%;background:var(--navy)"></div></div><span class="prog-val">78%</span></div>
-            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Approval Rate</span><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--green)"></div></div><span class="prog-val">82%</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Student Satisfaction</span><div class="prog-bar"><div class="prog-fill" style="width:{{ analytics.satisfaction|floatformat:0 }}%;background:var(--amber)"></div></div><span class="prog-val">{{ analytics.satisfaction }}</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Review Timeliness</span><div class="prog-bar"><div class="prog-fill" style="width:{{ analytics.review_timeliness }}%;background:var(--navy)"></div></div><span class="prog-val">{{ analytics.review_timeliness }}%</span></div>
+            <div class="prog-wrap"><span style="font-size:.78rem;color:var(--muted);width:130px">Approval Rate</span><div class="prog-bar"><div class="prog-fill" style="width:{{ analytics.approval_rate }}%;background:var(--green)"></div></div><span class="prog-val">{{ analytics.approval_rate }}%</span></div>
           </div>
         </div>
       </div>
@@ -1062,10 +1058,11 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
           <table>
             <thead><tr><th>Student</th><th>Request Type</th><th>Details</th><th>Submitted</th><th>Priority</th><th>Actions</th></tr></thead>
             <tbody>
-              <tr><td class="td-bold">Sarah Johnson</td><td>Thesis Proposal</td><td class="td-muted">PhD CS — Data Analysis Chapter approval</td><td class="td-muted">16 Mar</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
-              <tr><td class="td-bold">James Wilson</td><td>Supervisor Change</td><td class="td-muted">Request to change from Dr. Chen to Dr. Smith</td><td class="td-muted">15 Mar</td><td><span class="pill pill-amber">Medium</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Deny</button></td></tr>
-              <tr><td class="td-bold">Emily Brown</td><td>Extension Request</td><td class="td-muted">3-month extension on PhD submission deadline</td><td class="td-muted">14 Mar</td><td><span class="pill pill-red">High</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Deny</button></td></tr>
-              <tr><td class="td-bold">David Lee</td><td>Thesis Proposal</td><td class="td-muted">MSc Data Science — Research Proposal sign-off</td><td class="td-muted">13 Mar</td><td><span class="pill pill-blue">Low</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+              {% for item in pending_approvals %}
+              <tr><td class="td-bold">{{ item.student_name }}</td><td>{{ item.request_type }}</td><td class="td-muted">{{ item.details }}</td><td class="td-muted">{{ item.submitted_label }}</td><td><span class="pill {{ item.priority_badge }}">{{ item.priority_label }}</span></td><td><button class="btn btn-green btn-xs" onclick="showToast('Approved')">✓ Approve</button> <button class="btn btn-outline btn-xs">Defer</button></td></tr>
+              {% empty %}
+              <tr><td colspan="6" class="td-muted">No pending approvals.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -1079,8 +1076,8 @@ Chair opened the session at 10:00 AM. Student presented PhD proposal on AI-drive
         <div class="card">
           <div class="card-hdr"><div class="card-title">Profile Information</div></div>
           <div class="card-body">
-            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="Prof. Emily Rodriguez"/></div><div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" value="e.rodriguez@uni.edu"/></div></div>
-            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="CHR/2015/001" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="Computer Science" readonly style="background:var(--off2);color:var(--muted)"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Full Name</label><input class="form-control" value="{{ chair_name }}"/></div><div class="form-group"><label class="form-label">Email</label><input class="form-control" type="email" value="{{ chair_email }}"/></div></div>
+            <div class="form-row"><div class="form-group"><label class="form-label">Staff ID</label><input class="form-control" value="{{ chair_staff_id }}" readonly style="background:var(--off2);color:var(--muted)"/></div><div class="form-group"><label class="form-label">Department</label><input class="form-control" value="{{ department_name }}" readonly style="background:var(--off2);color:var(--muted)"/></div></div>
             <div class="form-group"><label class="form-label">Office</label><input class="form-control" value="Office 310, Science Block"/></div>
             <button class="btn btn-navy" onclick="showToast('Profile saved')">Save Changes</button>
           </div>

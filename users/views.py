@@ -44,7 +44,7 @@ def login_view(request):
             elif user.role == 'chair':
                 return redirect('/chair/')
             elif user.role == 'admin':
-                return redirect('/admin/')
+                return redirect('/admin:index/')
             else:
                 return redirect('/')
         else:
